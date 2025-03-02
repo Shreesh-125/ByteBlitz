@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
   },
   submissions: [
     {
+      submissionId:{
+        type:String,
+        required:true
+      },
       questionId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'problems',
@@ -55,7 +59,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   rating: {
-    type: String,
+    type: Number,
     default: 0,
   },
   problem_solved: [
@@ -97,7 +101,7 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
-  max_rating: {
+  maxRating: {
     type: Number,
     default: 0,
   },

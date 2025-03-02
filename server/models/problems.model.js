@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const questionDescriptionSchema = new mongoose.Schema({
   questionDesc: { type: String, required: true },
@@ -22,4 +22,4 @@ const problemSchema = new mongoose.Schema({
   hidden: { type: Boolean, required: true },
 });
 
-export const Problems = mongoose.model("Problems", problemSchema);
+export const Problems = mongoose.model("problems", problemSchema);

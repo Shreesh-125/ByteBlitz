@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const problemSchema = mongoose.Schema({
   problemId: {
@@ -24,4 +24,4 @@ const contestSchema = new mongoose.Schema({
   submissions: { type: [String], required: true },
 });
 
-export const Contests = mongoose.model("Contests", problemSchema);
+export const Contests = mongoose.model("contests", problemSchema);
