@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1cbd0f0 (problem route done)
 
 const questionDescriptionSchema = new mongoose.Schema({
   questionDesc: { type: String, required: true },
