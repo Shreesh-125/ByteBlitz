@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
+import contestRoute from "./route/contest.route.js";
 
 dotenv.config({});
 const app = express();
@@ -21,10 +22,11 @@ app.use(cors(corsOption));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoute);
-
 app.use("/api/v1/problem", problemRoute);
+app.use("/api/v1/contest", contestRoute);
 
 app.listen(PORT, async () => {
   console.log(`Example app listening on port ${PORT}`);

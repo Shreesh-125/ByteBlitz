@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-<<<<<<< HEAD
-=======
-
->>>>>>> 1cbd0f0 (problem route done)
+import AutoIncrement from "mongoose-sequence";
 
 const questionDescriptionSchema = new mongoose.Schema({
   questionDesc: { type: String, required: true },
@@ -17,6 +14,7 @@ const sampleTestCaseSchema = new mongoose.Schema({
 });
 
 const problemSchema = new mongoose.Schema({
+  problemId: { type: Number, unique: true },
   questionTitle: { type: String, required: true },
   timeLimit: { type: String, required: true },
   memoryLimit: { type: String, required: true },
@@ -25,5 +23,6 @@ const problemSchema = new mongoose.Schema({
   rating: { type: Number, required: true },
   hidden: { type: Boolean, required: true },
 });
+problemSchema.plugin(AutoIncrement(mongoose), { inc_field: "problemId" });
 
 export const Problems = mongoose.model("problems", problemSchema);

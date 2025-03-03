@@ -1,27 +1,18 @@
 import mongoose from "mongoose";
-
-const problemSchema = mongoose.Schema({
-  problemId: {
-    type: Number,
-    required: true,
-  },
-  problemTitle: {
-    type: String,
-    required: true,
-  },
-  solvedBy: {
-    type: Number,
-    required: true,
-  },
-  attemptedBy: {
-    type: Number,
-    required: true,
-  },
+import AutoIncrement from "mongoose-sequence";
+const problemSchema = new mongoose.Schema({
+  problemId: { type: Number, required: true },
+  problemTitle: { type: String, required: true },
+  solvedBy: { type: Number, required: true },
+  attemptedBy: { type: Number, required: true },
 });
 
 const contestSchema = new mongoose.Schema({
+  contestId: { type: Number, unique: true },
   problems: { type: [problemSchema], required: true },
   submissions: { type: [String], required: true },
 });
 
-export const Contests = mongoose.model("contests", problemSchema);
+contestSchema.plugin(AutoIncrement(mongoose), { inc_field: "contestId" });
+
+export const Contests = mongoose.model("Contests", contestSchema);
