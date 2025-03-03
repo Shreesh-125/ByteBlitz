@@ -15,4 +15,4 @@ const contestSchema = new mongoose.Schema({
 
 contestSchema.plugin(AutoIncrement(mongoose), { inc_field: "contestId" });
 
-export const Contests = mongoose.model("Contests", contestSchema);
+export const Contests = mongoose.model("contests", contestSchema);

@@ -1,25 +1,22 @@
-import express from "express";
-import {
-  getProfileDetails,
-  getSubmissionDetails,
-  getUserContests,
-  getUserSubmissions,
-  login,
-  logout,
-  signup,
-} from "../controllers/user.controller.js";
+import express from 'express'
+import { findUser, getHomepageDetails, getProfileDetails, getSubmissionDetails, getUserContests, getUserSubmissions, login, logout, signup } from '../controllers/user.controller.js'
+import isAuthenticated from '../middleware/auth.middleware.js';
+
 
 const router = express.Router();
 
 //----------------------------------------------Auth-------------------------------------------------------------------------
-router.route("/login").post(login);
-router.route("/signup").post(signup);
-router.route("/logout").get(logout);
+router.route('/login').post(login)
+router.route('/signup').post(signup);
+router.route('/logout').get(logout);
+router.route('/').get(isAuthenticated,  getHomepageDetails)
+router.route('/finduser').post(isAuthenticated,findUser);
 
-// --------------------------------------------Profile---------------------------------------------------------------------
-router.route("/:username").get(getProfileDetails);
-router.route("/:username/submissions").get(getUserSubmissions);
-router.route("/:username/submissions/:submissionId").get(getSubmissionDetails);
-router.route("/:username/contests").get(getUserContests);
+// --------------------------------------------Profile----------------------------------------------------------------------------
+router.route('/:username').get(isAuthenticated ,getProfileDetails)
+router.route('/:username/submissions').get(isAuthenticated,getUserSubmissions);
+router.route('/:username/submissions/:submissionId').get(isAuthenticated,getSubmissionDetails)
+router.route("/:username/contests").get(isAuthenticated,getUserContests);
+
 
 export default router;

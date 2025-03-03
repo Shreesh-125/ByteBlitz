@@ -108,6 +108,21 @@ const userSchema = new mongoose.Schema({
   location: {
     type: String,
   },
+  friends:{
+    type:Number,
+    default:0
+  },
+  friendsOf:{
+    type:Number,
+    default:0
+  },
+  country:{
+    type:String,
+    required:true
+  },
+  profilePhoto:{
+    type:String
+  }
 });
 
 export const User = mongoose.model("User",userSchema);

@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
 import contestRoute from "./route/contest.route.js";
+import adminRoute from './route/admin.route.js';
+
 
 dotenv.config({});
 const app = express();
@@ -22,11 +24,14 @@ app.use(cors(corsOption));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/problem", problemRoute);
 app.use("/api/v1/contest", contestRoute);
+app.use('/api/v1/admin',adminRoute);
+
 
 app.listen(PORT, async () => {
   console.log(`Example app listening on port ${PORT}`);

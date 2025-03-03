@@ -4,7 +4,6 @@ import { Contests } from "../models/constests.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 export const signup = async (req, res) => {
   try {
     const { fullname, username, password, email } = req.body;
@@ -77,7 +76,7 @@ export const login = async (req, res) => {
     }
 
     const tokenData = { userId: user._id };
-    const token = jwt.sign(tokenData, process.env.SECRET_KEY, {
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
 
@@ -126,137 +125,207 @@ export const logout = async (req, res) => {
   }
 };
 
-export const getProfileDetails =async(req,res)=>{
-    try {
-        const {username}= req.params;
-        const user=await User.findOne({username});
+export const getHomepageDetails = async (req, res) => {
+  try {
+    const userId = req.id;
 
-        if(!user){
-          return res.status(400).json({
-            success:false,
-            message:"Username Not Found"
-          })
-        }
-  
-        let modifieduser={
-          username:user.username,
-          email:user.email,
-          rating:user.rating,
-          maxRating:user.maxRating
-        }
-        
-        return res.status(200).json({
-          success:true,
-          message:"User Details Fetched Successfully",
-          user:modifieduser
-        })
-        
-    } catch (error) {
-        
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not Found",
+        success: false,
+      });
     }
-}
+
+    let userDetails = {
+      username: user.username,
+      rating: user.rating,
+    };
+
+    const topUsers = await User.find({}, "_id username rating")
+      .sort({ rating: -1 })
+      .limit(10);
+
+    return res.status(200).json({
+      message: "Data Fetched Successfully",
+      success: true,
+      user: userDetails,
+      topUsers: topUsers,
+    });
+  } catch (error) {}
+};
+
+export const findUser = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User Not Found",
+        success: false,
+      });
+    }
+
+    let userDetails = {
+      username: user.username,
+      email: user.email,
+      rating: user.rating,
+      maxRating: user.maxRating,
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "user Detailed Fetched Successfully",
+      user: userDetails,
+    });
+  } catch (error) {
+    return (
+      res.status(500),
+      json({
+        message: "Internal Server Error",
+        success: false,
+      })
+    );
+  }
+};
+
+export const getProfileDetails = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Username Not Found",
+      });
+    }
+
+    let modifieduser = {
+      username: user.username,
+      email: user.email,
+      rating: user.rating,
+      maxRating: user.maxRating,
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "User Details Fetched Successfully",
+      user: modifieduser,
+    });
+  } catch (error) {}
+};
 
 export const getUserSubmissions = async (req, res) => {
   try {
-      const { username } = req.params;
-      const user = await User.findOne({ username }).populate('submissions.questionId', 'title');
+    const { username } = req.params;
+    const user = await User.findOne({ username }).populate(
+      "submissions.questionId",
+      "title"
+    );
 
-      if (!user) {
-          return res.status(400).json({
-              success: false,
-              message: "Username Not Found"
-          });
-      }
-
-      const submissions = user.submissions.map(submission => ({
-          submissionId:submission.submissionId,
-          questionTitle: submission.questionId?.title || "Unknown",
-          status: submission.status,
-          date: submission.date,
-          language: submission.language,
-      }));
-      
-      return res.status(200).json({
-          success: true,
-          message: "User Submissions Fetched Successfully",
-          submissions
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Username Not Found",
       });
+    }
+
+    const submissions = user.submissions.map((submission) => ({
+      submissionId: submission.submissionId,
+      questionTitle: submission.questionId?.title || "Unknown",
+      status: submission.status,
+      date: submission.date,
+      language: submission.language,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "User Submissions Fetched Successfully",
+      submissions,
+    });
   } catch (error) {
-      console.error("Error fetching submissions:", error);
-      return res.status(500).json({
-          success: false,
-          message: "Internal Server Error"
-      });
+    console.error("Error fetching submissions:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
 export const getSubmissionDetails = async (req, res) => {
   try {
-      const { username, submissionId } = req.params;
+    const { username, submissionId } = req.params;
 
-      // Find the user by username and filter the specific submission
-      const user = await User.findOne(
-          { username, submissionId },
-          { "submissions.$": 1 } // Only return the matching submission
-      );
+    // Find the user by username and filter the specific submission
+    const user = await User.findOne(
+      { username, submissionId },
+      { "submissions.$": 1 } // Only return the matching submission
+    );
 
-      if (!user || user.submissions.length === 0) {
-          return res.status(404).json({
-              success: false,
-              message: "Submission not found",
-          });
-      }
-
-      const { code, language, date } = user.submissions[0];
-
-      return res.status(200).json({
-          success: true,
-          message: "Submission details fetched successfully",
-          submissionDetails:{
-            code,
-            language,
-            date
-          }
-          
+    if (!user || user.submissions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Submission not found",
       });
+    }
+
+    const { code, language, date } = user.submissions[0];
+
+    return res.status(200).json({
+      success: true,
+      message: "Submission details fetched successfully",
+      submissionDetails: {
+        code,
+        language,
+        date,
+      },
+    });
   } catch (error) {
-      console.error("Error fetching submission details:", error.message);
-      return res.status(500).json({
-          success: false,
-          message: "Internal Server Error - " + error.message,
-      });
+    console.error("Error fetching submission details:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error - " + error.message,
+    });
   }
 };
 
 export const getUserContests = async (req, res) => {
   try {
-      const { username } = req.params;
-      const user = await User.findOne({ username }).populate('contests.contestId', 'name');
+    const { username } = req.params;
+    const user = await User.findOne({ username }).populate(
+      "contests.contestId",
+      "name"
+    );
 
-      if (!user) {
-          return res.status(400).json({
-              success: false,
-              message: "Username Not Found"
-          });
-      }
-
-      const contests = user.contests.map(contest => ({
-          contestName: contest.contestId?.name || "Unknown",
-          rank: contest.rank,
-          ratingChange: contest.ratingChange,
-          newRating: contest.newRating
-      }));
-
-      return res.status(200).json({
-          success: true,
-          message: "User Contests Fetched Successfully",
-          contests
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Username Not Found",
       });
+    }
+
+    const contests = user.contests.map((contest) => ({
+      contestName: contest.contestId?.name || "Unknown",
+      rank: contest.rank,
+      ratingChange: contest.ratingChange,
+      newRating: contest.newRating,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "User Contests Fetched Successfully",
+      contests,
+    });
   } catch (error) {
-      console.error("Error fetching contests:", error);
-      return res.status(500).json({
-          success: false,
-          message: "Internal Server Error"
-      });
+    console.error("Error fetching contests:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
