@@ -122,7 +122,11 @@ const userSchema = new mongoose.Schema({
   },
   profilePhoto:{
     type:String
-  }
+  },
+  blogs:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Blog",
+  }]
 });
 
 export const User = mongoose.model("User",userSchema);

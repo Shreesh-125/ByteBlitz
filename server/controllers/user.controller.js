@@ -3,6 +3,7 @@ import { Problems } from "../models/problems.model.js";
 import { Contests } from "../models/constests.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { Blog } from "../models/blog.model.js";
 
 export const signup = async (req, res) => {
   try {
@@ -143,6 +144,17 @@ export const getHomepageDetails = async (req, res) => {
       rating: user.rating,
     };
 
+    const blogs = await Blog.find()
+            .sort({ updatedAt: -1 }) 
+            .limit(6);
+            
+    const formattedBlogs = blogs.map(blog => ({
+            id: blog._id,
+            title: blog.title,
+            updatedAt: blog.updatedAt,
+            snippet: blog.content.substring(0, 100) + (blog.content.length > 100 ? '...' : '') // Limit content to 100 chars
+          }));
+
     const topUsers = await User.find({}, "_id username rating")
       .sort({ rating: -1 })
       .limit(10);
@@ -151,6 +163,7 @@ export const getHomepageDetails = async (req, res) => {
       message: "Data Fetched Successfully",
       success: true,
       user: userDetails,
+      Blogs:formattedBlogs,
       topUsers: topUsers,
     });
   } catch (error) {}
