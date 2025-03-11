@@ -56,24 +56,23 @@ export const postBlog = async (req, res) => {
 
 export const getBlogsByUserName = async (req, res) => {
     try {
-        const username=req.params.username; 
-
-       
+        const {username}=req.params; 
+      
         const user = await User.findOne({username})
             .populate({
                 path: 'blogs',
                 select: 'title content updatedAt',
                 options: { sort: { updatedAt: -1 } } // Sort by latest
-            })
-            .lean();
-
+            });
+        
         if (!user) {
             return res.status(404).json({
                 success: false,
                 message: 'User not found',
             });
         }
-
+        
+        
         // Map the blogs to return only the necessary information
         const blogData = user.blogs.map(blog => ({
             id: blog._id,
@@ -81,7 +80,8 @@ export const getBlogsByUserName = async (req, res) => {
             snippet: blog.content.substring(0, 100) + (blog.content.length > 100 ? '...' : ''),
             updatedAt: blog.updatedAt,
         }));
-
+        
+        
         res.status(200).json({
             success: true,
             message: 'Blogs fetched successfully',
@@ -99,11 +99,11 @@ export const getBlogsByUserName = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
     try {
-        const blogId = req.params.id; 
-
+        const {id} = req.query; 
+        
         // Fetch the blog with author details
-        const blog = await Blog.findById(blogId)
-            .populate('author', 'name email _id')
+        const blog = await Blog.findById(id)
+            .populate('author', 'username _id')
             .lean();
 
         if (!blog) {
@@ -121,8 +121,8 @@ export const getBlogById = async (req, res) => {
                 title: blog.title,
                 content: blog.content,
                 tags: blog.tags,
-                author: blog.author.name,
-                authorId: blog.author._id, // Corrected the typo here
+                author: blog.author?.username ,
+                authorId: blog.author?._id,
                 updatedAt: blog.updatedAt,
                 createdAt: blog.createdAt,
             },

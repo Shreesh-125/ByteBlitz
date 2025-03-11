@@ -7,8 +7,8 @@ import { Blog } from "../models/blog.model.js";
 
 export const signup = async (req, res) => {
   try {
-    const { fullname, username, password, email } = req.body;
-    if (!fullname || !username || !password || !email) {
+    const { fullname, username, password, email,country } = req.body;
+    if (!fullname || !username || !password || !email || !country) {
       return res.status(400).json({
         message: "All fields are required",
         success: false,
@@ -22,6 +22,7 @@ export const signup = async (req, res) => {
       username,
       password: hashedPassword,
       email,
+      country
     });
 
     await newUser.save();
@@ -342,3 +343,49 @@ export const getUserContests = async (req, res) => {
     });
   }
 };
+
+export const addfriend=async (req,res)=>{
+  try {
+    const {userid,friendusername}= req.params;
+
+    
+    const user=await User.findById(userid);
+
+    if(!user){
+      return res.status(400).json({
+        message:"User not Found",
+        success:false
+      })
+    }
+
+    const friend=await User.findOne({username:friendusername});
+
+    if(!friend){
+      return res.status(400).json({
+        message:"User not Found",
+        success:false
+      })
+    }
+
+    user.friends=[...user.friends,friend._id];
+
+    friend.friendsOf=friend.friendsOf+1;
+
+    await friend.save();
+
+    await user.save();
+
+    return res.status(200).json({
+      message:"Friend Added Successfully",
+      success:true
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message:"Internal Server Error",
+      success:false
+    })
+    
+  }
+}

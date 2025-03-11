@@ -29,7 +29,7 @@ const isAuthenticated =async(req,res,next)=>{
         const versionIndex = urlParts.indexOf('v1');
         const role = versionIndex !== -1 && urlParts.length > versionIndex + 1 ? urlParts[versionIndex + 1] : null;
 
-        if (!['user', 'admin'].includes(role)) {
+        if (!['user', 'admin','blog','problem','contest'].includes(role)) {
             return res.status(400).json({
                 message: "Invalid user role in route",
                 success: false,
@@ -45,8 +45,8 @@ const isAuthenticated =async(req,res,next)=>{
                 })
             }
         }
-        else{
-             const admin=await Admin.findById(req.id).lean()
+        else if(role=='admin'){
+             const admin=await Admin.findById(req.id).lean();
              if(!admin){
                 return res.status(403).json({
                     message:"Access forbidden",

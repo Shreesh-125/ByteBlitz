@@ -1,5 +1,5 @@
 import express from 'express'
-import { findUser, getHomepageDetails, getProfileDetails, getSubmissionDetails, getUserContests, getUserSubmissions, login, logout, signup } from '../controllers/user.controller.js'
+import { addfriend, findUser, getHomepageDetails, getProfileDetails, getSubmissionDetails, getUserContests, getUserSubmissions, login, logout, signup } from '../controllers/user.controller.js'
 import isAuthenticated from '../middleware/auth.middleware.js';
 import { getBlogById, getBlogsByUserName, postBlog } from '../controllers/blog.controller.js';
 
@@ -20,9 +20,10 @@ router.route('/:username/submissions/:submissionId').get(isAuthenticated,getSubm
 router.route("/:username/contests").get(isAuthenticated,getUserContests);
 
 // ---------------------------------------------Blog---------------------------------------------------------------------------
-router.route('/createblog').post(isAuthenticated,postBlog);
 router.route('/:username/blog').get(isAuthenticated,getBlogsByUserName);
-router.route('/blog/:id').get(isAuthenticated,getBlogById);
+router.route('/createblog').post(isAuthenticated,postBlog);
 
+// ----------------------------------------------Friend------------------------------------------------------------------------
+router.route('/:userid/friended/:friendusername').get(isAuthenticated,addfriend);
 
 export default router;

@@ -7,6 +7,7 @@ import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
 import contestRoute from "./route/contest.route.js";
 import adminRoute from './route/admin.route.js';
+import blogRoute from './route/blog.route.js';
 
 
 dotenv.config({});
@@ -31,6 +32,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/problem", problemRoute);
 app.use("/api/v1/contest", contestRoute);
 app.use('/api/v1/admin',adminRoute);
+app.use('/api/v1/blog',blogRoute);
 
 
 app.listen(PORT, async () => {
