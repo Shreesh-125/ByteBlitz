@@ -25,9 +25,9 @@ export const postBlog = async (req, res) => {
 
     // Create a new blog post
     const blog = await Blog.create({
-      title: title,
-      content: content,
-      tags: tags,
+      title,
+      content,
+      tags,
       author: userId, // Assuming the Blog schema has an 'author' field
     });
 
@@ -56,7 +56,7 @@ export const postBlog = async (req, res) => {
 
 export const getBlogsByUserName = async (req, res) => {
   try {
-    const username = req.params.username;
+    const { username } = req.params;
 
     const user = await User.findOne({ username })
       .populate({
@@ -99,11 +99,11 @@ export const getBlogsByUserName = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
   try {
-    const blogId = req.params.id;
+    const { id } = req.params;
 
     // Fetch the blog with author details
-    const blog = await Blog.findById(blogId)
-      .populate("author", "name email _id")
+    const blog = await Blog.findById(id)
+      .populate("author", "username _id")
       .lean();
 
     if (!blog) {
@@ -121,8 +121,8 @@ export const getBlogById = async (req, res) => {
         title: blog.title,
         content: blog.content,
         tags: blog.tags,
-        author: blog.author.name,
-        authorId: blog.author._id, // Corrected the typo here
+        author: blog.author?.username,
+        authorId: blog.author?._id,
         updatedAt: blog.updatedAt,
         createdAt: blog.createdAt,
       },

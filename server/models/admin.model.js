@@ -9,6 +9,10 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  blogs:[{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
+  }]
 });
 
-export const Admin = mongoose.model("admin", adminSchema);
+export const Admin = mongoose.model("Admin", adminSchema);

@@ -32,14 +32,14 @@ const isAuthenticated = async (req, res, next) => {
         ? urlParts[versionIndex + 1]
         : null;
 
-    if (!["user", "admin"].includes(role)) {
+    if (!["user", "admin", "blog", "problem", "contest"].includes(role)) {
       return res.status(400).json({
         message: "Invalid user role in route",
         success: false,
       });
     }
 
-    if (role == "user") {
+    if (role === "user") {
       const user = await User.findById(req.id).lean();
       if (!user) {
         return res.status(403).json({
@@ -47,7 +47,7 @@ const isAuthenticated = async (req, res, next) => {
           success: false,
         });
       }
-    } else {
+    } else if (role === "admin") {
       const admin = await Admin.findById(req.id).lean();
       if (!admin) {
         return res.status(403).json({
