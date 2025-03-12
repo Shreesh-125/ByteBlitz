@@ -4,7 +4,9 @@ import {
   postProblem,
   getProblemById,
   updateProblem,
+  submitcode,
 } from "../controllers/problem.controller.js";
+import isAuthenticated from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -13,5 +15,7 @@ router.route("/create").post(postProblem);
 router.route("/:id").get(getProblemById);
 router.route("/update/:id").put(updateProblem);
 // router.route("/:id/submit").post(submitProblem);
+
+router.route('/:problemid/submitcode').post(isAuthenticated,submitcode);
 
 export default router;

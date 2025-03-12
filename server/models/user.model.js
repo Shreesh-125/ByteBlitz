@@ -17,13 +17,8 @@ const userSchema = new mongoose.Schema({
   },
   submissions: [
     {
-      submissionId:{
-        type:String,
-        required:true
-      },
-      questionId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'problems',
+      problemId: {
+        type: Number,
         required: true,
       },
       code: {
@@ -34,6 +29,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Accepted", "Rejected", "Pending"],
         required: true,
+      },
+      error: {
+        type: String,
+        enum: [
+            "Wrong Answer",
+            "Time Limit Exceeded (TLE)",
+            "Compilation Error",
+            "Runtime Error",
+            "Execution Time Limit Exceeded",
+            "Memory Limit Exceeded (MLE)",
+            "Compiled With No Error"
+        ],
+        required: true
       },
       date: {
         type: String,

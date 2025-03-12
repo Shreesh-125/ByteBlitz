@@ -22,8 +22,10 @@ const isAuthenticated =async(req,res,next)=>{
                 success: false,
             });
         }
-
+        
+        
         req.id = decode.userId;
+     
         
         const urlParts = req.originalUrl.split('/');
         const versionIndex = urlParts.indexOf('v1');
