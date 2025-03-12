@@ -12,20 +12,20 @@ const problemSchema = new mongoose.Schema({
 // Accepted Submission Schema
 const acceptedSchema = new mongoose.Schema({
   time: { type: Date, required: true },
-  submissionId: { type: mongoose.Schema.Types.ObjectId, ref: "submissions" },
+  submissionId: { type: mongoose.Schema.Types.ObjectId },
 });
 
 // Rejected Submission Schema
 const rejectedSchema = new mongoose.Schema({
   time: { type: Date, required: true },
-  submissionId: { type: mongoose.Schema.Types.ObjectId, ref: "submissions" },
+  submissionId: { type: mongoose.Schema.Types.ObjectId },
 });
 
 // Problem Solved Schema
 const problemSolvedSchema = new mongoose.Schema({
   attempted: { type: Boolean, default: false },
-  accepted: [acceptedSchema], // Correctly referencing acceptedSchema
-  rejected: [rejectedSchema], // Correctly referencing rejectedSchema
+  accepted: [acceptedSchema],
+  rejected: [rejectedSchema],
 });
 
 // Registered User Schema
