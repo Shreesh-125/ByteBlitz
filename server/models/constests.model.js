@@ -15,7 +15,12 @@ const contestSchema = new mongoose.Schema({
   contestId: { type: Number, unique: true },
   problems: { type: [problemSchema], required: true },
   submissions: { type: [String], required: true },
-  registeredUser: { type: [registeredUserSchema], default: [] },
+  registeredUser: { type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    }], default: [] 
+  },
   startTime: Date,
   endTime: Date,
   status: {
@@ -23,6 +28,7 @@ const contestSchema = new mongoose.Schema({
     enum: ['upcoming', 'running', 'ended'],
     default: 'upcoming',
   },
+  
 });
 
 // Apply AutoIncrement Plugin to Contest ID
