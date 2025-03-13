@@ -22,11 +22,15 @@ export const getAllcontests = async (req, res) => {
 
 export const getContestById = async (req, res) => {
   try {
-    const contest = await Contests.findById(req.params.id);
+    const contestID = req.params.id;
+    if (!contestID) {
+      return res.status(400).json({ message: "There is no contestId in body" });
+    }
+    const contest = await Contests.findById(contestID);
     if (!contest) {
       return res.status(404).json({ message: "Contest not found" });
     }
-    res.json(contest);
+    res.status(200).json(contest);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -35,6 +39,9 @@ export const getContestById = async (req, res) => {
 export const createContest = async (req, res) => {
   try {
     const contest = await Contests.create(req.body);
+    if (!contest) {
+      return res.status(400).json({ message: "there is no contest body " });
+    }
     res.status(201).json(contest);
   } catch (error) {
     res.status(500).json({ error: error.message });

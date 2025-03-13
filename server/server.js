@@ -6,9 +6,8 @@ import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
 import contestRoute from "./route/contest.route.js";
-import adminRoute from './route/admin.route.js';
-import blogRoute from './route/blog.route.js';
-
+import adminRoute from "./route/admin.route.js";
+import blogRoute from "./route/blog.route.js";
 
 dotenv.config({});
 const app = express();
@@ -31,11 +30,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/problem", problemRoute);
 app.use("/api/v1/contest", contestRoute);
-app.use('/api/v1/admin',adminRoute);
-app.use('/api/v1/blog',blogRoute);
-
+app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/blog", blogRoute);
 
 app.listen(PORT, async () => {
-  console.log(`Example app listening on port ${PORT}`);
+  console.log(` app listening on port ${PORT}`);
   await connectDB();
 });
