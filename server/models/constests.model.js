@@ -15,6 +15,7 @@ const contestSchema = new mongoose.Schema({
   problems: { type: [problemSchema], required: true },
   submissions: { type: [String], required: true },
 
+
   registeredUser: {
     type: [
       {
@@ -28,6 +29,7 @@ const contestSchema = new mongoose.Schema({
 
   startTime: Date,
   endTime: Date,
+
 
   status: {
     type: String,
