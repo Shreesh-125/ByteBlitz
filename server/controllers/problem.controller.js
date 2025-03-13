@@ -5,15 +5,31 @@ import { languageMap, StatusIdMap } from "../utils/maps.js";
 
 export const getPaginatedProblems = async (req, res) => {
   try {
-    let { page = 1, limit = 20 } = req.query;
+    let { page = 1, limit = 20, tags, Difficulty } = req.query;
     page = parseInt(page, 10);
     limit = parseInt(limit, 10);
 
-    const problems = await Problems.find()
+    let filter = {};
+
+    // Apply tags filter if provided
+    if (tags) {
+      const tagsArray = tags.split(","); // Convert comma-separated string to array
+      filter.tags = { $in: tagsArray };
+    }
+
+    // Apply difficulty filter if provided
+    if (Difficulty) {
+      const [minDifficulty, maxDifficulty] = Difficulty.split("-").map(Number);
+      if (!isNaN(minDifficulty) && !isNaN(maxDifficulty)) {
+        filter.rating = { $gte: minDifficulty, $lte: maxDifficulty };
+      }
+    }
+
+    const problems = await Problems.find(filter)
       .skip((page - 1) * limit)
       .limit(limit);
 
-    const total = await Problems.countDocuments();
+    const total = await Problems.countDocuments(filter);
 
     res.json({
       total,

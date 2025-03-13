@@ -5,6 +5,7 @@ import {
   getProblemById,
   updateProblem,
   submitcode,
+  getPaginatedProblems2,
 } from "../controllers/problem.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 
