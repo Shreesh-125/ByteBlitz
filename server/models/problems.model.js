@@ -22,6 +22,17 @@
     sampleTestCase: { type: [sampleTestCaseSchema], required: true },
     rating: { type: Number, required: true },
     hidden: { type: Boolean, required: true },
+    tags: {
+      type: [String],
+      enum: [
+        "Strings", "Sorting", "Recursion", "Backtracking", "Divide and Conquer", "Greedy", 
+        "Dynamic Programming", "Graph", "Tree", "Stack", "Heap", "Hashing", "DFS","BFS","Brute Force","Shortest Path",
+        "Linked List", "Binary Tree", "Trie", "Graph", "Stack", "Queue", "HashMap", "Matrix",
+        "Number Theory", "Probability", "Statistics", "Geometry", "Combinatorics",
+        "Multithreading", "Parallel Computing", "Bit Manipulation", "Computational Geometry", "Network Flow"
+      ],
+      required: true
+    }
   });
   problemSchema.plugin(AutoIncrement(mongoose), { inc_field: "problemId" });
 
