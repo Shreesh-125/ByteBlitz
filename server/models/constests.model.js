@@ -9,41 +9,16 @@ const problemSchema = new mongoose.Schema({
   attemptedBy: { type: Number, required: true },
 });
 
-// Accepted Submission Schema
-const acceptedSchema = new mongoose.Schema({
-  time: { type: Date, required: true },
-  submissionId: { type: mongoose.Schema.Types.ObjectId },
-});
-
-// Rejected Submission Schema
-const rejectedSchema = new mongoose.Schema({
-  time: { type: Date, required: true },
-  submissionId: { type: mongoose.Schema.Types.ObjectId },
-});
-
-// Problem Solved Schema
-const problemSolvedSchema = new mongoose.Schema({
-  attempted: { type: Boolean, default: false },
-  accepted: [acceptedSchema],
-  rejected: [rejectedSchema],
-});
-
-// Registered User Schema
-const registeredUserSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
-    required: true,
-  },
-  problemSolved: [problemSolvedSchema],
-});
-
 // Contest Schema
 const contestSchema = new mongoose.Schema({
   contestId: { type: Number, unique: true },
   problems: { type: [problemSchema], required: true },
   submissions: { type: [String], required: true },
-  registeredUser: { type: [registeredUserSchema], default: [] },
+  registeredUser: { type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+  }], default: [] },
 });
 
 // Apply AutoIncrement Plugin to Contest ID
