@@ -1,7 +1,10 @@
+import ContestPage from "./pages/ContestPage";
+
 function App() {
   return (
     <>
-      <p>Hello World</p>
+      <ContestPage/>
+
     </>
   );
 }
