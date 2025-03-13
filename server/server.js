@@ -1,12 +1,41 @@
-import express from 'express'
+import express from "express";
+import connectDB from "./utils/db.js";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import userRoute from "./route/user.route.js";
+import problemRoute from "./route/problem.route.js";
+import contestRoute from "./route/contest.route.js";
+import adminRoute from './route/admin.route.js';
+import blogRoute from './route/blog.route.js';
 
-const app = express()
-const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+dotenv.config({});
+const app = express();
+const PORT = process.env.PORT || 2000;
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+app.use(cookieParser());
+
+const corsOption = {
+  origin: "http://localhost:5173",
+  credentials: true,
+};
+app.use(cors(corsOption));
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/problem", problemRoute);
+app.use("/api/v1/contest", contestRoute);
+app.use('/api/v1/admin',adminRoute);
+app.use('/api/v1/blog',blogRoute);
+
+
+app.listen(PORT, async () => {
+  console.log(`Example app listening on port ${PORT}`);
+  await connectDB();
+});
