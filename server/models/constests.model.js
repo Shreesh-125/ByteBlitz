@@ -14,15 +14,21 @@ const contestSchema = new mongoose.Schema({
   contestId: { type: Number, unique: true },
   problems: { type: [problemSchema], required: true },
   submissions: { type: [String], required: true },
-  registeredUser: { type: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    }], default: [] 
+
+  registeredUser: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+      },
+    ],
+    default: [],
   },
- 
+
   startTime: Date,
   endTime: Date,
+
   status: {
     type: String,
     enum: ["upcoming", "running", "ended"],
