@@ -126,7 +126,7 @@ export const submitcode = async (req, res) => {
       const formattedOutput = JSON.stringify(tc.output).replace(/\\n/g, "\n");
 
       const submissionData = {
-        source_code: code, // Remove extra quotes
+        source_code: code,
         language_id: languageId,
         stdin: formattedInput.slice(1, -1),
         expected_output: formattedOutput.slice(1, -1),
