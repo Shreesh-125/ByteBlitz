@@ -1,4 +1,4 @@
-import { Contests } from "../models/constests.model.js";
+import { Contests, scheduleContestUpdates } from "../models/constests.model.js";
 
 export const getAllcontests = async (req, res) => {
   try {
@@ -42,6 +42,8 @@ export const createContest = async (req, res) => {
     if (!contest) {
       return res.status(400).json({ message: "there is no contest body " });
     }
+
+    scheduleContestUpdates(contest);
     res.status(201).json(contest);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -48,7 +48,7 @@ const updateContestStatus = async (contestId, status) => {
 };
 
 // Function to schedule contest updates
-const scheduleContestUpdates = (contest) => {
+export const scheduleContestUpdates = (contest) => {
   const { contestId, startTime, endTime } = contest;
 
   // Schedule status update to "running" at startTime
