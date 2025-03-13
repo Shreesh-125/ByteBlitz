@@ -20,6 +20,7 @@ const contestSchema = new mongoose.Schema({
       required: true,
     }], default: [] 
   },
+ 
   startTime: Date,
   endTime: Date,
   status: {
@@ -27,7 +28,6 @@ const contestSchema = new mongoose.Schema({
     enum: ["upcoming", "running", "ended"],
     default: "upcoming",
   },
-  
 });
 
 // Apply AutoIncrement Plugin to Contest ID
