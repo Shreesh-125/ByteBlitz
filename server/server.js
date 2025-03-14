@@ -10,6 +10,7 @@ import adminRoute from "./route/admin.route.js";
 import blogRoute from "./route/blog.route.js";
 import http from "http";  // 🔹 Added for WebSockets
 import { Server } from "socket.io";  // 🔹 Added for WebSockets
+import axios from "axios";
 
 dotenv.config({});
 const app = express();
@@ -23,7 +24,7 @@ const io = new Server(server, {
   },
 });
 
-app.use(cookieParser());  
+app.use(cookieParser());
 
 const corsOption = {
   origin: "http://localhost:5173",
@@ -32,49 +33,68 @@ const corsOption = {
 app.use(cors(corsOption));
 
 // 🔹 Contest State Management
-let contestRunning = false;
-let leaderboard = {};
+let contestRunning = true;
+// let leaderboard = {};
 
 
-// 🔹 Start Contest
-app.post("/api/v1/contest/start", (req, res) => {
-  contestRunning = true;
-  console.log("Contest started!");
-  io.emit("contest_started");
-  res.json({ message: "Contest started!" });
-});
 
-// 🔹 Stop Contest
-app.post("/api/v1/contest/stop", (req, res) => {
-  contestRunning = false;
-  console.log("Contest ended!");
-  io.emit("contest_ended");
-  res.json({ message: "Contest ended!" });
-});
 
 // 🔹 WebSocket Logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  if (!contestRunning) {
-    socket.disconnect(true);
-    return;
-  }
+  // if (!contestRunning) {
+  //   socket.emit("contest_not_running", { message: "Contest is not running!" });
+  //   io.emit("contest_ended");
+  //   socket.disconnect(true);
+  //   return;
+  // }
 
-  socket.on("submit_code", (data) => {
-    console.log(`Code received from ${data.userId} for Problem ${data.problemId}`);
+  socket.on("submit_code", async(data) => {
+    if (!contestRunning) {
+      socket.emit("submission_result", { message: "Contest is not running!" });
+      return;
+    }
+    const submissionData = {
+      source_code: data.code,
+      language_id: 63,
+      number_of_runs: 1,
+    };
 
-    // Simulating correct submission
-    let points = 10; 
-    leaderboard[data.userId] = (leaderboard[data.userId] || 0) + points;
+    const response1 = await axios.post(
+      "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+      submissionData
+    );
 
-    io.emit("leaderboard_update", leaderboard);
-    socket.emit("submission_result", { message: "Submission successful!" });
+    if (!response1.data || !response1.data.token) {
+      return res
+        .status(500)
+        .json({ message: "Failed to submit code", success: false });
+    }
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, (1) * 1000)
+    );
+
+    const response2 = await axios.get(
+            `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+      );
+    
+    // console.log(response2.data);
+
+    socket.emit("see_output",response2.data)
+      
+    // // Simulating correct submission
+    // let points = 10;
+    // leaderboard[data.userId] = (leaderboard[data.userId] || 0) + points;
+
+    // io.emit("leaderboard_update", leaderboard);
+    // socket.emit("submission_result", { message: "Submission successful!" });
   });
 
-  socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
-  });
+  // socket.on("disconnect", () => {
+  //   console.log(`User disconnected: ${socket.id}`);
+  // });
 });
 
 // Middleware
