@@ -4,6 +4,12 @@ export const languageMap = {
   71: "python", // Python 3 (3.8.1)
 };
 
+export const languagetoIdMap = {
+  "c++":54 , // C++ 17 (GCC 9.2.0)
+  "java":62 , // Java (OpenJDK 13)
+  "python":71, // Python 3 (3.8.1)
+};
+
 export const StatusIdMap = {
   1: "In Queue",
   2: "Processing",

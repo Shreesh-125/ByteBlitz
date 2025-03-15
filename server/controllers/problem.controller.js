@@ -177,6 +177,7 @@ export const submitcode = async (req, res) => {
           status: response2.data.status,
           stderr: response2.data.stderr,
           compile_output: response2.data.compile_output,
+          submissionId: user.submissions[user.submissions.length - 1]._id
         });
       }
     }
@@ -194,6 +195,7 @@ export const submitcode = async (req, res) => {
     return res.status(200).json({
       message: "Accepted",
       success: true,
+      submissionId: user.submissions[user.submissions.length - 1]._id
     });
   } catch (error) {
     console.log(error);

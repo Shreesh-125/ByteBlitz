@@ -11,6 +11,9 @@ import blogRoute from "./route/blog.route.js";
 import http from "http";  // 🔹 Added for WebSockets
 import { Server } from "socket.io";  // 🔹 Added for WebSockets
 import axios from "axios";
+import { languagetoIdMap } from "./utils/maps.js";
+import cookie from "cookie";
+import { Leaderboard } from "./models/LeaderBoard.model.js";
 
 dotenv.config({});
 const app = express();
@@ -21,6 +24,7 @@ const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -38,9 +42,11 @@ let contestRunning = true;
 
 
 
-
 // 🔹 WebSocket Logic
 io.on("connection", (socket) => {
+  const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+  const token = cookies.token; 
+  
   console.log(`User connected: ${socket.id}`);
 
   // if (!contestRunning) {
@@ -49,52 +55,92 @@ io.on("connection", (socket) => {
   //   socket.disconnect(true);
   //   return;
   // }
+  if (!token) {
+    console.log("No token provided, disconnecting...");
+    socket.emit("unauthorized", { message: "Authentication failed" });
+    socket.disconnect();
+    return;
+  }
 
-  socket.on("submit_code", async(data) => {
+  socket.on("submit_code", async (data) => {
     if (!contestRunning) {
       socket.emit("submission_result", { message: "Contest is not running!" });
       return;
     }
+
+    const currTime=new Date();
     const submissionData = {
-      source_code: data.code,
-      language_id: 63,
-      number_of_runs: 1,
+      code: data.code,
+      languageId: languagetoIdMap[data.language],
     };
-
-    const response1 = await axios.post(
-      "http://localhost:2358/submissions?base64_encoded=false&wait=true",
-      submissionData
-    );
-
-    if (!response1.data || !response1.data.token) {
-      return res
-        .status(500)
-        .json({ message: "Failed to submit code", success: false });
-    }
-
-    await new Promise((resolve) =>
-      setTimeout(resolve, (1) * 1000)
-    );
-
-    const response2 = await axios.get(
-            `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
-      );
     
-    // console.log(response2.data);
-
-    socket.emit("see_output",response2.data)
+    try {
+      const fresponse = await axios.post(
+        `http://localhost:8000/api/v1/problem/${data.problemId}/submitcode`,
+        submissionData,{ withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        } 
+      );
+      const verdict = fresponse.data.status.id;      //problem status 3 if accepted
+      let leaderboard= await Leaderboard.findOne({contestId:data.contestId});   
       
-    // // Simulating correct submission
-    // let points = 10;
-    // leaderboard[data.userId] = (leaderboard[data.userId] || 0) + points;
+      if (!leaderboard) {
+        return socket.emit("submission_result", { message: "Leaderboard not found!" });
+      }
+      
+      let userEntry = leaderboard.users.find(user => user.userId.equals(data.userId));
 
-    // io.emit("leaderboard_update", leaderboard);
-    // socket.emit("submission_result", { message: "Submission successful!" });
+      if (!userEntry) {   //adds the user if not submitted before
+        userEntry = {
+          userId: data.userId,
+          problemSolved: [],
+          score: 0,
+        };
+        leaderboard.users.push(userEntry);
+      }
+
+      let problemEntry = userEntry.problemSolved.find(problem => problem.problemId === data.problemId);
+      if (!problemEntry) {
+        problemEntry = { problemId: data.problemId, accepted: [], rejected: [] };
+        userEntry.problemSolved.push(problemEntry);
+      }
+
+      const submissionRecord = {
+        time: currTime,
+        submissionId: fresponse.data.submissionId, // Assuming submissionId is returned
+      };
+
+      const problemScoreEntry = leaderboard.problemScore.find(p => p.problemId === data.problemId);
+
+      if (!problemScoreEntry) {
+        return socket.emit("submission_result", { message: "Problem score not found!" });
+      }
+
+      let problemScore = problemScoreEntry.problemScore;
+
+      if (verdict === 3) {         // Accepted
+      problemEntry.accepted.push(submissionRecord);
+      const timeElapsedMinutes = Math.floor((submissionTime - leaderboard.contestStartTime) / (1000 * 60));
+      let finalScore = problemScore - timeElapsedMinutes;
+      userEntry.score += finalScore;
+      userEntry.score=Math.max(userEntry.score, problemScore / 4)
+    } else {                  // Wrong answer
+      problemEntry.rejected.push(submissionRecord);
+      userEntry.score -=50;   // hardcoded the wrong submission score
+    }
+    await leaderboard.save();
+      socket.emit("see_output", fresponse.data);
+    } catch (error) {
+      console.error("Error submitting code:", error);
+      socket.emit("submission_result", { message: "Failed to submit code" });
+    }
   });
 
-  // socket.on("disconnect", () => {
-  //   console.log(`User disconnected: ${socket.id}`);
-  // });
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
 });
 
 // Middleware

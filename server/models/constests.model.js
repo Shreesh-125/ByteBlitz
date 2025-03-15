@@ -6,8 +6,8 @@ import schedule from 'node-schedule';
 const problemSchema = new mongoose.Schema({
   problemId: { type: Number, required: true, ref: 'problems' },
   problemTitle: { type: String, required: true },
-  solvedBy: { type: Number, required: true },
-  attemptedBy: { type: Number, required: true },
+  solvedBy: { type: Number, required: true,default:0 },
+  attemptedBy: { type: Number, required: true,default:0 },
 });
 
 // Contest Schema
