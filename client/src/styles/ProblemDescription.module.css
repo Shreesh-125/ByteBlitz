@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Bentham&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Potta+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+.problemDescription{
+    width: 100%;
+    padding: 30px 0;
+    margin: 0 auto;
+    display: flex;
+    height: 80vh;
+    overflow: scroll;
+    flex-direction: column;
+    gap: 20px;
+}
+.problemTitle{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.title{
+    font-weight: bold;
+}
+.timeLimit, .memoryLimit{
+    opacity: 70%;
+}
+.problemDescription p{
+    font-weight: bolder;
+    font-size: 18px;
+}
+.problemItem{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.constraints{
+    display: flex;
+    flex-direction: column;
+    white-space: pre-line;
+    font-size: 14px;
+    padding-left: 15px;
+    line-height: 2.4em;
+    gap: 10px;
+    font-family: "Bentham", serif;
+}
+.sample{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 10px;
+    grid-area:
+    'input output',
+    'sampleInput sampleOutput';
+}
+.input{
+    grid-area: 'input';
+}
+.output{
+    grid-area: 'output';
+}
+.sampleInput{
+    grid-area: 'sampleInput';
+}
+.sampleOutput{
+    grid-area: 'sampleOutput';
+}
+
+.input,.output,.sampleInput,.sampleOutput {
+    border: 1px solid rgb(97, 97, 255);
+    padding: 10px;
+}
+.output{
+    border-left: none;
+    border-bottom: none;
+}
+.sampleOutput{
+    border-left: none;
+}
+.input{
+    border-bottom: none;
+}
+
+.input,.output{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.sampleInput,.sampleOutput{
+    white-space: pre-line;
+    line-height: 1.7em;
+}
+
+.copyIcon{
+    cursor: pointer;
+}
+/* Apply to a specific container */
+.problemScrollbar {
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden;
+    padding-right: 12px; 
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgb(99, 98, 98) #f0f0f0; /* Scrollbar thumb & track */
+}
+
+/* For Webkit-based browsers (Chrome, Edge, Safari) */
+.problemScrollbar::-webkit-scrollbar {
+    width: 8px; /* Scrollbar width */
+}
+
+.problemScrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Track background */
+    border-radius: 10px;
+}
+
+.problemScrollbar::-webkit-scrollbar-thumb {
+    background: #6a93fa; /* Scrollbar color */
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.problemScrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4a7aff; /* Darker on hover */
+}

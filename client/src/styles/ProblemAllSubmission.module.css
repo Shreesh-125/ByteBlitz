@@ -1,0 +1,55 @@
+.problemNav{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.problemSection{
+    
+}
+.problemAll{
+    width: 95%;
+    display: flex;
+    margin: 0 auto;
+}
+.leftSection{
+    width: 50%;
+    height: 70vh;
+}
+.rightSection{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 50%;
+    height: 80vh;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+/* Apply to a specific container */
+.Scrollbar {
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden;
+    padding-right: 12px; 
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgb(99, 98, 98) #f0f0f0; /* Scrollbar thumb & track */
+}
+
+/* For Webkit-based browsers (Chrome, Edge, Safari) */
+.Scrollbar::-webkit-scrollbar {
+    width: 8px; /* Scrollbar width */
+}
+
+.Scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Track background */
+    border-radius: 10px;
+}
+
+.Scrollbar::-webkit-scrollbar-thumb {
+    background: #6a93fa; /* Scrollbar color */
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.Scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4a7aff; /* Darker on hover */
+}

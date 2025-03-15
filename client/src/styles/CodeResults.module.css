@@ -1,0 +1,59 @@
+.customInput,
+.customOutput {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.customInput span,
+.customOutput span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.customInput textarea,
+.customOutput input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.customInput textarea:focus,
+.customOutput input:focus {
+    border-color: #4a7aff;
+    box-shadow: 0px 0px 5px rgba(74, 122, 255, 0.5);
+}
+
+.customInput textarea{
+    height: 180px;
+    resize: none;
+    line-height: 1.7em;
+}
+
+.customOutput input {
+    background-color: #f8f8f8;
+}
+
+.codeStatus{
+    border-left: 7px solid #333;
+    color: #676666;
+    padding: 15px 10px;
+    font-size: 14px;
+    box-shadow: 1px 1px 2px #888888;
+    border-radius: 8px;
+}
+.codeStatus p{
+    font-size: 16px;
+    color: black;
+}
+.resultsContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

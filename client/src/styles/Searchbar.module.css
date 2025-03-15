@@ -1,0 +1,169 @@
+
+.searchBar{
+    width: 95%;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px #888888;
+}
+.heading{
+    background-color: #3E5879;
+    font-size: 18px;
+    color: white;
+    padding: 15px 15px;
+    font-weight: 600;
+    border-radius: 10px 10px 0px 0px;
+}
+.filters{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: white;
+    padding: 20px 5px;
+    border-radius: 0px 0px 10px 10px;
+}
+.selectContainer {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 15px;
+    border: 1px solid black;
+    background-color: #F5EFE7;
+}
+
+/* Reset the select to default */
+.selectContainer select {
+    border: none;
+    background: transparent;
+    width: 100%; /* Takes full width */
+    cursor: pointer;
+    outline: none;
+}
+
+.selectContainer option{
+    padding: 5px 10px;
+}
+.difficulty{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.difficultyRight{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.difficulty input{
+    background-color: #F5EFE7;
+    border: 1px solid black;
+    outline: none;
+    padding: 8px 10px;
+    width: 5vw;
+}
+.searchQuestion {
+    border: 1px solid black;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 8px 10px;
+    background-color: #F5EFE7;
+}
+.searchQuestion input{
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.filtersOptions {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.selectedFilters{
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: auto;
+}
+.selectedFilter{
+    border: 1px solid #5e5d5d;
+    padding: 8px 10px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.submit{
+    display: flex;
+    justify-content: center;
+}
+.submit button{
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background-color: rgb(106, 147, 250);
+    color: white;
+}
+
+.PaginationInput {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+@media (max-width: 915px) {
+    .searchBar {
+        font-size: 13px !important;
+    }
+    .submit button{
+        padding: 8px 15px;
+        font-size: 11px;
+    }
+    .selectContainer select,.searchQuestion input, .searchQuestion{
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+    .selectContainer {
+        padding: 8px 8px;
+    }
+}
+
+@media (max-width: 800px) {
+    .searchBar {
+        font-size: 11px !important;
+    }
+    .submit button,
+    .selectContainer select{
+        padding: 8px 15px;
+        font-size: 11px;
+    }
+    .selectContainer select, .searchQuestion input, .searchQuestion{
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+    .selectContainer {
+        padding: 8px 8px;
+    }
+}
+
+@media (max-width: 586px) {
+    .searchBar {
+        font-size: 10px !important;
+    }
+    .submit button, .searchQuestion input{
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    .selectContainer select{
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+    .selectContainer {
+        padding: 8px 8px;
+    }
+}

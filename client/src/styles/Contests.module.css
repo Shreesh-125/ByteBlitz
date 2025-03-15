@@ -1,0 +1,142 @@
+.contestTop{
+    width: 100vw;
+    height: 350px;
+    background: radial-gradient(circle, rgb(92, 92, 92) 0%, rgba(0,0,0,1) 100%);
+    display: flex;
+    justify-content: center;
+}
+.upcomingContestsContainer{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+.imageCards{
+    display: flex;
+    gap: 50px;
+    width: 80%;
+    margin: 30px 0px;
+    justify-content: space-around;
+}
+.imageCard{
+    position: relative;
+    width: fit-content;
+    width: 450px;
+    box-shadow: 2px 2px 8px #888888;
+    border-radius: 10px;
+}
+.imageCard img{
+    width: 100%;
+}
+.contestImage {
+    object-fit: cover;
+    object-position: right;
+}
+.InfoAndRegister{
+    display: flex;
+    width: 100%;
+    position: relative;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px 5px;
+    font-size: 18px;
+}
+.startingTime{
+    position: absolute;
+    color: white;
+    display: flex;
+    gap: 10px;
+    top: -40px;
+    left: 10px;
+    align-items: center;
+}
+.contestInfo{
+    display: flex;
+    flex-direction: column;
+    /* align-items: left; */
+    /* text-align: left; */
+    gap: 5px;
+}
+.contestInfo p{
+    font-weight: 600;
+}
+.contestInfo span{
+    opacity: 70%;
+    font-size: 16px;
+}
+.contestRegister button{
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background-color: rgb(106, 147, 250);
+    color: white;
+}
+.contestsContainer{
+    display: flex;
+    justify-content: center;
+}
+.previousContests{
+    width: 78%;
+}
+.contestSelect{
+    display: flex;
+    gap: 20px;
+}
+.contestSelect span{
+    padding: 15px 10px;
+    border-radius: 15px;
+    opacity: 90%;
+    border: 1px solid #a1a0a0;
+    transition:  0.3s all;
+}
+.contestSelect span:hover{
+    cursor: pointer;
+    background-color: #d4d3d3;
+}
+.selected{
+    border: 1px solid #000000 !important;
+    background-color: #d4d3d377;
+}
+.previousContests {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.contests{
+    display: flex;
+    gap: 1px;
+    justify-content: center;
+}
+.contest{
+    width: 45%;
+    display: flex;
+    padding: 15px 15px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    transition: 0.3s all;
+}
+.contest:hover {
+    background-color: #f1ecec;
+}
+.contestImage{
+    width: 40%;
+    object-fit: cover;
+    object-position: right;
+}
+.contest p{
+    font-weight: 600;
+    font-size: 20px;
+    /* letter-spacing: 0.1em; */
+}
+.registeredUsers {
+    display: flex;
+    align-items: center;
+    text-decoration: underline;
+    background-color: rgba(248, 109, 248, 0.192);
+    padding: 5px 8px;
+    border-radius: 10px;
+}
