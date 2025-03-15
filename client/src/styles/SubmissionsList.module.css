@@ -58,14 +58,8 @@
     padding: 0 10px;
 }
 
-.infoItem p:first-child {
+.infoItem p {
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
     color: #1a1a1a; /* Lighter gray for labels */
-}
-
-.infoItem p:last-child {
-    font-weight: 700;
-    font-size: 18px;
-    color: black; /* Bright white for values */
 }
