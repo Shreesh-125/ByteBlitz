@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 2px #888888;
+    border-radius: 10px;
+}
+
+
+.heading {
+    background-color: #324F7F;
+    font-size: 18px;
+    color: white;
+    padding: 15px 15px;
+    font-weight: 600;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.aboutContest {
+    display: flex;
+    background-color: #FCF6ED;
+    padding: 20px;
+    gap: 20px;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.contestInformation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.contestInformation p,
+h3,
+h2 {
+    text-align: center;
+}
+
+.contestInformation p {
+    margin-bottom: 10px;
+}
+
+.contestInformation h3 {
+    text-decoration: underline;
+}
+
+.aboutContest img {
+    width: 50%;
+    max-height: 120px;
+    object-fit: cover;
+}
+
+@media (max-width: 1050px) {
+
+    .contestInformation p,
+    h3,
+    h2 {
+        font-size: 16px;
+    }
+    .contestInformation{
+        gap: 5px;
+    }
+    .contestInformation p{
+        gap: 7px;
+    }
+}
+@media (max-width: 950px) {
+
+    .aboutContest img{
+        display: none;
+    }
+    .aboutContest{
+        justify-content: center;
+    }
+}
