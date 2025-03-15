@@ -6,8 +6,8 @@ import schedule from 'node-schedule';
 const problemSchema = new mongoose.Schema({
   problemId: { type: Number, required: true, ref: 'problems' },
   problemTitle: { type: String, required: true },
-  solvedBy: { type: Number, required: true },
-  attemptedBy: { type: Number, required: true },
+  solvedBy: { type: Number, required: true,default:0 },
+  attemptedBy: { type: Number, required: true,default:0 },
 });
 
 // Contest Schema
@@ -48,16 +48,24 @@ const updateContestStatus = async (contestId, status) => {
 };
 
 // Function to schedule contest updates
+// Function to schedule contest updates
 export const scheduleContestUpdates = (contest) => {
   const { contestId, startTime, endTime } = contest;
 
+  // Convert startTime and endTime to Date objects if they are strings
+  const startDate = new Date(startTime);
+  const endDate = new Date(endTime);
+
+
   // Schedule status update to "running" at startTime
-  schedule.scheduleJob(startTime, () => {
+  schedule.scheduleJob(startDate, () => {
+    console.log(`Contest ${contestId} is now running`);
     updateContestStatus(contestId, 'running');
   });
 
   // Schedule status update to "ended" at endTime
-  schedule.scheduleJob(endTime, () => {
+  schedule.scheduleJob(endDate, () => {
+    console.log(`Contest ${contestId} has ended`);
     updateContestStatus(contestId, 'ended');
   });
 };
@@ -67,7 +75,7 @@ const rescheduleAllContests = async () => {
   const contests = await Contests.find({
     $or: [{ status: 'upcoming' }, { status: 'running' }],
   });
-
+  
   contests.forEach((contest) => {
     scheduleContestUpdates(contest);
   });

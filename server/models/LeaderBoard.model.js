@@ -13,7 +13,7 @@ const rejectedSchema = new mongoose.Schema({
 });
 
 const problemSolvedSchema = new mongoose.Schema({
-  attempted: { type: Boolean, default: false },
+  problemId:{type:Number,required:true},
   accepted: [acceptedSchema],
   rejected: [rejectedSchema],
 });
@@ -22,6 +22,7 @@ const problemSolvedSchema = new mongoose.Schema({
 const userContestInfoSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref:"User",
     required: true,
   },
   problemSolved: {
@@ -33,11 +34,15 @@ const userContestInfoSchema = new mongoose.Schema({
   },
 });
 
-// Specific contest information
-const ContestInfoSchema = new mongoose.Schema({
+
+const LeaderboardSchema = new mongoose.Schema({
+  contestId:{
+    type:Number,
+    required: true
+  },
+  contestStartTime:Date,
   users: {
-    type: [userContestInfoSchema],
-    required: true,
+    type: [userContestInfoSchema]
   },
   problemScore: {
     type: [
@@ -53,13 +58,7 @@ const ContestInfoSchema = new mongoose.Schema({
       },
     ],
     required: true,
-  },
-});
-
-const LeaderboardSchema = new mongoose.Schema({
-  contests: {
-    type: [ContestInfoSchema],
-  },
+  }
 });
 
 export const Leaderboard = mongoose.model("Leaderboard", LeaderboardSchema);

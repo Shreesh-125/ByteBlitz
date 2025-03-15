@@ -1,4 +1,8 @@
+import axios from "axios";
 import { Contests, scheduleContestUpdates } from "../models/constests.model.js";
+import { Leaderboard } from "../models/LeaderBoard.model.js";
+import { Problems } from "../models/problems.model.js";
+import { languageMap } from "../utils/maps.js";
 
 export const getAllcontests = async (req, res) => {
   try {
@@ -38,13 +42,32 @@ export const getContestById = async (req, res) => {
 
 export const createContest = async (req, res) => {
   try {
-    const contest = await Contests.create(req.body);
+
+    const {problems,startTime,endTime,status,problemScore}=req.body;
+    const contest = await Contests.create({
+      problems,startTime,endTime,status,
+      submissions:[],
+      registeredUser:[]
+    });
     if (!contest) {
       return res.status(400).json({ message: "there is no contest body " });
     }
-
+    const leaderboard=await Leaderboard.create({
+      contestId:contest.contestId,
+      contestStartTime:startTime,
+      problemScore:problemScore,
+      users:[]
+    })
+    
+    if(!leaderboard){
+      return res.status(400).json({
+        message:"Error While creating contest",
+        success:false
+      })
+    }
+    
     scheduleContestUpdates(contest);
-    res.status(201).json(contest);
+    res.status(201).json({contest,leaderboard});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

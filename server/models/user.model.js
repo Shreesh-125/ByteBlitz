@@ -64,6 +64,11 @@ const userSchema = new mongoose.Schema({
         enum: ["c++", "java", "python"],
         required: true,
       },
+      hidden:{
+        type:Boolean,
+        required:true,
+        default:true
+      }
     },
   ],
   rating: {
