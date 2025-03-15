@@ -1,0 +1,6 @@
+.main{
+    margin: 50px 144px;
+    display:flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}

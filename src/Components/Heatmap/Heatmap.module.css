@@ -1,0 +1,78 @@
+.heatmapContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    width: 800px;
+    max-width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    overflow-x: hidden; /* Prevent scrolling */
+    padding-left: 20px;
+    margin-top: 40px;
+}
+
+.monthLabels {
+    /* padding-left: 0px; */
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    padding: 5px 35px;
+    padding-right: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #666;
+}
+
+.heatmapContent {
+    display: flex;
+    align-items: flex-start;
+}
+
+.weekLabels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
+    font-size: 10px;
+    font-weight: bold;
+    color: #666;
+    padding-right: 0px;
+    width: 30px; /* Adjust width to align properly */
+    height: 100px; /* Match grid height */
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(53, minmax(auto, 14px));
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2px;
+    padding: 5px;
+    width: 100%;
+}
+
+.day {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background-color: #ebedf0;
+    transition: background-color 0.3s ease;
+}
+
+.day:hover {
+    transform: scale(1.1);
+    outline: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width: 800px) {
+    .monthLabels {
+        font-size: 10px;
+    }
+    .day {
+        width: 10px;
+        height: 10px;
+    }
+}
