@@ -1,22 +1,23 @@
 import express from "express";
-import connectDB from "./utils/db.js";
 import dotenv from "dotenv";
+import axios from "axios";
+import http from "http";
 import cors from "cors";
+import { Server } from "socket.io";
+import connectDB from "./utils/db.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
+import blogRoute from "./route/blog.route.js";
+import adminRoute from "./route/admin.route.js";
 import problemRoute from "./route/problem.route.js";
 import contestRoute from "./route/contest.route.js";
-import adminRoute from "./route/admin.route.js";
-import blogRoute from "./route/blog.route.js";
-import http from "http";  // 🔹 Added for WebSockets
-import { Server } from "socket.io";  // 🔹 Added for WebSockets
-import axios from "axios";
 
 dotenv.config({});
 const app = express();
 const PORT = process.env.PORT || 2000;
 
-const server = http.createServer(app); // 🔹 Create HTTP server for WebSockets
+//  Create HTTP server for WebSockets
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -32,14 +33,11 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 
-// 🔹 Contest State Management
+// Contest State Management
 let contestRunning = true;
 // let leaderboard = {};
 
-
-
-
-// 🔹 WebSocket Logic
+// WebSocket Logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -50,7 +48,7 @@ io.on("connection", (socket) => {
   //   return;
   // }
 
-  socket.on("submit_code", async(data) => {
+  socket.on("submit_code", async (data) => {
     if (!contestRunning) {
       socket.emit("submission_result", { message: "Contest is not running!" });
       return;
@@ -72,18 +70,16 @@ io.on("connection", (socket) => {
         .json({ message: "Failed to submit code", success: false });
     }
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, (1) * 1000)
-    );
+    await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
 
     const response2 = await axios.get(
-            `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
-      );
-    
+      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+    );
+
     // console.log(response2.data);
 
-    socket.emit("see_output",response2.data)
-      
+    socket.emit("see_output", response2.data);
+
     // // Simulating correct submission
     // let points = 10;
     // leaderboard[data.userId] = (leaderboard[data.userId] || 0) + points;
@@ -106,7 +102,8 @@ app.use("/api/v1/contest", contestRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/blog", blogRoute);
 
-server.listen(PORT, async () => {  // 🔹 Changed app.listen to server.listen
+server.listen(PORT, async () => {
+  // 🔹 Changed app.listen to server.listen
   console.log(`Server running on port ${PORT}`);
   await connectDB();
 });
