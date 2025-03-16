@@ -26,7 +26,8 @@ const Navbar = () => {
         ['/contests', 'Contests'],
         ['/problems', 'Problems'],
         ['/ranking', 'Ranking'],
-        ['/blogs', 'Blogs']
+        ['/blogs', 'Blogs'],
+        ['/login', 'Login']
     ];
 
     return (
