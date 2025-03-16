@@ -1,0 +1,372 @@
+/* SignUp Page Styles */
+.loginContainer {
+  display: flex;
+  min-height: 85vh;
+  background-color: white;
+  width: 80%;
+  margin: 2rem auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Background wrapper for the entire page */
+body {
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Right side - Form */
+.loginFormContainer {
+  flex: 0 0 50%; /* Fixed width of exactly 50% */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem;
+  max-width: 50%;
+  width: 50%;
+  margin: 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.loginContent {
+  background-color: white;
+  padding: 1.5rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.loginHeader h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.loginHeader p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Google Login Button */
+.googleLoginBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s;
+}
+
+.googleLoginBtn:hover {
+  background-color: #f8f8f8;
+}
+
+.googleLoginBtn img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.divider hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider span {
+  padding: 0 10px;
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* Form Styles */
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.passwordGroup {
+  position: relative;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Create Account Button */
+.createAccountBtn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.createAccountBtn:hover {
+  background-color: #3d8b40;
+}
+
+/* Terms Notice */
+.termsNotice {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 1rem;
+}
+
+/* Have Account Link */
+.haveAccount {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.signInLink {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Left side - Banner */
+.loginBanner {
+  flex: 0 0 50%; /* Fixed width of exactly 50% */
+  width: 50%;
+  background-color: #141A30;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 2rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Left banner specific styles */
+.leftBanner {
+  flex: 0 0 50%; /* Fixed width of exactly 50% */
+  width: 50%;
+  background-color: #0a0f1d;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.leftBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.85;
+  z-index: 0;
+  filter: brightness(0.7) contrast(1.2) saturate(1.2);
+}
+
+.leftBanner .contentWrapper {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.leftBanner .logoContainer {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.byteblitzLogoText {
+  font-size: 5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  color: white;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  line-height: 1;
+}
+
+.challengesText {
+  font-size: 2rem;
+  margin-top: 0.25rem;
+  color: white;
+  font-weight: 300;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  position: relative;
+  left: 20%;
+}
+
+.skillsQuestion {
+  font-size: 2.5rem;
+  margin: 6rem 0 0 0;
+  color: white;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.skillsQuestion p {
+  margin: 0;
+}
+
+/* Add cursor icon to represent a coding editor */
+.cursorIcon {
+  display: inline-block;
+  margin-left: 0.5rem;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .loginContainer {
+    width: 80%;
+  }
+}
+
+@media (max-width: 992px) {
+  .loginContainer {
+    width: 90%;
+    flex-direction: column;
+  }
+  
+  .loginFormContainer {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 0 auto;
+    order: 2;
+  }
+  
+  .loginBanner, 
+  .leftBanner {
+    width: 100%;
+    min-height: 400px;
+    flex: 1 0 auto;
+    order: 1;
+  }
+  
+  .haveAccount {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .loginContainer {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .loginContent, 
+  .loginBanner {
+    padding: 1.5rem;
+  }
+  
+  .loginCta {
+    padding: 1.5rem;
+  }
+  
+  .loginHeader h1 {
+    font-size: 1.5rem;
+  }
+  
+  .byteblitzLogoText {
+    font-size: 2rem;
+  }
+  
+  .challengesText,
+  .skillsQuestion {
+    font-size: 1.25rem;
+  }
+}
+
+/* Add this for the error message */
+.errorMessage {
+  background-color: rgba(255, 99, 71, 0.1);
+  color: #e74c3c;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  text-align: center;
+  border-left: 3px solid #e74c3c;
+}
+
+/* Add the missing classes */
+.titleWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.awaitText {
+  color: #61dafb;
+  margin-left: 10px;
+  text-shadow: 0 0 10px rgba(97, 218, 251, 0.7);
+} 
