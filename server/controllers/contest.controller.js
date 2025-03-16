@@ -42,33 +42,58 @@ export const getContestById = async (req, res) => {
 
 export const createContest = async (req, res) => {
   try {
+    const { problems, startTime, endTime, status, problemScore } = req.body;
+    
+    if (!problems || !startTime || !endTime || !status || !problemScore) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-    const {problems,startTime,endTime,status,problemScore}=req.body;
+    const now = new Date();
+    
+    const startIST = new Date(startTime);
+    const endIST = new Date(endTime);
+
+    if (isNaN(startIST.getTime()) || isNaN(endIST.getTime())) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+
+    if (startIST <= now) {
+      return res.status(400).json({ message: "Start time must be in the future" });
+    }
+    if (endIST <= startIST) {
+      return res.status(400).json({ message: "End time must be after start time" });
+    }
+
+
+
     const contest = await Contests.create({
-      problems,startTime,endTime,status,
-      submissions:[],
-      registeredUser:[]
+      problems,
+      startTime:  startIST.toISOString(),
+      endTime: endIST.toISOString(),
+      status,
+      submissions: [],
+      registeredUser: []
     });
+
     if (!contest) {
-      return res.status(400).json({ message: "there is no contest body " });
+      return res.status(400).json({ message: "Error creating contest" });
     }
-    const leaderboard=await Leaderboard.create({
-      contestId:contest.contestId,
-      contestStartTime:startTime,
-      problemScore:problemScore,
-      users:[]
-    })
-    
-    if(!leaderboard){
-      return res.status(400).json({
-        message:"Error While creating contest",
-        success:false
-      })
+
+    const leaderboard = await Leaderboard.create({
+      contestId: contest.contestId,
+      contestStartTime: startTime,
+      problemScore,
+      users: []
+    });
+
+    if (!leaderboard) {
+      return res.status(400).json({ message: "Error while creating leaderboard", success: false });
     }
-    
+
     scheduleContestUpdates(contest);
-    res.status(201).json({contest,leaderboard});
+    res.status(201).json({ contest, leaderboard });
   } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
