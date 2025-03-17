@@ -28,7 +28,7 @@ const ContestPage = () => {
 
     const fetchContestStatus = async () => {
       try {
-        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d576a11822d55aba25f3b7");
+        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d80237f77f6325a8dbd430");
 
         if (data.status === "running") {
           const newSocket = io("http://localhost:8000", {
@@ -79,7 +79,7 @@ const ContestPage = () => {
       code: `print(1+2)`,
       language: "python",
       userId: "67cc4cc3964068fd0a6a2730",
-      contestId:21
+      contestId:4
     });
 
     setMessage("Code submitted successfully!");

@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
     
     try {
       const fresponse = await axios.post(
-        `http://localhost:8000/api/v1/problem/${data.problemId}/submitcode`,
+        `http://localhost:8000/api/v1/contest/${data.problemId}/submitcode`,
         submissionData,{ withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`, 
