@@ -1,0 +1,149 @@
+.standingsSearchContainer {
+    display: flex;
+    align-items: end;
+    gap: 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+    flex-wrap: wrap;
+    padding: 10px 100px;
+    box-shadow: 2px 2px 2px #888888;
+    margin-bottom: 20px;
+    padding-top: 30px;
+  }
+  
+  .searchSection {
+    display: flex;
+    align-items: center;
+    min-width: 100px;
+  }
+  
+  .searchIcon {
+    margin-right: 8px;
+    color: #6b7280;
+  }
+  
+  .searchIcon img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+  
+  .searchInput {
+    border: none;
+    outline: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .searchInput::placeholder {
+    color: #9ca3af;
+  }
+  
+  .filterSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .filterLabel {
+    font-size: 16px;
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  .countrySelect {
+    position: relative;
+    min-width: 180px;
+  }
+  
+  .countryDropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .dropdownArrow {
+    color: #6b7280;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdownItem {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .countryInput {
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+    min-width: 250px;
+  }
+  
+  .applyButton {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .applyButton:hover {
+    background-color: #2563eb;
+  }
+  .dropdownArrow img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+  }
+  @media (max-width: 768px) {
+    .standingsSearchContainer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .searchSection, .filterSection {
+      width: 100%;
+    }
+    
+    .filterSection {
+      margin-top: 12px;
+    }
+  }
+  

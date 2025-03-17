@@ -1,0 +1,108 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    /* max-width: 363px; Ensures it doesn't stretch too much */
+    min-width: 363px;
+    margin: auto;
+    border-bottom: 2px solid #000000;
+    flex-wrap:wrap;
+}
+
+/* Top Section (Current Rating) */
+.top {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #4D68D8;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Middle Section (ByteBlitz Rating) */
+.middle {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.byteblitzratingtext {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.higherating {
+    font-size: 13px;
+}
+
+/* Bottom Section (Global Rank) */
+.bottom {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.bottom p:first-child {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0023ff;
+}
+
+.bottom p:last-child {
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        min-width: 200px; /* Takes up more space on small screens */
+        padding: 15px;
+    }
+    
+    .top {
+        font-size: 2.5rem; /* Slightly smaller on tablets */
+    }
+
+    .byteblitzratingtext {
+        font-size: 18px;
+    }
+
+    .higherating {
+        font-size: 12px;
+    }
+
+    .bottom p:first-child {
+        font-size: 1.3rem;
+    }
+
+    .bottom p:last-child {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        max-width: 95%;
+        padding: 10px;
+    }
+
+    .top {
+        font-size: 2rem;
+    }
+
+    .byteblitzratingtext {
+        font-size: 16px;
+    }
+
+    .higherating {
+        font-size: 11px;
+    }
+
+    .bottom p:first-child {
+        font-size: 1.2rem;
+    }
+
+    .bottom p:last-child {
+        font-size: 0.9rem;
+    }
+}

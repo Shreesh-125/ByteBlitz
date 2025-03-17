@@ -1,0 +1,99 @@
+/* Main Container */
+.container {
+    min-width: 450px;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    /* background: #f5f4ef; */
+    /* margin-top: 20px; */
+}
+.table{
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;
+}
+/* Title */
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    text-decoration: underline;
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #F5EFE7;
+    border-radius: 8px;
+    font-weight: 400;
+    text-align: center;
+    flex-shrink:0;
+}
+.when{
+    /* align-self: flex-start; */
+    flex: 1
+}
+.problem{
+    padding-left: 25px;
+    flex: 1;
+}
+.lang{
+    margin-right: -20px;
+    flex: 1;
+}
+.solution{
+    flex: 1;
+    margin-right: -15px;
+    /* align-self: flex-end; */
+}
+/* List Container */
+.list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* List Item (Each Submission) */
+.listitem {
+    display: flex;
+    justify-content: space-around;
+    min-width: 90.75px;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    flex-shrink:0;
+}
+
+/* Last Item (Remove Border) */
+.listitem:last-child {
+    border-bottom: none;
+}
+
+/* Solution Icon */
+.correct{
+    padding-left: 7px;
+    width: 36.94px;
+    height: 19px;
+}
+.wrong{
+    width: 17px;
+    height: 16px;
+}
+.datetime{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+/* Responsive Design
+@media (max-width: 500px) {
+    .header, .listitem {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .listitem img {
+        margin-top: 5px;
+    }
+} */

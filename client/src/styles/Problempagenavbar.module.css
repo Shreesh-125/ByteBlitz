@@ -1,0 +1,47 @@
+.containerwhenstandings {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-bottom: -40px;
+  }
+.navbar {
+    display: flex;
+    position: relative;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+/* Buttons */
+.problembtn, .standingbtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    font-weight: bold;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.problembtn:hover, .standingbtn:hover {
+    color: #0056b3;
+}
+
+/* Sliding Effect */
+.slider {
+    position: absolute;
+    width: 100px; /* Adjust based on button width */
+    height: 3px;
+    background-color: #0056b3;
+    bottom: 0;
+    left: 2px;
+    transition: transform 1s ease;
+    z-index: 1;
+}
+
+/* Move slider when on standings page */
+.navbar.standings .slider {
+    transform: translateX(113px); 
+}

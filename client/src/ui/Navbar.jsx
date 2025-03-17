@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import avatar from '../assets/genericAvatar.png';
+import avatar from '../assets/profile_icon.png';
 import styles from '../styles/Navbar.module.css';
 import { FiMenu, FiX } from 'react-icons/fi';
 
@@ -13,7 +13,7 @@ const Navbar = () => {
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 600);
-            if (window.innerWidth > 600) {
+            if(window.innerWidth > 600) {
                 setMenuOpen(false); // Close menu when resizing to desktop
             }
         };
