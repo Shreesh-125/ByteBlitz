@@ -1,9 +1,8 @@
 /* Main Container */
 .container {
-    min-width: 450px;
-    max-width: 600px;
+    min-width: 400px;
     margin: auto;
-    padding: 20px;
+    /* background-color: green; */
     /* background: #f5f4ef; */
     /* margin-top: 20px; */
 }
