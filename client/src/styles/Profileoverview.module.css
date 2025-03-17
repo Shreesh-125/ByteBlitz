@@ -1,0 +1,79 @@
+.container {
+    width: 294px;
+    border-radius: 12px; /* Increased for smooth edges */
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+
+.header {
+    background-color: #3E5879;
+    color: white;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.mainSection {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.rating {
+    font-size: 18px;
+    font-weight: bold
+}
+
+.ratingValue {
+    color: #3E5879;
+    opacity: 60%;
+    font-size: 18px;
+}
+
+.mainBottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navLinks {
+    padding-left: 15px;
+}
+.navLinks li {
+    margin-bottom: 6px;
+    font-size: 20px;
+}
+
+.navItem {
+    text-decoration: none;
+    color: #2c517b;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.navItem:hover {
+    text-decoration: underline;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right:30px;
+    padding-bottom:5px;
+}
+
+.profileImage {
+    width: 90px;  /* Reduced for better alignment */
+    height: 90px;
+    border-radius: 50%;
+}
+
+.username {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
+}

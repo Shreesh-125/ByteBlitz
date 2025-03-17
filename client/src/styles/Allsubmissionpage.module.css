@@ -1,0 +1,109 @@
+.container {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 40px;
+    flex-shrink: 0;
+}
+
+.pagetitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.table {
+    width: 100%;
+    /* border-collapse: collapse; */
+}
+
+/* Header Styling */
+.header {
+    display: flex;
+    background-color: #3E5879;
+    color: white;
+    font-weight: bold;
+    padding: 17px;
+    justify-content: space-around;
+    text-align: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.headertimesubmitted,
+.headerquestion,
+.headerstatus,
+.headerruntime,
+.headerlanguage {
+    flex: 1;
+}
+
+/* Submission List */
+.list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.listitem {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.listitem:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Date and Time */
+.when {
+    flex: 1;
+    text-align: center;
+}
+
+.date {
+    font-weight: bold;
+}
+
+.time {
+    font-size: 0.9rem;
+    color: gray;
+}
+
+/* Other Columns */
+.question,
+.status,
+.runtime,
+.language {
+    flex: 1;
+    text-align: center;
+}
+
+/* Status Colors */
+.status {
+    font-weight: bold;
+}
+
+.accepted {
+    color: green;
+}
+
+.rejected {
+    color: red;
+}
+
+@media (max-width: 600px){
+    .container{
+        font-size: 12px;
+    }
+    .headertimesubmitted,
+    .when{
+        display: none;
+    }
+}

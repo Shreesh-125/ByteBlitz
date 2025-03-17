@@ -1,0 +1,139 @@
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    justify-content: space-between
+  }
+  
+  .left {
+    flex: 1;
+    max-width: 784px;
+    min-width: 400px;
+  }
+
+  
+  .blogcontainer {
+    margin-top: 40px;
+    background-color: #F5EFE7;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 5px;
+    margin-bottom: 16px;
+    background-color: #3E5879;
+    padding: 20px;
+    color: white;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+  
+  .whopostedtime {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .blogtext {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding: 20px;
+    padding-bottom: 0px;
+  }
+  
+  .blogtext p {
+    margin-top: 0;
+  }
+  
+  .votes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eaeaea;
+    padding-left: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .upvotebtn, .downvotebtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .upvote, .downvote {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.1s ease;
+  }
+  
+  .upvote:hover, .downvote:hover {
+    transform: scale(1.1);
+  }
+  .right{
+    padding-top: 40px
+  }
+  
+  /* Responsive design */
+  @media (max-width: 1024px) {
+    .container {
+      padding: 15px;
+      gap: 15px;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .left {
+      min-width: 350px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+    }
+    
+    .left {
+      max-width: 100%;
+      min-width: 300px;
+      margin-bottom: 20px;
+    }
+    
+    .title {
+      font-size: 20px;
+    }
+    
+    .blogtext {
+      font-size: 15px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 10px;
+    }
+    
+    .left {
+      min-width: 100%;
+    }
+    
+    .blogcontainer {
+      padding: 15px;
+    }
+  }
