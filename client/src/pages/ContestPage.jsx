@@ -35,10 +35,14 @@ const ContestPage = () => {
     const fetchContestData = async () => {
       console.log("Fetching contest status and problems...");
       try {
+<<<<<<< HEAD
         const { data } = await axios.get(
           "http://localhost:8000/api/v1/contest/67d576a11822d55aba25f3b7"
         );
         console.log("Contest data received:", data);
+=======
+        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d80237f77f6325a8dbd430");
+>>>>>>> 6671a52f565a0fcebd3a842d989b98433aba2784
 
         if (data.status === "running") {
           console.log("Contest is running. Connecting to WebSocket...");
@@ -92,10 +96,35 @@ const ContestPage = () => {
       return;
     }
 
+<<<<<<< HEAD
     if (!selectedProblem) {
       console.warn("No problem selected!");
       setMessage("Please select a problem first.");
       return;
+=======
+    socket.emit("submit_code", {
+      problemId: 1,
+      code: `print(1+2)`,
+      language: "python",
+      userId: "67cc4cc3964068fd0a6a2730",
+      contestId:4
+    });
+
+    setMessage("Code submitted successfully!");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.get("http://localhost:8000/api/v1/user/logout", {
+        withCredentials: true,
+      });
+
+      dispatch(logoutUser());
+      localStorage.removeItem("user");
+      navigate("/");
+    } catch (error) {
+      setMessage("Logout failed. Please try again.");
+>>>>>>> 6671a52f565a0fcebd3a842d989b98433aba2784
     }
 
     const submissionData = {

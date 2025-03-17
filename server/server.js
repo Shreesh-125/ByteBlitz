@@ -5,28 +5,20 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
-import contestRoute from "./route/contest.route.js";
+import { contestRoutes } from "./route/contest.route.js"; // Import contestRoutes
 import adminRoute from "./route/admin.route.js";
 import blogRoute from "./route/blog.route.js";
 import http from "http";
-import { Server } from "socket.io";
-import axios from "axios";
-import { languagetoIdMap } from "./utils/maps.js";
-import cookie from "cookie";
-import { Leaderboard } from "./models/LeaderBoard.model.js";
+import { initializeSocket } from "./services/socketService.js";
+import { rescheduleAllContests } from "./services/contestScheduler.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 2000;
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
+
+const io = initializeSocket(server);
 
 app.use(cookieParser());
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -178,11 +170,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/problem", problemRoute);
-app.use("/api/v1/contest", contestRoute);
+app.use("/api/v1/contest", contestRoutes(io)); // Pass `io` to contest routes
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/blog", blogRoute);
 
 server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   await connectDB();
+
+  rescheduleAllContests(io); // Reschedule contests on server start
 });
