@@ -4,16 +4,13 @@ import Navbar from './ui/Navbar';
 import Profilepage from './pages/Profilepage'
 import Allsubmissionpage from './pages/Allsubmissionpage';
 import Conteststandingpage from './pages/Conteststandingpage';
-import Home from './pages/Home';
 import Contestproblempage from './pages/Contestproblempage';
 import Particularblog from './pages/Particularblog';
 import Allblogs from './pages/Allblogs';
-import { Route, Routes } from "react-router-dom";
 import Contests from "./pages/Contests";
 import Ranking from "./pages/Ranking";
 import Problems from "./pages/Problems";
 import Home from "./pages/Home";
-import Navbar from "./ui/Navbar";
 import Problempage from "./pages/Problempage";
 import ProblemAllSubmissionsPage from "./pages/ProblemAllSubmissionsPage";
 import Login from "./pages/Login";
