@@ -6,12 +6,17 @@ import {
 } from "../controllers/contest.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 
-const router = express.Router();
-router.route("/").get();
-router.route("/:id").get(getContestById);
-router.route("/create").post(createContest);
-router.route("/update/:id").put();
+// Export a function that accepts `io` and returns the router
+export const contestRoutes = (io) => {
+  const router = express.Router();
 
-router.route("/:problemid/submitcode").post(isAuthenticated,contestProblemSubmitCode);
+  // Define routes
+  router.route("/").get();
+  router.route("/:id").get(getContestById);
+  router.route("/create").post((req, res) => createContest(req, res, io)); // Pass `io` to createContest
+  router.route("/update/:id").put();
 
-export default router;
+  router.route("/:problemid/submitcode").post(isAuthenticated, contestProblemSubmitCode);
+
+  return router;
+};

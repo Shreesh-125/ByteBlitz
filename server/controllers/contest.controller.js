@@ -1,9 +1,10 @@
 import axios from "axios";
-import { Contests, scheduleContestUpdates } from "../models/constests.model.js";
+import { Contests } from "../models/constests.model.js";
 import { Leaderboard } from "../models/LeaderBoard.model.js";
 import { Problems } from "../models/problems.model.js";
 import { languageMap, StatusIdMap } from "../utils/maps.js";
 import { User } from "../models/user.model.js";
+import { scheduleContestUpdates } from "../services/contestScheduler.js";
 
 export const getAllcontests = async (req, res) => {
   try {
@@ -41,7 +42,7 @@ export const getContestById = async (req, res) => {
   }
 };
 
-export const createContest = async (req, res) => {
+export const createContest = async (req, res,io) => {
   try {
     const { problems, startTime, endTime, status, problemScore } = req.body;
 
