@@ -2,23 +2,14 @@ import React from 'react';
 import Profilecontainer from '../ui/Profilecontainer';
 import Profilepagesidebar from './Profilepagesidebar';
 import Profilepageleftbar from './Profilepageleftbar';
-
+import styles from '../styles/Profilepage.module.css'
 const Profilepage = () => {
   return (
     <div style={{ marginTop: 40 }}>
-      <div 
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-evenly", /* Ensures centered layout */
-        //   flexWrap: "wrap", /* Ensures responsiveness */
-        //   maxWidth: "150px", /* Prevents overstretching */
-          margin: "0 auto", /* Centers the container */
-          padding: "0 20px", /* Adds spacing */
-        }}
+      <div className={styles.container}
       >
-        <Profilepageleftbar/>
-        <Profilepagesidebar/>
+        <Profilepageleftbar className={styles.left}/>
+        <Profilepagesidebar className={styles.right}/>
       </div>
     </div>
   );

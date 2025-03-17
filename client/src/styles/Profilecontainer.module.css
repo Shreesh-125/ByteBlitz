@@ -9,7 +9,6 @@
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
     width: 800px;
     height: 400px;
-    min-width: 450px;
     border-radius: 10px;
 }
 
@@ -17,15 +16,17 @@
 .info {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
+   
     padding: 20px;
     align-items: center;
     justify-content: space-evenly;
     width: 53.6%;
+    /* background-color: red; */
 }
 
 /* Trophy & Tag */
 .tag {
+    /* background-color: green; */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -43,11 +44,13 @@
 
 /* User Details */
 .userdetails {
+    /* background-color: blue; */
     display: flex;
     flex-direction: column;
     align-items: start;
     justify-content: space-around;
     gap: 18px;
+    padding-left: 35px;
 }
 
 .links {
@@ -67,8 +70,8 @@
 /* Profile Image */
 .profileimage {
     margin-top: 10px;
-    height: 250px;
-    width: 250px;
+    height: 300px;
+    width: 300px;
     border-radius: 10px;
     max-width: 100%;
 }
@@ -99,28 +102,42 @@
 }
 
 /* ----- Responsive Design ----- */
+@media (max-width: 753px) {
+    .profileimage {
+        max-width: 200px;
+        max-height: 200px;
+    }
+    .container {
+        line-height: 10px;
+        align-items: center;
+    }
+}
 @media (max-width: 600px) {
     .container {
-        flex-direction: column;
-        max-height: unset;
+        width: 500px;
         align-items: center;
         padding: 10px;
+        height: 350px;
     }
 
     .info {
         width: 100%;
-        text-align: center;
+        font-size: 12px;
+        line-height: 10px;
     }
-
+    .tag img {
+        max-width: 50px;
+    }
     .profileimage {
         height: auto;
-        width: 80%;
+        width: 90%;
         max-width: 200px;
     }
 
     .photochangedetails {
         width: 100%;
-        justify-content: center;
+        justify-content: space-evenly;
+        padding-right: 36px;
     }
 
     .tag p {
