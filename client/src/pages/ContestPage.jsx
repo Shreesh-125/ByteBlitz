@@ -5,7 +5,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const ContestPage = () => {
-  console.log("Rendering ContestPage component...");
 
   const [socket, setSocket] = useState(null);
   const { user } = useSelector((store) => store.app);
@@ -32,9 +31,14 @@ const ContestPage = () => {
       return;
     }
 
-    const fetchContestStatus = async () => {
+    const fetchContestData = async () => {
+      console.log("Fetching contest status and problems...");
       try {
-        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d80237f77f6325a8dbd430");
+
+        const { data } = await axios.get(
+          "http://localhost:8000/api/v1/contest/67d86e0f260ec7f2a179dee7"
+        );
+
 
         if (data.status === "running") {
           console.log("Contest is running. Connecting to WebSocket...");
@@ -76,7 +80,7 @@ const ContestPage = () => {
       }
     };
 
-    fetchContestStatus();
+    fetchContestData();
   }, []);
 
   const handleSubmit = () => {
@@ -93,7 +97,7 @@ const ContestPage = () => {
       console.warn("No problem selected!");
       setMessage("Please select a problem first.");
       return;
-
+    }
     socket.emit("submit_code", {
       problemId: 1,
       code: `print(1+2)`,
@@ -116,7 +120,6 @@ const ContestPage = () => {
       navigate("/");
     } catch (error) {
       setMessage("Logout failed. Please try again.");
-
     }
 
     const submissionData = {
@@ -202,5 +205,5 @@ const ContestPage = () => {
     </div>
   );
 };
-}
+
 export default ContestPage;
