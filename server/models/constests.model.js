@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import AutoIncrement from 'mongoose-sequence';
-import schedule from 'node-schedule';
+// import schedule from 'node-schedule';
 
 // Problem Schema
 const problemSchema = new mongoose.Schema({
@@ -37,49 +37,49 @@ contestSchema.plugin(AutoIncrement(mongoose), { inc_field: 'contestId' });
 // Export Contest Model
 export const Contests = mongoose.model('Contests', contestSchema);
 
-// Function to update contest status
-const updateContestStatus = async (contestId, status) => {
-  try {
-    await Contests.updateOne({ contestId }, { $set: { status } });
-    console.log(`Contest ${contestId} status updated to ${status}`);
-  } catch (error) {
-    console.error(`Error updating contest status: ${error.message}`);
-  }
-};
+// // Function to update contest status
+// const updateContestStatus = async (contestId, status) => {
+//   try {
+//     await Contests.updateOne({ contestId }, { $set: { status } });
+//     console.log(`Contest ${contestId} status updated to ${status}`);
+//   } catch (error) {
+//     console.error(`Error updating contest status: ${error.message}`);
+//   }
+// };
 
-// Function to schedule contest updates
-// Function to schedule contest updates
-export const scheduleContestUpdates = (contest) => {
-  const { contestId, startTime, endTime } = contest;
+// // Function to schedule contest updates
+// // Function to schedule contest updates
+// export const scheduleContestUpdates = (contest) => {
+//   const { contestId, startTime, endTime } = contest;
 
-  // Convert startTime and endTime to Date objects if they are strings
-  const startDate = new Date(startTime);
-  const endDate = new Date(endTime);
+//   // Convert startTime and endTime to Date objects if they are strings
+//   const startDate = new Date(startTime);
+//   const endDate = new Date(endTime);
 
 
-  // Schedule status update to "running" at startTime
-  schedule.scheduleJob(startDate, () => {
-    console.log(`Contest ${contestId} is now running`);
-    updateContestStatus(contestId, 'running');
-  });
+//   // Schedule status update to "running" at startTime
+//   schedule.scheduleJob(startDate, () => {
+//     console.log(`Contest ${contestId} is now running`);
+//     updateContestStatus(contestId, 'running');
+//   });
 
-  // Schedule status update to "ended" at endTime
-  schedule.scheduleJob(endDate, () => {
-    console.log(`Contest ${contestId} has ended`);
-    updateContestStatus(contestId, 'ended');
-  });
-};
+//   // Schedule status update to "ended" at endTime
+//   schedule.scheduleJob(endDate, () => {
+//     console.log(`Contest ${contestId} has ended`);
+//     updateContestStatus(contestId, 'ended');
+//   });
+// };
 
-// Function to reschedule all contests on server start
-const rescheduleAllContests = async () => {
-  const contests = await Contests.find({
-    $or: [{ status: 'upcoming' }, { status: 'running' }],
-  });
+// // Function to reschedule all contests on server start
+// const rescheduleAllContests = async () => {
+//   const contests = await Contests.find({
+//     $or: [{ status: 'upcoming' }, { status: 'running' }],
+//   });
   
-  contests.forEach((contest) => {
-    scheduleContestUpdates(contest);
-  });
-};
+//   contests.forEach((contest) => {
+//     scheduleContestUpdates(contest);
+//   });
+// };
 
-// Call this function when your server starts
-rescheduleAllContests();
+// // Call this function when your server starts
+// rescheduleAllContests();

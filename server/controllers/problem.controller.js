@@ -119,6 +119,7 @@ export const submitcode = async (req, res) => {
       code: code,
       status: "Pending",
       language: language,
+      hidden:false
     };
     let isServerError = false;
     for (const tc of problem.sampleTestCase) {
