@@ -1,39 +1,56 @@
-import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import styles from '../styles/Login.module.css';
-import googleIcon from '../assets/google.png';
-import byteblitzLogo from '../assets/byteblitz-logo.png'; 
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import styles from "../styles/Login.module.css";
+import googleIcon from "../assets/google.png";
+import byteblitzLogo from "../assets/byteblitz-logo.png";
+import { useDispatch } from "react-redux";
+import { login } from "../servers/signInAndLogin.js";
+import { useMutation } from "@tanstack/react-query";
+import { loginSuccess } from "../store/authStore.js";
+import toast from "react-hot-toast";
 
 const Login = ({ setIsAuthenticated }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [userType, setUserType] = useState('student'); 
-  const [error, setError] = useState('');
-  
+  const [userType, setUserType] = useState("student");
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
   const from = location.state?.from || "/";
+
+  // Mutation for login
+  const mutation = useMutation({
+    mutationFn: (data) => login(data), // Call API
+    onSuccess: (data) => {
+      dispatch(loginSuccess(data)); //Save user info to Redux
+      toast.success("Login successfully");
+      navigate(from, { replace: true });
+    },
+    onError: (error) => {
+      if (error) {
+        console.log(error);
+      }
+      setError(error.response?.data?.message || "Login failed. Try again.");
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in all fields');
+    if (!username || !password) {
+      setError("Please fill in all fields");
       return;
     }
-
-    setError('');
-    setIsAuthenticated(true);
-    console.log('Login successful with:', { email, password, rememberMe, userType });
-
-    navigate(from, { replace: true });
+    setError("");
+    mutation.mutate({ username, password, userType });
   };
 
   const handleGoogleLogin = () => {
     setIsAuthenticated(true);
-    console.log('Google login successful');
+    console.log("Google login successful");
     navigate(from, { replace: true });
   };
 
@@ -47,15 +64,19 @@ const Login = ({ setIsAuthenticated }) => {
           </div>
 
           <div className={styles.userTypeSelector}>
-            <button 
-              className={`${styles.userTypeBtn} ${userType === 'student' ? styles.active : ''}`}
-              onClick={() => setUserType('student')}
+            <button
+              className={`${styles.userTypeBtn} ${
+                userType === "student" ? styles.active : ""
+              }`}
+              onClick={() => setUserType("student")}
             >
               Student
             </button>
-            <button 
-              className={`${styles.userTypeBtn} ${userType === 'admin' ? styles.active : ''}`}
-              onClick={() => setUserType('admin')}
+            <button
+              className={`${styles.userTypeBtn} ${
+                userType === "admin" ? styles.active : ""
+              }`}
+              onClick={() => setUserType("admin")}
             >
               Admin
             </button>
@@ -77,11 +98,11 @@ const Login = ({ setIsAuthenticated }) => {
           <form onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
               <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="username"
+                id="username"
+                placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -95,12 +116,12 @@ const Login = ({ setIsAuthenticated }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={styles.togglePassword}
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
 
@@ -119,18 +140,33 @@ const Login = ({ setIsAuthenticated }) => {
               </Link>
             </div>
 
-            <button type="submit" className={styles.loginBtn}>Log In</button>
+            <button
+              type="submit"
+              className={styles.loginBtn}
+              disabled={mutation.isLoading}
+            >
+              {mutation.isLoading ? "Logging in..." : "Log In"}
+            </button>
           </form>
         </div>
 
         <div className={styles.signUpPrompt}>
-          <p>Don't have an account? <Link to="/signup" className={styles.signUpLink}>Sign up!</Link></p>
+          <p>
+            Don't have an account?{" "}
+            <Link to="/signup" className={styles.signUpLink}>
+              Sign up!
+            </Link>
+          </p>
         </div>
       </div>
 
       <div className={styles.loginBanner}>
         <div className={styles.logoContainer}>
-          <img src={byteblitzLogo} alt="ByteBlitz Logo" className={styles.byteblitzLogo} />
+          <img
+            src={byteblitzLogo}
+            alt="ByteBlitz Logo"
+            className={styles.byteblitzLogo}
+          />
         </div>
         <div className={styles.loginCta}>
           <button className={styles.sharpenSkillsBtn}>
@@ -138,9 +174,8 @@ const Login = ({ setIsAuthenticated }) => {
             Sharpen your coding skills
           </button>
           <p className={styles.ctaText}>
-            Practice, compete, and improve your 
-            programming skills with our innovative 
-            challenges and competitions.
+            Practice, compete, and improve your programming skills with our
+            innovative challenges and competitions.
           </p>
         </div>
       </div>
@@ -148,4 +183,4 @@ const Login = ({ setIsAuthenticated }) => {
   );
 };
 
-export default Login; 
+export default Login;

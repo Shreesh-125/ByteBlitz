@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { data, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import styles from "../styles/SignUp.module.css";
 import googleIcon from "../assets/google.png";
