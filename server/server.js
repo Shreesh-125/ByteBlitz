@@ -11,17 +11,9 @@ import blogRoute from "./route/blog.route.js";
 import adminRoute from "./route/admin.route.js";
 import problemRoute from "./route/problem.route.js";
 import contestRoute from "./route/contest.route.js";
-<<<<<<< HEAD
-=======
-import adminRoute from "./route/admin.route.js";
-import blogRoute from "./route/blog.route.js";
-import http from "http";  // 🔹 Added for WebSockets
-import { Server } from "socket.io";  // 🔹 Added for WebSockets
-import axios from "axios";
 import { languagetoIdMap } from "./utils/maps.js";
 import cookie from "cookie";
 import { Leaderboard } from "./models/LeaderBoard.model.js";
->>>>>>> c797ed5bef4921ce5515d7eb6972322157d1bd76
 
 dotenv.config({});
 const app = express();
@@ -49,17 +41,13 @@ app.use(cors(corsOption));
 let contestRunning = true;
 // let leaderboard = {};
 
-<<<<<<< HEAD
 // WebSocket Logic
-=======
-
 
 // 🔹 WebSocket Logic
->>>>>>> c797ed5bef4921ce5515d7eb6972322157d1bd76
 io.on("connection", (socket) => {
   const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-  const token = cookies.token; 
-  
+  const token = cookies.token;
+
   console.log(`User connected: ${socket.id}`);
 
   // if (!contestRunning) {
@@ -81,59 +69,40 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const currTime=new Date();
+    const currTime = new Date();
     const submissionData = {
       code: data.code,
       languageId: languagetoIdMap[data.language],
     };
-<<<<<<< HEAD
 
-    const response1 = await axios.post(
-      "http://localhost:2358/submissions?base64_encoded=false&wait=true",
-      submissionData
-    );
-
-    if (!response1.data || !response1.data.token) {
-      return res
-        .status(500)
-        .json({ message: "Failed to submit code", success: false });
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
-
-    const response2 = await axios.get(
-      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
-    );
-
-    // console.log(response2.data);
-
-    socket.emit("see_output", response2.data);
-
-    // // Simulating correct submission
-    // let points = 10;
-    // leaderboard[data.userId] = (leaderboard[data.userId] || 0) + points;
-=======
-    
     try {
       const fresponse = await axios.post(
         `http://localhost:8000/api/v1/problem/${data.problemId}/submitcode`,
-        submissionData,{ withCredentials: true,
+        submissionData,
+        {
+          withCredentials: true,
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
-        } 
+        }
       );
-      const verdict = fresponse.data.status.id;      //problem status 3 if accepted
-      let leaderboard= await Leaderboard.findOne({contestId:data.contestId});   
-      
-      if (!leaderboard) {
-        return socket.emit("submission_result", { message: "Leaderboard not found!" });
-      }
-      
-      let userEntry = leaderboard.users.find(user => user.userId.equals(data.userId));
->>>>>>> c797ed5bef4921ce5515d7eb6972322157d1bd76
+      const verdict = fresponse.data.status.id; //problem status 3 if accepted
+      let leaderboard = await Leaderboard.findOne({
+        contestId: data.contestId,
+      });
 
-      if (!userEntry) {   //adds the user if not submitted before
+      if (!leaderboard) {
+        return socket.emit("submission_result", {
+          message: "Leaderboard not found!",
+        });
+      }
+
+      let userEntry = leaderboard.users.find((user) =>
+        user.userId.equals(data.userId)
+      );
+
+      if (!userEntry) {
+        //adds the user if not submitted before
         userEntry = {
           userId: data.userId,
           problemSolved: [],
@@ -142,9 +111,15 @@ io.on("connection", (socket) => {
         leaderboard.users.push(userEntry);
       }
 
-      let problemEntry = userEntry.problemSolved.find(problem => problem.problemId === data.problemId);
+      let problemEntry = userEntry.problemSolved.find(
+        (problem) => problem.problemId === data.problemId
+      );
       if (!problemEntry) {
-        problemEntry = { problemId: data.problemId, accepted: [], rejected: [] };
+        problemEntry = {
+          problemId: data.problemId,
+          accepted: [],
+          rejected: [],
+        };
         userEntry.problemSolved.push(problemEntry);
       }
 
@@ -153,25 +128,33 @@ io.on("connection", (socket) => {
         submissionId: fresponse.data.submissionId, // Assuming submissionId is returned
       };
 
-      const problemScoreEntry = leaderboard.problemScore.find(p => p.problemId === data.problemId);
+      const problemScoreEntry = leaderboard.problemScore.find(
+        (p) => p.problemId === data.problemId
+      );
 
       if (!problemScoreEntry) {
-        return socket.emit("submission_result", { message: "Problem score not found!" });
+        return socket.emit("submission_result", {
+          message: "Problem score not found!",
+        });
       }
 
       let problemScore = problemScoreEntry.problemScore;
 
-      if (verdict === 3) {         // Accepted
-      problemEntry.accepted.push(submissionRecord);
-      const timeElapsedMinutes = Math.floor((submissionTime - leaderboard.contestStartTime) / (1000 * 60));
-      let finalScore = problemScore - timeElapsedMinutes;
-      userEntry.score += finalScore;
-      userEntry.score=Math.max(userEntry.score, problemScore / 4)
-    } else {                  // Wrong answer
-      problemEntry.rejected.push(submissionRecord);
-      userEntry.score -=50;   // hardcoded the wrong submission score
-    }
-    await leaderboard.save();
+      if (verdict === 3) {
+        // Accepted
+        problemEntry.accepted.push(submissionRecord);
+        const timeElapsedMinutes = Math.floor(
+          (submissionTime - leaderboard.contestStartTime) / (1000 * 60)
+        );
+        let finalScore = problemScore - timeElapsedMinutes;
+        userEntry.score += finalScore;
+        userEntry.score = Math.max(userEntry.score, problemScore / 4);
+      } else {
+        // Wrong answer
+        problemEntry.rejected.push(submissionRecord);
+        userEntry.score -= 50; // hardcoded the wrong submission score
+      }
+      await leaderboard.save();
       socket.emit("see_output", fresponse.data);
     } catch (error) {
       console.error("Error submitting code:", error);
