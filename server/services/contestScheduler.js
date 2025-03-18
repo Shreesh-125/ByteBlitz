@@ -24,8 +24,12 @@ export const scheduleContestUpdates = (contest, io) => {
     console.log(`Contest ${contestId} is now running`);
     updateContestStatus(contestId, 'running');
 
-    // Emit contest_started event
-    io.emit('contest_started', { message: 'Contest has started!' });
+    // Use a closure to capture the `io` instance
+    if (io && typeof io.emit === 'function') {
+      io.emit('contest_started', { message: 'Contest has started!' });
+    } else {
+      console.error('io.emit is not a function. Check if `io` is passed correctly.');
+    }
   });
 
   // Schedule status update to "ended" at endTime
@@ -33,13 +37,17 @@ export const scheduleContestUpdates = (contest, io) => {
     console.log(`Contest ${contestId} has ended`);
     updateContestStatus(contestId, 'ended');
 
-    // Emit contest_ended event and disconnect all clients
-    io.emit('contest_ended', { message: 'Contest has ended!' });
+    // Use a closure to capture the `io` instance
+    if (io && typeof io.emit === 'function') {
+      io.emit('contest_ended', { message: 'Contest has ended!' });
 
-    // Disconnect all clients
-    io.sockets.sockets.forEach((socket) => {
-      socket.disconnect(true);
-    });
+      // Disconnect all clients
+      io.sockets.sockets.forEach((socket) => {
+        socket.disconnect(true);
+      });
+    } else {
+      console.error('io.emit is not a function. Check if `io` is passed correctly.');
+    }
   });
 };
 

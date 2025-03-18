@@ -42,7 +42,7 @@ export const getContestById = async (req, res) => {
   }
 };
 
-export const createContest = async (req, res,io) => {
+export const createContest = async (req, res, io) => {
   try {
     const { problems, startTime, endTime, status, problemScore } = req.body;
 
@@ -51,36 +51,11 @@ export const createContest = async (req, res,io) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const now = new Date();
-
-    // Parse input times as IST
-    const startIST = new Date(startTime);
-    const endIST = new Date(endTime);
-
-    // Validate date format
-    if (isNaN(startIST.getTime()) || isNaN(endIST.getTime())) {
-      return res.status(400).json({ message: "Invalid date format" });
-    }
-
-    // Validate start time is in the future
-    if (startIST <= now) {
-      return res.status(400).json({ message: "Start time must be in the future" });
-    }
-
-    // Validate end time is after start time
-    if (endIST <= startIST) {
-      return res.status(400).json({ message: "End time must be after start time" });
-    }
-
-    // Convert IST to UTC
-    const startUTC = new Date(startIST.getTime() - 5.5 * 60 * 60 * 1000); // IST is UTC+5:30
-    const endUTC = new Date(endIST.getTime() - 5.5 * 60 * 60 * 1000);
-
     // Create contest with UTC times
     const contest = await Contests.create({
       problems,
-      startTime: startUTC.toISOString(), // Save as UTC
-      endTime: endUTC.toISOString(), // Save as UTC
+      startTime: startTime, // Save as UTC
+      endTime: endTime, // Save as UTC
       status,
       submissions: [],
       registeredUser: []
@@ -90,10 +65,14 @@ export const createContest = async (req, res,io) => {
       return res.status(400).json({ message: "Error creating contest" });
     }
 
-    // Create leaderboard with original IST times
+    // Convert UTC to IST for leaderboard
+    const startTimeUTC = new Date(startTime); // Parse input UTC time
+    const startTimeIST = new Date(startTimeUTC.getTime() + 5.5 * 60 * 60 * 1000); // Add 5.5 hours for IST
+
+    // Create leaderboard with IST time
     const leaderboard = await Leaderboard.create({
       contestId: contest.contestId,
-      contestStartTime: startTime, // Save original IST time
+      contestStartTime: startTimeIST.toISOString(), // Save as IST
       problemScore,
       users: []
     });
@@ -103,7 +82,7 @@ export const createContest = async (req, res,io) => {
     }
 
     // Schedule contest updates (if needed)
-    scheduleContestUpdates(contest);
+    scheduleContestUpdates(contest, io); // Pass `io` here
 
     // Return success response
     res.status(201).json({ contest, leaderboard });

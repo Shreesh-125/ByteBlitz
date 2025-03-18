@@ -28,7 +28,7 @@ const ContestPage = () => {
 
     const fetchContestStatus = async () => {
       try {
-        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d80237f77f6325a8dbd430");
+        const { data } = await axios.get("http://localhost:8000/api/v1/contest/67d86e0f260ec7f2a179dee7");
 
         if (data.status === "running") {
           const newSocket = io("http://localhost:8000", {
