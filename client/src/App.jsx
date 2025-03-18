@@ -71,8 +71,8 @@ function App() {
           style: {
             fontSize: "14px",
             padding: "16px 24px",
-            backgroundColor: "#ffffff", // Light grey/white
-            color: "#333333", // Dark grey text
+            backgroundColor: "#ffffff",
+            color: "#333333",
           },
         }}
       />

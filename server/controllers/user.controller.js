@@ -7,7 +7,7 @@ import { Blog } from "../models/blog.model.js";
 
 export const signup = async (req, res) => {
   try {
-    const { fullname, username, password, email,country } = req.body;
+    const { fullname, username, password, email, country } = req.body;
     if (!fullname || !username || !password || !email || !country) {
       return res.status(400).json({
         message: "All fields are required",
@@ -22,7 +22,7 @@ export const signup = async (req, res) => {
       username,
       password: hashedPassword,
       email,
-      country
+      country,
     });
 
     await newUser.save();
@@ -145,16 +145,16 @@ export const getHomepageDetails = async (req, res) => {
       rating: user.rating,
     };
 
-    const blogs = await Blog.find()
-            .sort({ updatedAt: -1 }) 
-            .limit(6);
-            
-    const formattedBlogs = blogs.map(blog => ({
-            id: blog._id,
-            title: blog.title,
-            updatedAt: blog.updatedAt,
-            snippet: blog.content.substring(0, 100) + (blog.content.length > 100 ? '...' : '') // Limit content to 100 chars
-          }));
+    const blogs = await Blog.find().sort({ updatedAt: -1 }).limit(6);
+
+    const formattedBlogs = blogs.map((blog) => ({
+      id: blog._id,
+      title: blog.title,
+      updatedAt: blog.updatedAt,
+      snippet:
+        blog.content.substring(0, 100) +
+        (blog.content.length > 100 ? "..." : ""), // Limit content to 100 chars
+    }));
 
     const topUsers = await User.find({}, "_id username rating")
       .sort({ rating: -1 })
@@ -164,7 +164,7 @@ export const getHomepageDetails = async (req, res) => {
       message: "Data Fetched Successfully",
       success: true,
       user: userDetails,
-      Blogs:formattedBlogs,
+      Blogs: formattedBlogs,
       topUsers: topUsers,
     });
   } catch (error) {}
@@ -344,48 +344,45 @@ export const getUserContests = async (req, res) => {
   }
 };
 
-export const addfriend=async (req,res)=>{
+export const addfriend = async (req, res) => {
   try {
-    const {userid,friendusername}= req.params;
+    const { userid, friendusername } = req.params;
 
-    
-    const user=await User.findById(userid);
+    const user = await User.findById(userid);
 
-    if(!user){
+    if (!user) {
       return res.status(400).json({
-        message:"User not Found",
-        success:false
-      })
+        message: "User not Found",
+        success: false,
+      });
     }
 
-    const friend=await User.findOne({username:friendusername});
+    const friend = await User.findOne({ username: friendusername });
 
-    if(!friend){
+    if (!friend) {
       return res.status(400).json({
-        message:"User not Found",
-        success:false
-      })
+        message: "User not Found",
+        success: false,
+      });
     }
 
-    user.friends=[...user.friends,friend._id];
+    user.friends = [...user.friends, friend._id];
 
-    friend.friendsOf=friend.friendsOf+1;
+    friend.friendsOf = friend.friendsOf + 1;
 
     await friend.save();
 
     await user.save();
 
     return res.status(200).json({
-      message:"Friend Added Successfully",
-      success:true
-    })
-
+      message: "Friend Added Successfully",
+      success: true,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message:"Internal Server Error",
-      success:false
-    })
-    
+      message: "Internal Server Error",
+      success: false,
+    });
   }
-}
+};
