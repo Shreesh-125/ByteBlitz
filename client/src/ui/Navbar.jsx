@@ -3,22 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import avatar from '../assets/profile_icon.png';
 import styles from '../styles/Navbar.module.css';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { FaSun, FaMoon } from 'react-icons/fa';
-import { useDispatch } from 'react-redux'
-import { updateTheme } from '../redux/actions/theme';
 
 const Navbar = () => {
     const location = useLocation();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(false);
-    const dispatch = useDispatch();
     
-    const toggleTheme = () => {
-        setDarkMode(!darkMode)
-        dispatch(updateTheme(darkMode ? 'dark' : 'light'))
-        localStorage.setItem('theme', darkMode ? 'dark' : 'light')
-    }
 
     // Update isMobile on window resize
     useEffect(() => {
@@ -72,13 +62,6 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <>
-                            <div>
-                                {
-                                    !darkMode ?
-                                    <FaSun onClick={toggleTheme} className={styles.themeIcons}/> :
-                                    <FaMoon onClick={toggleTheme} className={styles.themeIcons} />
-                                }
-                            </div>
                             <Link to="/profile">
                                 <img src={avatar} alt="User Avatar" className={styles.avatar} />
                             </Link>
