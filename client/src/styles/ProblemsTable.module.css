@@ -1,3 +1,4 @@
+
 .grid {
     width: 95%;
 }
@@ -27,7 +28,7 @@
 }
 
 .gridHeader {
-    background-color: #324F7F;
+    background-color: var(--heading-bg-color);
     color: white;
     font-weight: 500;
     padding: 12px;
@@ -39,7 +40,7 @@
 
 /* Alternate row colors */
 .gridRow:nth-child(odd):not(:first-child) {
-    background-color: #F0F9FF;
+    background-color: var(--table-bg-color-2);
 }
 
 .status {
