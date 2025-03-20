@@ -75,7 +75,7 @@ const data = [
     ],
     startTime: new Date("2025-01-01T00:00:00Z"),
     status: "ended"
-  },{
+  }, {
     contestId: 10,
     registeredUsers: [
       "zaxas",
@@ -108,7 +108,7 @@ const data = [
     ],
     startTime: new Date("2025-01-01T00:00:00Z"),
     status: "ended"
-  },{
+  }, {
     contestId: 14,
     registeredUsers: [
       "zaxas",
@@ -124,7 +124,7 @@ const data = [
       "shreesh_125"
     ],
     startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
+    status: "upcoming"
   },
   {
     contestId: 16,
@@ -132,7 +132,7 @@ const data = [
       "shreesh_125"
     ],
     startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
+    status: "upcoming"
   },
   {
     contestId: 17,
@@ -142,28 +142,35 @@ const data = [
     startTime: new Date("2025-01-01T00:00:00Z"),
     status: "ended"
   },
-]
+] //data we will fetch from backend contains both upcoming and previous contests
 
 const Contests = () => {
   const [myContests, setMyContests] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
-  const [contests, setContests] = useState(data);
+  const [contests, setContests] = useState(data); //here contests are all the previous contests
+  const [upcomingContests, setUpcomingContests] = useState([]); //upcoming contests
   const [pageContests, setPageContests] = useState([])
   const contestsPerPage = 5;
   const [totalPages, setTotalPages] = useState(Math.ceil(contests.length / contestsPerPage));
-  
+
+
+  useEffect(() => {
+    setContests(data.filter(contest => contest.status === 'ended'))
+    setUpcomingContests(data.filter(contest => contest.status !== 'ended'))
+  }, [data])
+
   useEffect(() => {
     setTotalPages(() => {
       const newTotalPages = Math.ceil(contests.length / contestsPerPage);
-      
+
       if (currentPage > newTotalPages) {
         setCurrentPage(newTotalPages);
       }
-      
+
       return newTotalPages;
     });
   }, [contests]); // Runs when `contests` change
-  
+
   useEffect(() => {
     const indexOfLastContest = currentPage * contestsPerPage;
     const indexOfFirstContest = indexOfLastContest - contestsPerPage;
@@ -171,85 +178,56 @@ const Contests = () => {
   }, [currentPage, contests]); // Runs when `currentPage` changes  
 
 
-  useEffect(() => {
-    if (myContests) {
-      setContests(data.filter(contest => (contest.status == "ended" && contest.registeredUsers.includes("zaxas"))))
-    } else {
-      setContests(data.filter(contest => contest.status == "ended"))
-    }
-  }, [myContests])
-
   return (
     <div className={styles.contestsContainer}>
       <div className={styles.upcomingContestsContainer}>
-        <div className={styles.upcomingContestsHeading}>
+        <div className={styles.contestsHeading}>
           Upcoming Contests
         </div>
         <div className={styles.upcomingContests}>
-
-          <div className={styles.upcomingContest}>
-            <div>
-              <img src={contestImage} alt="contest image" className={styles.upcomingContestImage} />
-            </div>
-            <div className={styles.upcomingContestInformation}>
-              <div className={styles.info1}>
-                <p>BB Challenge #2</p>
-                <p>
-                  <span>
-                    20th March 2025
-                  </span>
-                  <span>
-                    8:00 PM
-                  </span>
-                </p>
-              </div>
-              <div className={styles.info2}>
-                <div className={styles.registeredUsers}>
-                  <p>3500</p>
-                  <img src={user} alt="user image" className={styles.icon} />
+          {
+            upcomingContests.map((upcomingContest, index) => {
+              
+              if (!upcomingContest.startTime) return null; // Prevent errors if startTime is missing
+              
+              const formattedTime = formatDateTime(upcomingContest.startTime);
+              return (
+                <div className={styles.upcomingContest}>
+                  <div>
+                    <img src={contestImage} alt="contest image" className={styles.upcomingContestImage} />
+                  </div>
+                  <div className={styles.upcomingContestInformation}>
+                    <div className={styles.info1}>
+                      <p>BB Challenge #{upcomingContest.contestId}</p>
+                      <p>
+                        <span>
+                          {formattedTime.formattedDate}
+                        </span>
+                        <span>
+                          {formattedTime.formattedTime}
+                        </span>
+                      </p>
+                    </div>
+                    <div className={styles.info2}>
+                      <div className={styles.registeredUsers}>
+                        <p>{upcomingContest.registeredUsers.length}</p>
+                        <img src={user} alt="user image" className={styles.icon} />
+                      </div>
+                      <button className={styles.registerBtn}>
+                        Register Now
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <button className={styles.registerBtn}>
-                  Register Now
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className={styles.upcomingContest}>
-            <div>
-              <img src={contestImage} alt="contest image" className={styles.upcomingContestImage} />
-            </div>
-            <div className={styles.upcomingContestInformation}>
-              <div className={styles.info1}>
-                <p>BB Challenge #2</p>
-                <p>
-                  <span>
-                    20th March 2025
-                  </span>
-                  <span>
-                    8:00 PM
-                  </span>
-                </p>
-              </div>
-              <div className={styles.info2}>
-                <div className={styles.registeredUsers}>
-                  <p>3500</p>
-                  <img src={user} alt="user image" className={styles.icon} />
-                </div>
-                <button className={styles.registerBtn}>
-                  Register Now
-                </button>
-              </div>
-            </div>
-          </div>
-
+              )
+            }
+            )
+          }
         </div>
       </div>
       <div className={styles.pastContestsContainer}>
         <div className={styles.previousContests}>
-          <div className={styles.contestSelect}>
-            <span onClick={() => setMyContests(false)} className={`${!myContests ? styles.selected : ""} ${styles.selectedItem}`}>Previous Contests</span>
-            <span onClick={() => setMyContests(true)} className={`${myContests ? styles.selected : ""} ${styles.selectedItem}`}>My Contests</span>
-          </div>
+            <span className={styles.contestsHeading}>Previous Contests</span>
           <div className={styles.contests}>
             <div className={styles.contestsListHeading}>
               <span>Contest</span>
@@ -260,41 +238,41 @@ const Contests = () => {
             </div>
           </div>
           {
-            pageContests.length >0 ?
-            (
-            pageContests.map((contest, index) => {
-              if (!contest.startTime) return null; // Prevent errors if startTime is missing
+            pageContests.length > 0 ?
+              (
+                pageContests.map((contest, index) => {
+                  if (!contest.startTime) return null; // Prevent errors if startTime is missing
 
-              const formattedTime = formatDateTime(contest.startTime);
+                  const formattedTime = formatDateTime(contest.startTime);
 
-              return (
-                <div key={contest.contestId || index} className={styles.contestsListItem}>
-                  <img src={contestImage} alt="contest" className={styles.contestImage} />
+                  return (
+                    <div key={contest.contestId || index} className={styles.contestsListItem}>
+                      <img src={contestImage} alt="contest" className={styles.contestImage} />
 
-                  <span className={styles.contestName}>
-                    BB Challenge #{contest.contestId}
-                  </span>
+                      <span className={styles.contestName}>
+                        BB Challenge #{contest.contestId}
+                      </span>
 
-                  <span>
-                    <p>{formattedTime.formattedDate}</p>
-                    <span className={styles.contestTiming}>
-                      {formattedTime.dayName} {formattedTime.formattedTime}
-                    </span>
-                  </span>
+                      <span>
+                        <p>{formattedTime.formattedDate}</p>
+                        <span className={styles.contestTiming}>
+                          {formattedTime.dayName} {formattedTime.formattedTime}
+                        </span>
+                      </span>
 
-                  <Link to={`/contests/${contest.contestId}/standings`} className={styles.LinkStyles}>
-                    <span>Standings</span>
-                  </Link>
+                      <Link to={`/contests/${contest.contestId}/standings`} className={styles.LinkStyles}>
+                        <span>Standings</span>
+                      </Link>
 
-                  <span className={styles.registeredUsers}>
-                    <p>{contest.registeredUsers.length}</p>
-                    <img src={user} alt="user image" className={styles.icon} />
-                  </span>
-                </div>
-              );
-            })
-          ) :
-          <p>Contests are loading...</p>
+                      <span className={styles.registeredUsers}>
+                        <p>{contest.registeredUsers.length}</p>
+                        <img src={user} alt="user image" className={styles.icon} />
+                      </span>
+                    </div>
+                  );
+                })
+              ) :
+              <p>Contests are loading...</p>
           }
         </div>
       </div>
