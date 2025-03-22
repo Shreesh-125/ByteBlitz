@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ProblemNav from '../ui/ProblemNav'
 import ProblemDescription from './ProblemDescription'
 import styles from '../styles/Problempage.module.css'
@@ -7,6 +7,7 @@ import { codeSnippets } from '../utils/languagesConstants';
 import CodeResults from './CodeResults';
 import ProblemSubmission from './ProblemSubmission';
 import SubmissionsList from './SubmissionsList';
+import { useLocation } from 'react-router-dom';
 
 const Problempage = () => {
     const [language, setLanguage] = useState('cpp')
@@ -21,6 +22,16 @@ const Problempage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [hasSubmitted, setHasSubmitted] = useState("no") //becomes true after you make a submissions
     const [submission, setSubmission] = useState(null) //fetch the submission for this particular problem
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [isEditor, setIsEditor] = useState(false);
+    // Update isMobile on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 1000);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const onSelectLanguage = (lang) => {
         setLanguage(lang);
@@ -29,10 +40,24 @@ const Problempage = () => {
     return (
         <div>
             <div className={styles.problemNav}>
-                <ProblemNav value={value} language={language} onSelectLanguage={onSelectLanguage} setIsExecuted={setIsExecuted} setTheme={setTheme} setIsSubmitting={setIsSubmitting} setHasSubmitted={setHasSubmitted} setSubmission={setSubmission} />
+                <ProblemNav 
+                prevLocation={location.pathname}
+                value={value} 
+                language={language} 
+                onSelectLanguage={onSelectLanguage} 
+                setIsExecuted={setIsExecuted} 
+                setTheme={setTheme} 
+                setIsSubmitting={setIsSubmitting} 
+                setHasSubmitted={setHasSubmitted} 
+                setSubmission={setSubmission}
+                isMobile={isMobile}
+                isEditor={isEditor}
+                setIsEditor={setIsEditor}
+                isSubmissionPage={true}
+                />
             </div>
             <div className={styles.problemAll}>
-                <div className={`${styles.rightSection} ${styles.Scrollbar}`}>
+                <div className={`${styles.leftSection} ${styles.Scrollbar}`}>
                     <SubmissionsList/>
                 </div>
                 <div className={`${styles.rightSection} ${styles.Scrollbar}`}>

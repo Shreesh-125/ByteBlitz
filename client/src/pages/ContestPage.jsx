@@ -5,7 +5,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const ContestPage = () => {
-
   const [socket, setSocket] = useState(null);
   const { user } = useSelector((store) => store.app);
   const [code, setCode] = useState("");
@@ -34,11 +33,9 @@ const ContestPage = () => {
     const fetchContestData = async () => {
       console.log("Fetching contest status and problems...");
       try {
-
         const { data } = await axios.get(
           "http://localhost:8000/api/v1/contest/67d86e0f260ec7f2a179dee7"
         );
-
 
         if (data.status === "running") {
           console.log("Contest is running. Connecting to WebSocket...");
@@ -92,7 +89,6 @@ const ContestPage = () => {
       return;
     }
 
-
     if (!selectedProblem) {
       console.warn("No problem selected!");
       setMessage("Please select a problem first.");
@@ -103,7 +99,7 @@ const ContestPage = () => {
       code: `print(1+2)`,
       language: "python",
       userId: "67cc4cc3964068fd0a6a2730",
-      contestId:4
+      contestId: 4,
     });
 
     setMessage("Code submitted successfully!");
@@ -119,6 +115,7 @@ const ContestPage = () => {
       localStorage.removeItem("user");
       navigate("/");
     } catch (error) {
+      console.log(error);
       setMessage("Logout failed. Please try again.");
     }
 

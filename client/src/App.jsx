@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./ui/Navbar";
@@ -19,6 +18,8 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import OauthLogin from "./pages/OuthLogin";
+
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -37,7 +38,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/*" element={<Home />} />
-          <Route path="/contests/problems" element={<Contestproblempage />} />
+          <Route path="/contests/:contestId/problems" element={<Contestproblempage />} />
+          <Route path="/contests/:contestId/problems/:problemId" element={<Problempage />} />
           <Route path="/ranking" element={<Allsubmissionpage />} />
           <Route path="/blogs" element={<Allblogs />} />
           <Route path="/profile" element={<Profilepage />} />
@@ -56,6 +58,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth" element={<OauthLogin />} />
         </Routes>
       </Router>
       <Toaster
@@ -78,6 +81,6 @@ function App() {
         }}
       />
     </QueryClientProvider>
-  )
+  );
 }
 export default App;

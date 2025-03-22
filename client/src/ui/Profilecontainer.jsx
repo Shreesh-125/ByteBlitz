@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import defaultprofileimage from "../assets/defaultprofileimage.png";
 import styles from '../styles/Profilecontainer.module.css';
 import trophy from '../assets/trophy.png'
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 const Profilecontainer = () => {
 
@@ -48,6 +49,7 @@ const Profilecontainer = () => {
                 <div className={styles.tag}>
                     <img src={trophy}></img>
                     <p>{tag}</p>
+                    <FaRegHeart color="blue" size={24} />
                 </div>
                 <div className={styles.userdetails}>
                 <p className={styles.username}>

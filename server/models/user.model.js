@@ -33,15 +33,15 @@ const userSchema = new mongoose.Schema({
       error: {
         type: String,
         enum: [
-            "Wrong Answer",
-            "Time Limit Exceeded (TLE)",
-            "Compilation Error",
-            "Runtime Error",
-            "Execution Time Limit Exceeded",
-            "Memory Limit Exceeded (MLE)",
-            "Compiled With No Error"
+          "Wrong Answer",
+          "Time Limit Exceeded (TLE)",
+          "Compilation Error",
+          "Runtime Error",
+          "Execution Time Limit Exceeded",
+          "Memory Limit Exceeded (MLE)",
+          "Compiled With No Error",
         ],
-        required: true
+        required: true,
       },
       date: {
         type: String,
@@ -64,11 +64,11 @@ const userSchema = new mongoose.Schema({
         enum: ["c++", "java", "python"],
         required: true,
       },
-      hidden:{
-        type:Boolean,
-        required:true,
-        default:true
-      }
+      hidden: {
+        type: Boolean,
+        required: true,
+        default: true,
+      },
     },
   ],
   rating: {
@@ -121,25 +121,29 @@ const userSchema = new mongoose.Schema({
   location: {
     type: String,
   },
-  friends:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }],
-  friendsOf:{
-    type:Number,
-    default:0
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  friendsOf: {
+    type: Number,
+    default: 0,
   },
-  country:{
-    type:String,
-    required:true
+  country: {
+    type: String,
+    required: true,
   },
-  profilePhoto:{
-    type:String
+  profilePhoto: {
+    type: String,
   },
-  blogs:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Blog",
-  }]
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
+    },
+  ],
 });
 
-export const User = mongoose.model("User",userSchema);
+export const User = mongoose.model("User", userSchema);

@@ -273,3 +273,109 @@ export const registerForContest=async(req,res)=>{
     })
   }
 }
+
+export const getContestProblem = async (req, res) => {
+  try {
+      const { contestId } = req.params;
+
+      if (!contestId) {
+          return res.status(400).json({
+              message: "Contest ID is required",
+              success: false,
+          });
+      }
+
+      const contest = await Contests.findOne({ contestId: contestId });
+
+      if (!contest) {
+          return res.status(200).json({
+              message: "Contest not found",
+              success: false,
+              contestAccessible: false, 
+              isrunning:false,
+          });
+      }
+
+      if (contest.status === 'upcoming') {
+          return res.status(200).json({
+              message: "Contest has not started yet",
+              success: false,
+              contestAccessible: false, 
+              isrunning:false,
+          });
+      }
+
+      if(contest.status ==='running'){
+        return res.status(200).json({
+          message:"Contest is running",
+          success:true,
+          contestAccessible: true, // Additional flag to indicate contest is accessible
+          isrunning:true,
+          problems: contest.problems,
+          endTime:contest.endTime
+        })
+      }
+
+      return res.status(200).json({
+          message: "Problem fetched successfully",
+          success: true,
+          contestAccessible: true, // Additional flag to indicate contest is accessible
+          isrunning:false,
+          problems: contest.problems,
+      });
+
+  } catch (error) {
+      return res.status(500).json({
+          message: "Internal Server Error",
+          success: false,
+      });
+  }
+};
+
+export const getContestProblemById = async (req, res) => {
+  try {
+    const { problemId, contestId } = req.params;
+    
+    // Find the contest
+    const contest = await Contests.findOne({ contestId });
+
+    if (!contest) {
+      return res.status(400).json({
+        message: "Contest Not Found",
+        success: false,
+      });
+    }
+
+    // Check if the problemId exists in the contest's problems array
+    const problemExists = contest.problems.some(
+      (problem) => problem.problemId.toString() === problemId
+    );
+
+    if (!problemExists) {
+      return res.status(404).json({
+        message: "Problem not found in contest",
+        success: false,
+      });
+    }
+
+    // Find the problem
+    const problem = await Problems.findOne({ problemId });
+
+    if (!problem) {
+      return res.status(404).json({ message: "Problem not found" });
+    }
+
+    // Extract only the first test case from sampleTestCase
+    const firstSampleTestCase = problem.sampleTestCase[0];
+
+    // Create a new response object with only the first test case
+    const response = {
+      ...problem.toObject(), // Spread the rest of the problem details
+      sampleTestCase: firstSampleTestCase, // Override sampleTestCase with only the first test case
+    };
+
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

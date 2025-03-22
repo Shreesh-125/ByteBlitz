@@ -14,7 +14,24 @@ const problemSchema = new mongoose.Schema({
 const contestSchema = new mongoose.Schema({
   contestId: { type: Number, unique: true },
   problems: { type: [problemSchema], required: true },
-  submissions: { type: [String], required: true },
+  submissions: [{ type: {
+    submissionId:{
+      type:String,
+      required:true
+    },
+    username:{
+      type:String,
+      required:true
+    },
+    status:{
+      type:String,
+      enum:["Accepted","Rejected"]
+    },
+    submittedAt:{
+      type:Date,
+      default:Date.now
+    }
+  } }],
   registeredUser: { type: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
