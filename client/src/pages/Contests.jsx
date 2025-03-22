@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import styles from "../styles/Contests.module.css";
 import contestImage from "../assets/contestImage.jpg";
 import user from "../assets/user.png";
@@ -7,6 +7,8 @@ import Pagination from "../ui/Pagination";
 import { formatDateTime } from "../utils/DateFormat";
 import { useQuery } from "@tanstack/react-query";
 import { getAllContestWithPagination } from "../servers/getContest.js";
+import next_icon from '../assets/next-icon.png'
+import back_icon from '../assets/back-icon.png'
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,41 +43,63 @@ const Contests = () => {
     return endedContests.slice(indexOfFirstContest, indexOfLastContest);
   }, [currentPage, endedContests]);
 
+  const slider = useRef();
+  let tx = 0;
+  const slideForward = ()=>{
+      console.log("hi there");
+      if(tx > -50){
+          tx -=33.33;
+      }
+      slider.current.style.transform =`translateX(${tx}%)`;
+  }
+  const slideBackward = () => {
+      console.log("hi there");
+      if(tx < 0){
+          tx +=33.33;
+      }
+      slider.current.style.transform =`translateX(${tx}%)`;
+  }
+
+
   return (
     <div className={styles.contestsContainer}>
       <div className={styles.upcomingContestsContainer}>
         <div className={styles.contestsHeading}>Upcoming Contests</div>
-        <div className={styles.upcomingContests}>
-          {upcomingContests.map((contest) => {
-            if (!contest.startTime) return null;
-            const formattedTime = formatDateTime(contest.startTime);
+        <img src={next_icon} alt="" className={styles["next-btn"]} onClick={slideForward}/>
+        <img src={back_icon} alt="" className={styles["back-btn"]}  onClick={slideBackward}/>
+        <div className={styles.slider}>
+          <ul className={styles.upcomingContests} ref={slider}>
+            {upcomingContests.map((contest) => {
+              if (!contest.startTime) return null;
+              const formattedTime = formatDateTime(contest.startTime);
 
-            return (
-              <div key={contest.contestId} className={styles.upcomingContest}>
-                <img
-                  src={contestImage}
-                  alt="contest"
-                  className={styles.upcomingContestImage}
-                />
-                <div className={styles.upcomingContestInformation}>
-                  <div className={styles.info1}>
-                    <p>BB Challenge #{contest.contestId}</p>
-                    <p>
-                      <span>{formattedTime.formattedDate}</span>
-                      <span>{formattedTime.formattedTime}</span>
-                    </p>
-                  </div>
-                  <div className={styles.info2}>
-                    <div className={styles.registeredUsers}>
-                      <p>{contest.registeredUsers.length}</p>
-                      <img src={user} alt="user" className={styles.icon} />
+              return (
+                <li key={contest.contestId} className={styles.upcomingContest}>
+                  <img
+                    src={contestImage}
+                    alt="contest"
+                    className={styles.upcomingContestImage}
+                  />
+                  <div className={styles.upcomingContestInformation}>
+                    <div className={styles.info1}>
+                      <p>BB Challenge #{contest.contestId}</p>
+                      <p>
+                        <span>{formattedTime.formattedDate}</span>
+                        <span>{formattedTime.formattedTime}</span>
+                      </p>
                     </div>
-                    <button className={styles.registerBtn}>Register Now</button>
+                    <div className={styles.info2}>
+                      <div className={styles.registeredUsers}>
+                        <p>{contest.registeredUsers.length}</p>
+                        <img src={user} alt="user" className={styles.icon} />
+                      </div>
+                      <button className={styles.registerBtn}>Register Now</button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
 
