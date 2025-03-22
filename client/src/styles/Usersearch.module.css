@@ -1,9 +1,9 @@
 .container {
-    width: 294px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top:20px;
+    width: 85%;
   }
   
   .header {
@@ -24,15 +24,13 @@
     width:25px
   }
   .searchContainer {
-    margin-top:10px;
-    margin-bottom:10px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: white;
-    padding: 8px;
+    padding: 18px 30px;
     border-radius: 0 0 10px 10px;
+    /* background-color: red; */
   }
   
   .inputBox {
