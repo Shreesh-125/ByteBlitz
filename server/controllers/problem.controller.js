@@ -5,33 +5,44 @@ import { languageMap, StatusIdMap } from "../utils/maps.js";
 
 export const getPaginatedProblems = async (req, res) => {
   try {
-    let { page = 1, limit = 20, tags, Difficulty } = req.query;
-    page = parseInt(page, 10);
-    limit = parseInt(limit, 10);
+    let {
+      page = "1",
+      limit = "10",
+      tags = "",
+      minRating = "0",
+      maxRating = "1000",
+      sortBy = "rating",
+      order = "desc",
+    } = req.query;
+    // Convert query parameters to correct types
+    page = parseInt(page, 10) || 1;
+    limit = parseInt(limit, 10) || 20;
+    minRating = parseInt(minRating, 10) || 0;
+    maxRating = parseInt(maxRating, 10) || 1500;
+    order = order === "asc" ? 1 : -1; // Convert order to MongoDB sort format
 
     let filter = {};
 
     // Apply tags filter if provided
-    if (tags) {
-      const tagsArray = tags.split(","); // Convert comma-separated string to array
-      filter.tags = { $in: tagsArray };
+    if (tags.trim()) {
+      const tagsArray = tags.split(",").map((tag) => tag.trim()); // Convert comma-separated string to array
+      filter.tags = { $all: tagsArray };
     }
 
-    // Apply difficulty filter if provided
-    if (Difficulty) {
-      const [minDifficulty, maxDifficulty] = Difficulty.split("-").map(Number);
-      if (!isNaN(minDifficulty) && !isNaN(maxDifficulty)) {
-        filter.rating = { $gte: minDifficulty, $lte: maxDifficulty };
-      }
-    }
+    // Apply rating (difficulty) range filter
+    filter.rating = { $gte: minRating, $lte: maxRating };
 
+    // Fetch paginated & sorted problems
     const problems = await Problems.find(filter)
+      .sort({ [sortBy]: order }) // Sorting dynamically
       .skip((page - 1) * limit)
       .limit(limit);
 
+    // Count total problems matching the filter
     const total = await Problems.countDocuments(filter);
 
     res.json({
+      success: true,
       total,
       page,
       limit,
@@ -39,7 +50,8 @@ export const getPaginatedProblems = async (req, res) => {
       problems,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching problems:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -119,7 +131,7 @@ export const submitcode = async (req, res) => {
       code: code,
       status: "Pending",
       language: language,
-      hidden:false
+      hidden: false,
     };
     let isServerError = false;
     for (const tc of problem.sampleTestCase) {
@@ -178,7 +190,7 @@ export const submitcode = async (req, res) => {
           status: response2.data.status,
           stderr: response2.data.stderr,
           compile_output: response2.data.compile_output,
-          submissionId: user.submissions[user.submissions.length - 1]._id
+          submissionId: user.submissions[user.submissions.length - 1]._id,
         });
       }
     }
@@ -196,7 +208,7 @@ export const submitcode = async (req, res) => {
     return res.status(200).json({
       message: "Accepted",
       success: true,
-      submissionId: user.submissions[user.submissions.length - 1]._id
+      submissionId: user.submissions[user.submissions.length - 1]._id,
     });
   } catch (error) {
     console.log(error);
@@ -206,3 +218,5 @@ export const submitcode = async (req, res) => {
     });
   }
 };
+
+//filter problem by the tag,diffulty
