@@ -135,3 +135,31 @@ export const getBlogById = async (req, res) => {
     });
   }
 };
+
+export const getAllBlog = async (req, res) => {
+  try {
+    let { page, limit } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Fetch blogs with pagination
+    const blogs = await Blog.find().skip(skip).limit(limit);
+
+    // Get total count of blogs for pagination metadata
+    const totalBlogs = await Blog.countDocuments();
+
+    res.status(200).json({
+      message: "ok",
+      page,
+      limit,
+      totalPages: Math.ceil(totalBlogs / limit),
+      totalBlogs,
+      blogs,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "not able to send data internal server error" });
+  }
+};
