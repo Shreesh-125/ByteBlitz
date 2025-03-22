@@ -1,19 +1,15 @@
-import React, { useContext, useState } from 'react'
-import styles from '../styles/Problems.module.css'
-import Searchbar from '../ui/Searchbar';
-import ProblemsTable from '../ui/ProblemsTable';
-import Upcomingcontest from '../ui/Upcomingcontest';
-import LastUnsolved from '../ui/LastUnsolvedTable';
+import styles from "../styles/Problems.module.css";
+import Searchbar from "../ui/Searchbar";
+import ProblemsTable from "../ui/ProblemsTable";
+import Upcomingcontest from "../ui/Upcomingcontest";
+import LastUnsolved from "../ui/LastUnsolvedTable";
 import { ProblemsProvider } from "../context/ProblemsContext";
 
 const Problems = () => {
-
-
   return (
     <ProblemsProvider>
       <div className={styles.problemsPage}>
         <div className={styles.container}>
-
           <div className={styles.leftSection}>
             <Searchbar />
             <ProblemsTable />
@@ -25,7 +21,7 @@ const Problems = () => {
         </div>
       </div>
     </ProblemsProvider>
-  )
-}
+  );
+};
 
-export default Problems
+export default Problems;
