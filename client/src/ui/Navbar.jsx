@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import avatar from '../assets/profile_icon.png';
 import styles from '../styles/Navbar.module.css';
 import { FiMenu, FiX } from 'react-icons/fi';
-
+import byteblitz_logo from "../assets/byteblitz-logo.png"
 const Navbar = () => {
     const location = useLocation();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
@@ -36,9 +36,12 @@ const Navbar = () => {
             <div className={styles.container}>
                 {/* Left Side - Logo & Nav Links */}
                 <div className={styles.leftContainer}>
-                    <Link to="/" className={styles.logo}>
-                        ByteBlitz
-                    </Link>
+                    <div className={styles["logo-text"]}>
+                        {/* <img src={byteblitz_logo} className={styles.logoimg}/> */}
+                        <Link to="/" className={styles.logo}>
+                            ByteBlitz
+                        </Link>
+                    </div>
                     <ul className={styles.navLinks}>
                         {pathAndName.map(([path, name]) => (
                             <li key={path}>

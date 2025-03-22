@@ -1,8 +1,10 @@
 /* Navbar Styling */
 .nav {
     background-color: #F5EFE7;
+    /* background-color: #324F7F; */
     padding: 12px 70px;
     border-bottom: 1px solid #e5e5e5;
+    
 }
 
 /* Flex Container */
@@ -18,7 +20,6 @@
     display: flex;
     align-items: center;
 }
-
 /* Logo Styling */
 .logo {
     font-size: 18px;
@@ -133,8 +134,13 @@
     margin-right: 20px;
     width: 25px;
     height: 25px;
+    
 }
-
+/* .logoimg{
+    /* border-radius: 50%; 
+    width: 50px;
+    height: 50px;
+} */
 
 /* Responsive - Mobile Styles */
 @media (max-width: 600px) {
