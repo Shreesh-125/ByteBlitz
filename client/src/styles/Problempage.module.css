@@ -12,7 +12,14 @@
     margin: 0 auto;
 }
 .leftSection{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     width: 50%;
+    height: 80vh;
+    margin-top: 10px;
+    margin-left: 20px;
+
 }
 .rightSection{
     display: flex;
@@ -51,4 +58,13 @@
 
 .Scrollbar::-webkit-scrollbar-thumb:hover {
     background: #4a7aff; /* Darker on hover */
+}
+@media (max-width: 1000px) {
+    .rightSection{
+        display: none;
+    }
+    .leftSection{
+        width: 95%;
+        margin: 0 auto;
+    }
 }

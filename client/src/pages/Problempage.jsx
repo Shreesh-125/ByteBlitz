@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProblemNav from '../ui/ProblemNav'
 import ProblemDescription from './ProblemDescription'
 import styles from '../styles/Problempage.module.css'
@@ -20,6 +20,17 @@ const Problempage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [hasSubmitted, setHasSubmitted] = useState("no") //becomes true after you make a submissions
     const [submission, setSubmission] = useState(null) //fetch the submission for this particular problem
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
+    const [isEditor, setIsEditor] = useState(false);
+
+    // Update isMobile on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 1000);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const onSelectLanguage = (lang) => {
         setLanguage(lang);
@@ -28,19 +39,67 @@ const Problempage = () => {
     return (
         <div>
             <div className={styles.problemNav}>
-                <ProblemNav value={value} language={language} onSelectLanguage={onSelectLanguage} setIsExecuted={setIsExecuted} setTheme={setTheme} setIsSubmitting={setIsSubmitting} setHasSubmitted={setHasSubmitted} setSubmission={setSubmission} />
+                <ProblemNav
+                    value={value}
+                    language={language}
+                    onSelectLanguage={onSelectLanguage}
+                    setIsExecuted={setIsExecuted}
+                    setTheme={setTheme}
+                    setIsSubmitting={setIsSubmitting}
+                    setHasSubmitted={setHasSubmitted}
+                    setSubmission={setSubmission}
+                    isMobile={isMobile}
+                    isEditor={isEditor}
+                    setIsEditor={setIsEditor}
+                    isSubmissionPage={false}
+                />
             </div>
             <div className={styles.problemAll}>
                 <div className={styles.leftSection}>
                     {
+                        isMobile && isEditor ?
+                            <>
+                                <CodeEditor
+                                    language={language}
+                                    value={value}
+                                    setValue={setValue}
+                                    theme={theme}
+                                />
+                                <CodeResults
+                                    customInput={customInput}
+                                    setCustomInput={setCustomInput}
+                                    isExecuted={isExecuted}
+                                    yourOutput={yourOutput}
+                                    isSucess={isSucess}
+                                />
+                            </> :
                         hasSubmitted === "no" ?
-                        <ProblemDescription sampleInput={sampleInput} sampleOutput={sampleOutput} isSubmitting={isSubmitting} hasSubmitted={hasSubmitted}/> :
-                        <ProblemSubmission hasSubmitted={hasSubmitted} submission={submission} /> 
+                    <ProblemDescription
+                        sampleInput={sampleInput}
+                        sampleOutput={sampleOutput}
+                        isSubmitting={isSubmitting}
+                        hasSubmitted={hasSubmitted}
+                    /> :
+                    <ProblemSubmission
+                        hasSubmitted={hasSubmitted}
+                        submission={submission}
+                    />
                     }
                 </div>
                 <div className={`${styles.rightSection} ${styles.Scrollbar}`}>
-                    <CodeEditor language={language} value={value} setValue={setValue} theme={theme} />
-                    <CodeResults customInput={customInput} setCustomInput={setCustomInput} isExecuted={isExecuted} yourOutput={yourOutput} isSucess={isSucess} />
+                    <CodeEditor
+                        language={language}
+                        value={value}
+                        setValue={setValue}
+                        theme={theme}
+                    />
+                    <CodeResults
+                        customInput={customInput}
+                        setCustomInput={setCustomInput}
+                        isExecuted={isExecuted}
+                        yourOutput={yourOutput}
+                        isSucess={isSucess}
+                    />
                 </div>
             </div>
         </div>
