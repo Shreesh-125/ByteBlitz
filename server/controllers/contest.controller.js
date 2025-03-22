@@ -12,7 +12,13 @@ export const getAllcontests = async (req, res) => {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
-    const contests = await Contests.find().skip(skip).limit(limit);
+    
+    // Fetch contests but exclude 'problems' and 'submissions'
+    const contests = await Contests.find()
+      .select("-problems -submissions") // Exclude these fields
+      .skip(skip)
+      .limit(limit);
+
     const totalContests = await Contests.countDocuments();
     res.json({
       page,
@@ -212,5 +218,58 @@ export const contestProblemSubmitCode= async(req,res)=>{
       message: "Internal Server Error",
       success: false,
     });
+  }
+}
+
+export const registerForContest=async(req,res)=>{
+  try {
+    const {userId,contestId}=req.params;
+    
+    const user= await User.findById(userId)
+
+    if(!user){
+      return res.status(400).json({
+        message:"User not found",
+        success:false
+      })
+    }
+
+    const contest=await Contests.findOne({contestId:contestId});
+
+    if(!contest){
+      return res.status(400).json({
+        message:"Contest not found",
+        success:false
+      })
+    }
+
+    if(contest.status=="ended"){
+      return res.status(400).json({
+        message:"contest Ending Cannot Register",
+        success:false
+      })
+    }
+    
+    if (contest.registeredUser.includes(userId)) {
+      return res.status(400).json({
+        message: "User already registered",
+        success: false
+      });
+    }
+
+    contest.registeredUser.push(userId);
+    await contest.save();
+
+    return res.status(200).json({
+      message:"Registered Successfully",
+      success:true
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message:"Internal Server Error",
+      success:false
+    })
   }
 }
