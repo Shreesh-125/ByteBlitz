@@ -8,12 +8,13 @@ const Navbar = () => {
     const location = useLocation();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
     const [menuOpen, setMenuOpen] = useState(false);
+    
 
     // Update isMobile on window resize
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 600);
-            if(window.innerWidth > 600) {
+            if (window.innerWidth > 600) {
                 setMenuOpen(false); // Close menu when resizing to desktop
             }
         };
@@ -60,9 +61,11 @@ const Navbar = () => {
                             {menuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
                         </div>
                     ) : (
-                        <Link to="/profile">
-                            <img src={avatar} alt="User Avatar" className={styles.avatar} />
-                        </Link>
+                        <>
+                            <Link to="/profile">
+                                <img src={avatar} alt="User Avatar" className={styles.avatar} />
+                            </Link>
+                        </>
                     )}
 
                     {/* Mobile Navigation Menu */}

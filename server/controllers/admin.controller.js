@@ -2,6 +2,7 @@ import { Admin } from "../models/admin.model.js";
 import { Blog } from "../models/blog.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { Problems } from "../models/problems.model.js";
 
 export const login = async (req, res) => {
   try {
@@ -40,7 +41,7 @@ export const login = async (req, res) => {
       throw new Error("SECRET_KEY is missing in environment variables");
     }
 
-    const tokenData = { adminId: admin._id };
+    const tokenData = { userId: admin._id };
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
@@ -137,6 +138,79 @@ export const createBlog = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
+    });
+  }
+};
+
+export const createProblem = async (req,res)=>{
+  try {
+    const {questionTitle,timeLimit,memoryLimit,questionDescription,sampleTestCase,rating,hidden,tags}=req.body;
+
+    const problem= await Problems.create({
+      questionTitle,timeLimit,memoryLimit,questionDescription,sampleTestCase,rating,hidden,tags
+    });
+    await problem.save();
+
+    res.status(201).json({ success: true, message: "Problem created" });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message:"Internal Server Error",
+      success:false
+    })
+  }
+}
+
+export const postBlog = async (req, res) => {
+  try {
+    const { title, content, tags } = req.body;
+
+    // Validate required fields
+    if (!title || !content) {
+      return res.status(400).json({
+        message: "Title and Content are required",
+        success: false,
+      });
+    }
+
+    const userId = req.id; // Assuming req.id contains the authenticated user's ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    // Create a new blog post
+    const blog = await Blog.create({
+      title,
+      content,
+      tags,
+      author: userId, // Assuming the Blog schema has an 'author' field
+    });
+
+    // Optionally, add the blog to the user's list of blogs
+    user.blogs = user.blogs ? [...user.blogs, blog._id] : [blog._id];
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Blog posted successfully",
+      data: {
+        blogId: blog._id,
+        title: blog.title,
+        author: user.name,
+        createdAt: blog.createdAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to post blog",
+      error: error.message,
     });
   }
 };
