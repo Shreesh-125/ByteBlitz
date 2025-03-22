@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import styles from "../styles/ProblemNav.module.css";
-import { LANGUAGE_VERSION } from "../utils/languagesConstants";
+import { LANGUAGE_VERSION, languagetoIdMap } from "../utils/languagesConstants";
 import { Link } from "react-router-dom";
+
+import axios from "axios";
 
 const languages = Object.entries(LANGUAGE_VERSION);
 
@@ -17,9 +19,26 @@ const ProblemNav = ({
   isEditor,
   setIsEditor,
   isSubmissionPage,
+  customInput,
+  setYourOutput,
+  setIsSuccess
 }) => {
-  const handleRunCode = () => {
-    setIsExecuted(true);
+  const handleRunCode = async() => {
+    try {
+      const languagecode=languagetoIdMap[language];
+    const response= await axios.post(`/api/v1/problem/customTestCase`,{ languagecode, value,customInput })
+    
+      setYourOutput(response.data.response.output);
+      setIsSuccess(!response.data.response.isError)
+      
+    } catch (error) {
+      console.log(error);
+      setIsSuccess(false)
+      setYourOutput("");
+    } finally{
+      setIsExecuted(true);
+    }
+    
   };
   const handleSubmitCode = () => {
     try {

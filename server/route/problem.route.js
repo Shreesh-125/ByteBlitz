@@ -5,6 +5,7 @@ import {
   getProblemById,
   updateProblem,
   submitcode,
+  checkCustomTestCase,
 } from "../controllers/problem.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.route("/").get(getPaginatedProblems);
 router.route("/create").post(isAuthenticated, postProblem);
+router.route("/customTestCase").post(checkCustomTestCase);
 router.route("/:id").get(getProblemById);
 router.route("/update/:id").put(isAuthenticated, updateProblem);
 // router.route("/filterproblem").get(getFilterProblem);

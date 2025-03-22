@@ -25,7 +25,7 @@ const Problempage = () => {
     // console.log(problem);
     
   const [language, setLanguage] = useState('cpp');
-  const [value, setValue] = useState(codeSnippets['C++']);
+  const [value, setValue] = useState(codeSnippets['cpp']);
   const [customInput, setCustomInput] = useState('');
   const [isExecuted, setIsExecuted] = useState(false);
   const [yourOutput, setYourOutput] = useState('');
@@ -57,10 +57,6 @@ const Problempage = () => {
   // Show error state if fetching fails
   if (isError) return <div>Error: {error.message}</div>;
 
-  // Extract sample input and output from the fetched problem data
-  const sampleInput = problem?.sampleTestCase?.input || '';
-  const sampleOutput = problem?.sampleTestCase?.output || '';
-
   return (
     <div>
       <div className={styles.problemNav}>
@@ -77,6 +73,10 @@ const Problempage = () => {
           isEditor={isEditor}
           setIsEditor={setIsEditor}
           isSubmissionPage={false}
+          customInput={customInput}
+          yourOutput={yourOutput}
+          setYourOutput={setYourOutput}
+          setIsSuccess={setIsSuccess}
         />
       </div>
       <div className={styles.problemAll}>

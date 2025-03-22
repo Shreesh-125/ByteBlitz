@@ -2,6 +2,7 @@ import { Problems } from "../models/problems.model.js";
 import axios from "axios";
 import { User } from "../models/user.model.js";
 import { languageMap, StatusIdMap } from "../utils/maps.js";
+import { response } from "express";
 
 export const getPaginatedProblems = async (req, res) => {
   try {
@@ -229,4 +230,79 @@ export const submitcode = async (req, res) => {
   }
 };
 
-//filter problem by the tag,diffulty
+export const checkCustomTestCase = async (req,res)=>{
+  try {
+    const { languagecode, value,customInput } = req.body;
+   
+    if(!languagecode || !value ){
+      return res.status(400).json({
+        message:"All fields are required",
+        success:false
+      })
+    }
+   
+    const submissionData = {
+      source_code: value,
+      language_id: languagecode,
+      stdin: customInput,
+      cpu_time_limit: 2,
+      number_of_runs: 1,
+    };
+  
+    const response1 = await axios.post(
+      "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+      submissionData
+    );
+
+    if (!response1.data || !response1.data.token) {
+      return res
+        .status(500)
+        .json({ message: "Failed to submit code", success: false });
+    }
+
+    // Wait for Judge0 to complete execution
+    await new Promise((resolve) =>
+      setTimeout(resolve, (3) * 1000)
+    );
+
+    // Fetch submission result
+    const response2 = await axios.get(
+      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+    );
+
+    if(response2.data.status.id==13){
+      return res.status(400).json({
+        message:"Judge0 Error",
+        success:false
+      })
+    }
+    
+    if(response2.data.status.id!=3){
+      return res.status(200).json({
+        response:{
+        isError:true,
+      output:response2.data.status.description
+    }
+      })
+    }
+    
+    const response3 = await axios.get(
+      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+    );
+    
+    return res.status(200).json({
+      response:{
+        output:response3.data.stdout,
+        isError:false
+      }
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+}
+
