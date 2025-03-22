@@ -25,7 +25,7 @@ function App() {
         <Route path="/*" element={<Home/>} />
         <Route path="/contests/problems" element={<Contestproblempage/>} />
         <Route path="/ranking" element={<Allsubmissionpage/>} />
-        <Route path="/blogs" element={<Allblogs/>} />
+        <Route path="/blogs" element={<Contestproblempage/>} />
         <Route path="/profile" element={<Profilepage/>} />
         <Route path="/My_Friends" element={<Profilepage/>} />
         <Route path="/settings" element={<Profilepage/>} />
