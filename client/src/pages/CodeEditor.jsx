@@ -22,6 +22,7 @@ const CodeEditor = ({ language, value, setValue,theme }) => {
                 }
                 options={{
                     fontSize: 16, // Change this value to increase/decrease font size
+                    minimap: { enabled: false }
                 }}
                 />
         </div>
