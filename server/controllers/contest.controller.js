@@ -273,3 +273,61 @@ export const registerForContest=async(req,res)=>{
     })
   }
 }
+
+export const getContestProblem = async (req, res) => {
+  try {
+      const { contestId } = req.params;
+
+      if (!contestId) {
+          return res.status(400).json({
+              message: "Contest ID is required",
+              success: false,
+          });
+      }
+
+      const contest = await Contests.findOne({ contestId: contestId });
+
+      if (!contest) {
+          return res.status(200).json({
+              message: "Contest not found",
+              success: false,
+              contestAccessible: false, 
+              isrunning:false,
+          });
+      }
+
+      if (contest.status === 'upcoming') {
+          return res.status(200).json({
+              message: "Contest has not started yet",
+              success: false,
+              contestAccessible: false, 
+              isrunning:false,
+          });
+      }
+
+      if(contest.status ==='running'){
+        return res.status(200).json({
+          message:"Contest is running",
+          success:true,
+          contestAccessible: true, // Additional flag to indicate contest is accessible
+          isrunning:true,
+          problems: contest.problems,
+          endTime:contest.endTime
+        })
+      }
+
+      return res.status(200).json({
+          message: "Problem fetched successfully",
+          success: true,
+          contestAccessible: true, // Additional flag to indicate contest is accessible
+          isrunning:false,
+          problems: contest.problems,
+      });
+
+  } catch (error) {
+      return res.status(500).json({
+          message: "Internal Server Error",
+          success: false,
+      });
+  }
+};

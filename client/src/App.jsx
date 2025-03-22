@@ -37,7 +37,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/*" element={<Home />} />
-          <Route path="/contests/problems" element={<Contestproblempage />} />
+          <Route path="/contests/:contestId/problems" element={<Contestproblempage />} />
+          <Route path="/contests/:contestId/problems/:problemId" element={<Problempage />} />
           <Route path="/ranking" element={<Allsubmissionpage />} />
           <Route path="/blogs" element={<Allblogs />} />
           <Route path="/profile" element={<Profilepage />} />
