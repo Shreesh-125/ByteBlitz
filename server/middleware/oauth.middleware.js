@@ -5,5 +5,5 @@ export const oauthValidate = () => {
 };
 
 export const oauthFailureCheck = () => {
-  passport.authenticate("google", { failureRedirect: "/login" });
+  passport.authenticate("google", { scope: ["profile", "email"] });
 };

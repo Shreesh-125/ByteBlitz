@@ -1,6 +1,5 @@
 import passport from "passport";
 import { User } from "../models/user.model";
-
 export const oauthCallback = async (req, res) => {
   if (!req.user.username) {
     req.session.tempUser = req.user; // Store temp user session

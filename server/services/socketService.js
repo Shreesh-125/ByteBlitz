@@ -1,8 +1,8 @@
-import { Server } from 'socket.io';
-import { Leaderboard } from '../models/LeaderBoard.model.js';
-import { languagetoIdMap } from '../utils/maps.js';
-import cookie from 'cookie';
-import axios from 'axios';
+import { Server } from "socket.io";
+import { Leaderboard } from "../models/LeaderBoard.model.js";
+import { languagetoIdMap } from "../utils/maps.js";
+import cookie from "cookie";
+import axios from "axios";
 
 let contestRunning = true;
 
@@ -23,7 +23,9 @@ export const initializeSocket = (server) => {
 
     // Reject connection if contest is not running
     if (!contestRunning) {
-      socket.emit("contest_not_running", { message: "Contest is not running!" });
+      socket.emit("contest_not_running", {
+        message: "Contest is not running!",
+      });
       socket.disconnect(true);
       return;
     }
@@ -39,7 +41,9 @@ export const initializeSocket = (server) => {
     // Handle code submission
     socket.on("submit_code", async (data) => {
       if (!contestRunning) {
-        socket.emit("submission_result", { message: "Contest is not running!" });
+        socket.emit("submission_result", {
+          message: "Contest is not running!",
+        });
         return;
       }
 
@@ -62,13 +66,19 @@ export const initializeSocket = (server) => {
         );
 
         const verdict = fresponse.data.status.id; // Problem status 3 if accepted
-        let leaderboard = await Leaderboard.findOne({ contestId: data.contestId });
+        let leaderboard = await Leaderboard.findOne({
+          contestId: data.contestId,
+        });
 
         if (!leaderboard) {
-          return socket.emit("submission_result", { message: "Leaderboard not found!" });
+          return socket.emit("submission_result", {
+            message: "Leaderboard not found!",
+          });
         }
 
-        let userEntry = leaderboard.users.find((user) => user.userId.equals(data.userId));
+        let userEntry = leaderboard.users.find((user) =>
+          user.userId.equals(data.userId)
+        );
 
         if (!userEntry) {
           // Add the user if not submitted before
@@ -80,9 +90,15 @@ export const initializeSocket = (server) => {
           leaderboard.users.push(userEntry);
         }
 
-        let problemEntry = userEntry.problemSolved.find((problem) => problem.problemId === data.problemId);
+        let problemEntry = userEntry.problemSolved.find(
+          (problem) => problem.problemId === data.problemId
+        );
         if (!problemEntry) {
-          problemEntry = { problemId: data.problemId, accepted: [], rejected: [] };
+          problemEntry = {
+            problemId: data.problemId,
+            accepted: [],
+            rejected: [],
+          };
           userEntry.problemSolved.push(problemEntry);
         }
 
@@ -91,10 +107,14 @@ export const initializeSocket = (server) => {
           submissionId: fresponse.data.submissionId, // Assuming submissionId is returned
         };
 
-        const problemScoreEntry = leaderboard.problemScore.find((p) => p.problemId === data.problemId);
+        const problemScoreEntry = leaderboard.problemScore.find(
+          (p) => p.problemId === data.problemId
+        );
 
         if (!problemScoreEntry) {
-          return socket.emit("submission_result", { message: "Problem score not found!" });
+          return socket.emit("submission_result", {
+            message: "Problem score not found!",
+          });
         }
 
         let problemScore = problemScoreEntry.problemScore;
@@ -102,7 +122,9 @@ export const initializeSocket = (server) => {
         if (verdict === 3) {
           // Accepted
           problemEntry.accepted.push(submissionRecord);
-          const timeElapsedMinutes = Math.floor((currTime - leaderboard.contestStartTime) / (1000 * 60));
+          const timeElapsedMinutes = Math.floor(
+            (currTime - leaderboard.contestStartTime) / (1000 * 60)
+          );
           let finalScore = problemScore - timeElapsedMinutes;
           userEntry.score += finalScore;
           userEntry.score = Math.max(userEntry.score, problemScore / 4);
@@ -117,6 +139,35 @@ export const initializeSocket = (server) => {
       } catch (error) {
         console.error("Error submitting code:", error);
         socket.emit("submission_result", { message: "Failed to submit code" });
+      }
+    });
+    socket.on("fetch_leaderboard", async (contestId) => {
+      if (!contestRunning) {
+        socket.emit("leaderboard_error", {
+          message: "Contest is not running!",
+        });
+        return;
+      }
+
+      try {
+        const leaderboard = await Leaderboard.findOne({ contestId });
+        if (!leaderboard) {
+          return socket.emit("leaderboard_error", {
+            message: "Leaderboard not found!",
+          });
+        }
+
+        const leaderboardData = leaderboard.users.map((user) => ({
+          userId: user.userId,
+          score: user.score,
+        }));
+
+        socket.emit("leaderboard_update", leaderboardData);
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+        socket.emit("leaderboard_error", {
+          message: "Failed to fetch leaderboard",
+        });
       }
     });
 
