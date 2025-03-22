@@ -1,7 +1,8 @@
 import React from 'react'
 import Profilecontainer from '../ui/Profilecontainer'
 import Heatmap from '../ui/Heatmap'
-
+import Bargraph from '../ui/bargraph';
+import styles from '../styles/Profilepageleftbar.module.css'
 const Profilepageleftbar = () => {
     const sampleHeatmapData = [
         { date: "2025-02-01", count: 3 },
@@ -45,9 +46,10 @@ const Profilepageleftbar = () => {
         { date: "2024-03-10", count: 12 },
       ];
   return (
-    <div>
+    <div className={styles.container}>
         <Profilecontainer/>
         <Heatmap startDate = {"2023-03-10"} endDate = {"2024-03-10"} dataValues = {sampleHeatmapData}  />
+        <Bargraph/>
     </div>
   )
 }

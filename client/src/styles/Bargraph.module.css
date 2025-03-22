@@ -1,0 +1,136 @@
+.statsContainer {
+    width: 100%;
+    margin-top: 40px;
+    padding: 20px;
+    /* background-color: yellow; */
+    color: #fff;
+    border-radius: 8px;
+  }
+  
+  .chartTitle {
+    display: flex;
+    font-size: 24px;
+    font-weight: 600;
+    color: #213555;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 24px;
+    text-align: center;
+  }
+  
+  .statCard {
+    padding: 12px;
+    position: relative;
+  }
+  
+  .statCard:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background-color: #3a3a3a;
+  }
+  
+  .statLabel {
+    font-size: 16px;
+    color: #3E5879;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .statValue {
+    font-size: 16px;
+    font-weight: 600;
+    color: #3E5879;
+  }
+  
+  .customTooltip {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    color: #fff;
+  }
+  
+  .tooltipLabel {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .tooltipValue {
+    color: #ddd;
+  }
+  
+  .tooltipRank {
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .statsGrid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .statCard:not(:last-child)::after {
+      display: none;
+    }
+    
+    .statCard {
+      border-bottom: 1px solid #3a3a3a;
+      padding-bottom: 20px;
+    }
+    
+    .statCard:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  /* Codeforces rating colors */
+  .newbie {
+    color: #808080;
+  }
+  
+  .pupil {
+    color: #008000;  
+  }
+  
+  .specialist {
+    color: #03A89E;
+  }
+  
+  .expert {
+    color: #0000FF;
+  }
+  
+  .candidateMaster {
+    color: #AA00AA;
+  }
+  
+  .master {
+    color: #FF8C00;
+  }
+  
+  .grandmaster {
+    color: #FF0000;
+  }
+  
+  /* Chart grid styling */
+  .customGrid line {
+    stroke: black;
+  }
+  
+  .axisLabel {
+    font-size: 14px;
+    fill: #aaa;
+  }
