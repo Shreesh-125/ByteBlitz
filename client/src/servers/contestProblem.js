@@ -5,8 +5,8 @@ export const getContestProblem = async (contestId)=>{
     return response.data;
 }
 
-export const getProblemInfo = async (problemId) =>{
-    const response = await axios.get(`/api/v1/problem/${problemId}`);
+export const getProblemInfo = async ({problemId,contestId}) =>{
+    const response = await axios.get(`/api/v1/contest/${contestId}/problems/${problemId}`);
     return response.data;
 }
 

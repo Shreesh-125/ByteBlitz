@@ -64,7 +64,6 @@
 .Select select {
     padding: 8px 12px;
     max-width: 100px;
-    font-size: 16px;
     border: 2px solid #ccc;
     border-radius: 6px;
     background-color: white;
@@ -104,6 +103,34 @@
     background-color: rgba(127, 189, 255, 0.2);
     cursor: pointer;
     font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+    .leftNav, .Select   {
+        font-size: 16px;
+    }
+    .codeButton , .Select select{
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+}
+@media (max-width: 850px) {
+    .leftNav, .Select   {
+        font-size: 14px;
+    }
+    .codeButton , .Select select{
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+}
+@media (max-width: 850px) {
+    .codeButton , .Select select{
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
 }
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -1,11 +1,12 @@
 .container {
-    width: 294px;
+    /* width: 294px; */
     max-width: 400px;
     border-radius: 10px;
     overflow: hidden;
     background: white;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
     margin-top:20px;
+    width: 85%;
   }
   .header {
     background-color: #3E5879;

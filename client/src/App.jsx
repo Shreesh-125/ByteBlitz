@@ -19,6 +19,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import NotFound from "./pages/NotFound";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -81,5 +82,4 @@ function App() {
     </QueryClientProvider>
   )
 }
-
 export default App;

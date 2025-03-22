@@ -63,3 +63,25 @@
     font-weight: 500;
     color: #1a1a1a; /* Lighter gray for labels */
 }
+@media (max-width: 850px) {
+    .headerItem span{
+        font-size: 14px;
+    }
+    .infoItem{
+        padding: 0 5px;
+    }
+    .infoItem p{
+        font-size: 12px;
+    }
+    .problemSubmissionInfo{
+        padding: 20px 15px;
+    }
+}
+@media (max-width: 650px) {
+    .headerItem span{
+        font-size: 12px;
+    }
+    .problemSubmissionInfo{
+        padding: 15px 10px;
+    }
+}

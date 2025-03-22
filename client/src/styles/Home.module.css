@@ -1,10 +1,15 @@
 .home {
-    display: flex;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* max-width: 1200px; */
+    /* margin: 40px auto;
+    padding: 20px; */
+    /* gap: 20px; */
     justify-content: space-between;
+    /* background-color: blue; */
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 40px;
   }
   
   /* Responsive design */

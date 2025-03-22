@@ -331,3 +331,51 @@ export const getContestProblem = async (req, res) => {
       });
   }
 };
+
+export const getContestProblemById = async (req, res) => {
+  try {
+    const { problemId, contestId } = req.params;
+    
+    // Find the contest
+    const contest = await Contests.findOne({ contestId });
+
+    if (!contest) {
+      return res.status(400).json({
+        message: "Contest Not Found",
+        success: false,
+      });
+    }
+
+    // Check if the problemId exists in the contest's problems array
+    const problemExists = contest.problems.some(
+      (problem) => problem.problemId.toString() === problemId
+    );
+
+    if (!problemExists) {
+      return res.status(404).json({
+        message: "Problem not found in contest",
+        success: false,
+      });
+    }
+
+    // Find the problem
+    const problem = await Problems.findOne({ problemId });
+
+    if (!problem) {
+      return res.status(404).json({ message: "Problem not found" });
+    }
+
+    // Extract only the first test case from sampleTestCase
+    const firstSampleTestCase = problem.sampleTestCase[0];
+
+    // Create a new response object with only the first test case
+    const response = {
+      ...problem.toObject(), // Spread the rest of the problem details
+      sampleTestCase: firstSampleTestCase, // Override sampleTestCase with only the first test case
+    };
+
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
