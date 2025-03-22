@@ -8,11 +8,14 @@ import problemRoute from "./route/problem.route.js";
 import { contestRoutes } from "./route/contest.route.js"; // Import contestRoutes
 import adminRoute from "./route/admin.route.js";
 import blogRoute from "./route/blog.route.js";
+import oauthRoute from "./route/oauthRoute.js";
 import http from "http";
 import passport from "passport";
 import { initializeSocket } from "./services/socketService.js";
 import { rescheduleAllContests } from "./services/contestScheduler.js";
 import { User } from "./models/user.model.js";
+import session from "express-session";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 dotenv.config({});
 const app = express();
