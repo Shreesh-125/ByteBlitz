@@ -88,11 +88,19 @@ export const login = async (req, res) => {
       _id: user._id,
     };
 
-    return res.status(200).cookie("token",token,{maxAge:1*24*60*60*1000,httpsOnly:true,sameSite:'strict'}).json({
-      message:`Welcome back!! `,
-      user:userResponse,
-      success:true
-  })
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome back!! `,
+        user: userResponse,
+        token,
+        success: true,
+      });
   } catch (error) {
     console.error("Error:", error.message);
     return res.status(500).json({

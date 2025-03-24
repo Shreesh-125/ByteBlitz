@@ -5,6 +5,7 @@ import stylesall from "../styles/Allblogs.module.css";
 import Blog from "../ui/Blog";
 import { getAllBlogs } from "../servers/getAllBlogs";
 import { useState } from "react";
+import Loader from "../ui/Loader";
 const Allblogs = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -61,9 +62,13 @@ const Allblogs = () => {
   return (
     <div className={stylesall.container}>
       <ul>
-        {blogData?.map((blog, index) => (
-          <Blog blog={blog} index={index} key={index} />
-        ))}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          blogData?.map((blog, index) => (
+            <Blog blog={blog} index={index} key={index} />
+          ))
+        )}
       </ul>
     </div>
   );

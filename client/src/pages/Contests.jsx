@@ -7,17 +7,17 @@ import Pagination from "../ui/Pagination";
 import { formatDateTime } from "../utils/DateFormat";
 import { useQuery } from "@tanstack/react-query";
 import { getAllContestWithPagination } from "../servers/getContest.js";
-import next_icon from '../assets/next-icon.png'
-import back_icon from '../assets/back-icon.png'
+import next_icon from "../assets/next-icon.png";
+import back_icon from "../assets/back-icon.png";
+import Loader from "../ui/Loader.jsx";
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const contestsPerPage = 5;
   const { data: contestData, isLoading } = useQuery({
     queryKey: ["contest"],
-    queryFn: () => getAllContestWithPagination(currentPage, 10),
+    queryFn: () => getAllContestWithPagination(currentPage, 5),
   });
-  console.log(contestData);
 
   // Memoize filtered contests to prevent unnecessary recalculations
   const { endedContests, upcomingContests, totalPages } = useMemo(() => {
@@ -45,28 +45,37 @@ const Contests = () => {
 
   const slider = useRef();
   let tx = 0;
-  const slideForward = ()=>{
-      console.log("hi there");
-      if(tx > -50){
-          tx -=33.33;
-      }
-      slider.current.style.transform =`translateX(${tx}%)`;
-  }
+  const slideForward = () => {
+    console.log("hi there");
+    if (tx > -50) {
+      tx -= 33.33;
+    }
+    slider.current.style.transform = `translateX(${tx}%)`;
+  };
   const slideBackward = () => {
-      console.log("hi there");
-      if(tx < 0){
-          tx +=33.33;
-      }
-      slider.current.style.transform =`translateX(${tx}%)`;
-  }
-
+    console.log("hi there");
+    if (tx < 0) {
+      tx += 33.33;
+    }
+    slider.current.style.transform = `translateX(${tx}%)`;
+  };
 
   return (
     <div className={styles.contestsContainer}>
       <div className={styles.upcomingContestsContainer}>
         <div className={styles.contestsHeading}>Upcoming Contests</div>
-        <img src={next_icon} alt="" className={styles["next-btn"]} onClick={slideForward}/>
-        <img src={back_icon} alt="" className={styles["back-btn"]}  onClick={slideBackward}/>
+        <img
+          src={next_icon}
+          alt=""
+          className={styles["next-btn"]}
+          onClick={slideForward}
+        />
+        <img
+          src={back_icon}
+          alt=""
+          className={styles["back-btn"]}
+          onClick={slideBackward}
+        />
         <div className={styles.slider}>
           <ul className={styles.upcomingContests} ref={slider}>
             {upcomingContests.map((contest) => {
@@ -93,7 +102,9 @@ const Contests = () => {
                         <p>{contest.registeredUsers.length}</p>
                         <img src={user} alt="user" className={styles.icon} />
                       </div>
-                      <button className={styles.registerBtn}>Register Now</button>
+                      <button className={styles.registerBtn}>
+                        Register Now
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -116,7 +127,7 @@ const Contests = () => {
             </div>
           </div>
           {isLoading ? (
-            <p>Loading contests...</p>
+            <Loader />
           ) : pageContests.length > 0 ? (
             pageContests.map((contest) => {
               if (!contest.startTime) return null;
