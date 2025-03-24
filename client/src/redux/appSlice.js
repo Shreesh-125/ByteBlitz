@@ -6,6 +6,7 @@ const appSlice = createSlice({
     isDarkMode: JSON.parse(localStorage.getItem("isDarkMode")) || false, // Load from localStorage
     loading: false,
     user: JSON.parse(localStorage.getItem("user")) || null, // Load from localStorage
+    token: localStorage.getItem("token") || null, // Load token from localStorage
   },
   reducers: {
     // Theme actions
@@ -17,16 +18,20 @@ const appSlice = createSlice({
       state.isDarkMode = action.payload; // Explicitly set theme
       localStorage.setItem("isDarkMode", JSON.stringify(state.isDarkMode)); // Persist theme state
     },
-    
+
     // User actions
     setUser: (state, action) => {
-      state.user = action.payload;
-      localStorage.setItem("user", JSON.stringify(action.payload)); // Persist user data
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      localStorage.setItem("user", JSON.stringify(action.payload.user)); // Persist user data
+      localStorage.setItem("token", action.payload.token); // Persist token
     },
-    
+
     logoutUser: (state) => {
       state.user = null;
+      state.token = null;
       localStorage.removeItem("user"); // Clear user from localStorage
+      localStorage.removeItem("token"); // Clear token from localStorage
     },
 
     // Loading actions
@@ -36,5 +41,6 @@ const appSlice = createSlice({
   },
 });
 
-export const { toggleTheme, setTheme, setLoading, setUser, logoutUser } = appSlice.actions;
+export const { toggleTheme, setTheme, setLoading, setUser, logoutUser } =
+  appSlice.actions;
 export default appSlice.reducer;

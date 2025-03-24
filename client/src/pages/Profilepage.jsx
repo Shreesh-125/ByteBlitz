@@ -4,6 +4,7 @@ import Profilepagesidebar from './Profilepagesidebar';
 import Profilepageleftbar from './Profilepageleftbar';
 import styles from '../styles/Profilepage.module.css'
 const Profilepage = () => {
+  
   return (
     <div style={{ marginTop: 40 }}>
       <div className={styles.container}
