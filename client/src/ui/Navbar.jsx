@@ -4,15 +4,14 @@ import avatar from "../assets/profile_icon.png";
 import styles from "../styles/Navbar.module.css";
 import { FiMenu, FiX } from "react-icons/fi";
 import byteblitz_logo from "../assets/byteblitz-logo.png";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/authStore.js"; // Import your logout action
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-
+import { logout } from "../store/authStore";
 const Navbar = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
   // Update isMobile on window resize
@@ -27,16 +26,14 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Define menu items
   const pathAndName = [
     ["/", "Home"],
     ["/contests", "Contests"],
     ["/problems", "Problems"],
     ["/ranking", "Ranking"],
     ["/blogs", "Blogs"],
-    user ? ["/logout", "Logout"] : ["/login", "Login"], // Conditional login/logout
+    user ? ["/logout", "Logout"] : ["/login", "Login"],
   ];
-
   const handleLogout = () => {
     dispatch(logout()); // Call Redux logout action
     toast.success("Logout Successfully");
@@ -48,6 +45,7 @@ const Navbar = () => {
         {/* Left Side - Logo & Nav Links */}
         <div className={styles.leftContainer}>
           <div className={styles["logo-text"]}>
+            {/* <img src={byteblitz_logo} className={styles.logoimg}/> */}
             <Link to="/" className={styles.logo}>
               ByteBlitz
             </Link>
@@ -84,50 +82,42 @@ const Navbar = () => {
               {menuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
             </div>
           ) : (
-            user && (
+            <>
               <Link to="/profile">
                 <img src={avatar} alt="User Avatar" className={styles.avatar} />
               </Link>
-            )
+            </>
           )}
 
           {/* Mobile Navigation Menu */}
           {isMobile && menuOpen && (
             <ul className={styles.mobileNav}>
-              {user && (
-                <li>
-                  <div className={styles.mobileNavProfile}>
-                    <Link to="/profile">
-                      <img
-                        src={avatar}
-                        alt="User Avatar"
-                        className={styles.avatar}
-                      />
-                    </Link>
-                    <Link to="/profile">
-                      <span>{user.username}</span>
-                    </Link>
-                  </div>
-                  <hr className={styles.separator} />
-                </li>
-              )}
+              <li>
+                <div className={styles.mobileNavProfile}>
+                  <Link to="/profile">
+                    <img
+                      src={avatar}
+                      alt="User Avatar"
+                      className={styles.avatar}
+                    />
+                  </Link>
+                  <Link to="/profile">
+                    <span>Shreesh-125</span>
+                  </Link>
+                </div>
+                <hr className={styles.separator} />
+              </li>
               {pathAndName.map(([path, name], index) => (
                 <li key={path}>
-                  {name === "Logout" ? (
-                    <button className={styles.navItem} onClick={handleLogout}>
-                      {name}
-                    </button>
-                  ) : (
-                    <Link
-                      to={path}
-                      className={`${styles.navItem} ${
-                        location.pathname === path ? styles.active : ""
-                      }`}
-                      onClick={() => setMenuOpen(false)} // Close menu on click
-                    >
-                      {name}
-                    </Link>
-                  )}
+                  <Link
+                    to={path}
+                    className={`${styles.navItem} ${
+                      location.pathname === path ? styles.active : ""
+                    }`}
+                    onClick={() => setMenuOpen(false)} // Close menu on click
+                  >
+                    {name}
+                  </Link>
                   {index !== pathAndName.length - 1 && (
                     <hr className={styles.separator} />
                   )}
