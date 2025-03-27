@@ -15,7 +15,6 @@ const isTokenValid = (token) => {
 };
 
 // Initial State
-console.log(storedUser);
 const initialState = {
   user: storedUser ? JSON.parse(storedUser) : null,
   token: isTokenValid(storedToken) ? storedToken : null,
@@ -27,8 +26,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
-      console.log(action);
-      console.log("hello");
       state.user = action.payload.user;
       state.token = action.payload.token;
       localStorage.setItem("token", action.payload.token);
