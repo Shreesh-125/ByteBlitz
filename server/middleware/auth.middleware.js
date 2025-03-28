@@ -24,7 +24,7 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     req.id = decode.userId;
-
+   
     const urlParts = req.originalUrl.split("/");
     const versionIndex = urlParts.indexOf("v1");
     const role =

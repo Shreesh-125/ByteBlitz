@@ -8,19 +8,19 @@ import CodeEditor from './CodeEditor';
 import { codeSnippets } from '../utils/languagesConstants';
 import CodeResults from './CodeResults';
 import ProblemSubmission from './ProblemSubmission';
-import { getProblemInfo } from '../servers/contestProblem';
 import Loader from '../ui/Loader';
+import { getproblemInfoById } from '../servers/problem';
 
 
 const Problempage = () => {
-  const { problemId,contestId } = useParams(); // Get problemId from URL params
+  const { problemId } = useParams(); // Get problemId from URL params
     
 
   // Fetch problem data using React Query
   const { data: problem, isLoading, isError, error } = useQuery({
-    queryKey: ['problem', { problemId, contestId }], // Unique key for the query
-    queryFn: () => getProblemInfo({ problemId, contestId }), // Fetch function
-    enabled: !!problemId && !!contestId, // Only fetch if both problemId and contestId are available
+    queryKey: ['problemid', problemId],
+    queryFn: () => getproblemInfoById(problemId), 
+    enabled: !!problemId,
   });
     // console.log(problem);
     
@@ -77,6 +77,7 @@ const Problempage = () => {
           yourOutput={yourOutput}
           setYourOutput={setYourOutput}
           setIsSuccess={setIsSuccess}
+          problemId={problemId}
         />
       </div>
       <div className={styles.problemAll}>
