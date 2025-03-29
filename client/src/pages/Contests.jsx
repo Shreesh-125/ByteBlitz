@@ -11,6 +11,7 @@ import Loader from "../ui/Loader.jsx";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { ContestCard, PastContestCard } from "../ui/ContestsCard.jsx";
+import { addRegisteredAttribute } from "../utils/ContestUtils.js";
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,16 +44,10 @@ const Contests = () => {
 
         // Only add registered status if user is logged in
         if (user?._id) {
-          const addRegisteredStatus = (contests) => 
-            contests.map(c => ({
-              ...c,
-              registered: c.registeredUsers?.includes(user._id) || false
-            }));
-
           setProcessedContests({
             ended,
-            upcoming: addRegisteredStatus(upcoming),
-            running: addRegisteredStatus(running)
+            upcoming: addRegisteredAttribute(upcoming),
+            running: addRegisteredAttribute(running)
           });
         } else {
           setProcessedContests({
@@ -67,6 +62,7 @@ const Contests = () => {
     }
   }, [contestData, user?._id]);
 
+  //register User + update Registration State
   const { mutate: registerMutation, isLoading: isRegistering } = useMutation({
     mutationFn: ({ contestId, userId }) => registerUser({ contestId, userId }),
     onSuccess: (data) => {
@@ -75,13 +71,6 @@ const Contests = () => {
         setProcessedContests(prev => ({
           ...prev,
           upcoming: prev.upcoming.map(c => 
-            c.contestId === data.contestId ? { 
-              ...c, 
-              registered: true,
-              registeredUsers: [...c.registeredUsers, user._id] 
-            } : c
-          ),
-          running: prev.running.map(c => 
             c.contestId === data.contestId ? { 
               ...c, 
               registered: true,
@@ -106,8 +95,6 @@ const Contests = () => {
   };
 
   const renderContestAction = (contest) => {
-    console.log(contest);
-    
     //for running contest
     if (contest.status === "running") {
       if (!user) {
