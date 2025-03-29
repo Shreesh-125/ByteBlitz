@@ -42,13 +42,8 @@ const authSlice = createSlice({
 
 // Export Actions
 export const { loginSuccess, logout } = authSlice.actions;
+export default authSlice.reducer;
 
-// Create Store
-export const authStore = configureStore({
-  reducer: {
-    auth: authSlice.reducer,
-  },
-});
 
 // Custom Hook for Dispatch
 export const useAppDispatch = () => authStore.dispatch;

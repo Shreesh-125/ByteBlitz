@@ -238,6 +238,33 @@
     align-items: center;
 }
 
+.registerBtn {
+  background-color: #4a6bff;
+  color: white;
+}
+
+.registerBtn:hover {
+  background-color: #3a5bef;
+}
+
+.registerBtn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.registeredBtn {
+  background-color: #4CAF50;
+}
+
+.enterBtn {
+  background-color: #ff6b4a;
+  color: white;
+}
+
+.enterBtn:hover {
+  background-color: #ff5b3a;
+}
+
 @media (max-width: 1000px) {
     .upcomingContests{
         display: flex;
