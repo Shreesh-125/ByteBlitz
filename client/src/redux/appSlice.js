@@ -44,3 +44,4 @@ const appSlice = createSlice({
 export const { toggleTheme, setTheme, setLoading, setUser, logoutUser } =
   appSlice.actions;
 export default appSlice.reducer;
+export const selectUser = (state) => state.app.user;

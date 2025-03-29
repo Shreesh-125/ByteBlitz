@@ -5,8 +5,9 @@ import { MdOutlineContentCopy } from 'react-icons/md';
 
 // Function to replace ^ with e
 const formatExponent = (str) => {
-  return str.replace(/\^(\d+)/g, 'e$1');
+  return (str || "").replace(/\^(\d+)/g, 'e$1'); // Default to empty string if str is undefined
 };
+
 
 const ProblemDescription = ({ problem }) => {
   const sampleInput = problem?.sampleTestCase?.input;

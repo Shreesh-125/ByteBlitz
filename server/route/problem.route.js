@@ -14,7 +14,7 @@ const router = express.Router();
 router.route("/").get(getPaginatedProblems);
 router.route("/create").post(isAuthenticated, postProblem);
 router.route("/customTestCase").post(checkCustomTestCase);
-router.route("/:id").get(getProblemById);
+router.route("/:problemid").get(getProblemById);
 router.route("/update/:id").put(isAuthenticated, updateProblem);
 // router.route("/filterproblem").get(getFilterProblem);
 // router.route("/:id/submit").post(submitProblem);

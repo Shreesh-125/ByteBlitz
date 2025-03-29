@@ -71,7 +71,8 @@ export const postProblem = async (req, res) => {
 
 export const getProblemById = async (req, res) => {
   try {
-    const problem = await Problems.findOne({ problemId: req.params.id });
+    const {problemid}= req.params;
+    const problem = await Problems.findOne({ problemId:problemid });
     if (!problem) {
       return res.status(404).json({ message: "Problem not found" });
     }
@@ -85,7 +86,11 @@ export const getProblemById = async (req, res) => {
       sampleTestCase: firstSampleTestCase, // Override sampleTestCase with only the first test case
     };
 
-    res.json(response);
+    return res.status(200).json({
+      success:true,
+      message:"Problem info retrieved sucessfully",
+      response
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -178,7 +183,7 @@ export const submitcode = async (req, res) => {
 
       // Fetch submission result
       const response2 = await axios.get(
-        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
       );
 
       // If status ID is not 3 (Accepted), return immediately

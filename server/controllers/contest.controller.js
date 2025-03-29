@@ -18,7 +18,8 @@ export const getAllcontests = async (req, res) => {
       .select("-problems -submissions") // Exclude these fields
       .skip(skip)
       .limit(limit);
-
+    console.log(contests);
+    
     const totalContests = await Contests.countDocuments();
     res.json({
       page,
@@ -335,22 +336,22 @@ export const getContestProblem = async (req, res) => {
 export const getContestProblemById = async (req, res) => {
   try {
     const { problemId, contestId } = req.params;
-    
+   
     // Find the contest
     const contest = await Contests.findOne({ contestId });
-
+    
     if (!contest) {
       return res.status(400).json({
         message: "Contest Not Found",
         success: false,
       });
     }
-
+    
     // Check if the problemId exists in the contest's problems array
     const problemExists = contest.problems.some(
       (problem) => problem.problemId.toString() === problemId
     );
-
+    
     if (!problemExists) {
       return res.status(404).json({
         message: "Problem not found in contest",

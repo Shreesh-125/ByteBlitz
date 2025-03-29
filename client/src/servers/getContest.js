@@ -4,7 +4,7 @@ export const getAllContestWithPagination = async (page = 1, limit = 10) => {
   try {
     console.log(page);
     const response = await axios.get(
-      `http://localhost:8000/api/v1/contest?page=${page}&limit=${limit}`
+      `/api/v1/contest?page=${page}&limit=${limit}`
     );
 
     const transformContestData = (data) => {
@@ -24,3 +24,8 @@ export const getAllContestWithPagination = async (page = 1, limit = 10) => {
     return null; // Return null in case of an error
   }
 };
+
+export const registerUser= async({contestId,userId})=>{
+  const response=await axios.get(`/api/v1/contest/register/${contestId}/${userId}`);
+  return response;
+}
