@@ -10,6 +10,7 @@ const isTokenValid = (token) => {
     const decoded = JSON.parse(atob(token?.split(".")[1])); // Decode JWT payload
     return decoded.exp * 1000 > Date.now(); // Check if token is expired
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
@@ -42,6 +43,8 @@ const authSlice = createSlice({
 
 // Export Actions
 export const { loginSuccess, logout } = authSlice.actions;
+
+
 export const authStore = configureStore({
   reducer: {
     auth: authSlice.reducer,
