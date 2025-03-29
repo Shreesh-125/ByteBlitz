@@ -219,14 +219,20 @@ export const getProfileDetails = async (req, res) => {
         message: "Username Not Found",
       });
     }
-
+    const submissions = user.submissions.map((submission) => ({
+      submissionId: submission.submissionId,
+      questionTitle: submission.questionId?.title || "Unknown",
+      status: submission.status,
+      date: submission.date,
+      language: submission.language,
+    }));
     let modifieduser = {
       username: user.username,
       email: user.email,
       rating: user.rating,
       maxRating: user.maxRating,
+      submissions: submissions,
     };
-
     return res.status(200).json({
       success: true,
       message: "User Details Fetched Successfully",
