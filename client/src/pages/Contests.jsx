@@ -9,14 +9,14 @@ import next_icon from "../assets/next-icon.png";
 import back_icon from "../assets/back-icon.png";
 import Loader from "../ui/Loader.jsx";
 import { useSelector } from "react-redux";
-import { selectUser } from "../redux/appSlice.js";
 import toast from "react-hot-toast";
 import { ContestCard, PastContestCard } from "../ui/ContestsCard.jsx";
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const contestsPerPage = 5;
-  const user = useSelector(selectUser);
+  const user = useSelector((state)=> state.auth.user);
+  
   const slider = useRef();
   const [tx, setTx] = useState(0);
 
@@ -106,6 +106,9 @@ const Contests = () => {
   };
 
   const renderContestAction = (contest) => {
+    console.log(contest);
+    
+    //for running contest
     if (contest.status === "running") {
       if (!user) {
         return (
