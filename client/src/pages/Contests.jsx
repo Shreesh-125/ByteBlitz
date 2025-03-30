@@ -14,11 +14,17 @@ import Loader from "../ui/Loader.jsx";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { ContestCard, PastContestCard } from "../ui/ContestsCard.jsx";
+import { addRegisteredAttribute } from "../utils/ContestUtils.js";
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const contestsPerPage = 5;
+<<<<<<< HEAD
   const user = useSelector((state) => state.auth.user);
+=======
+  const user = useSelector((state)=> state.auth.user);
+  
+>>>>>>> 29b82ddfb190e262cda4826b72fe3e400707cc56
   const slider = useRef();
   const [tx, setTx] = useState(0);
 
@@ -45,6 +51,7 @@ const Contests = () => {
 
         // Only add registered status if user is logged in
         if (user?._id) {
+<<<<<<< HEAD
           const addRegisteredStatus = (contests) =>
             contests.map((c) => ({
               ...c,
@@ -55,6 +62,12 @@ const Contests = () => {
             ended,
             upcoming: addRegisteredStatus(upcoming),
             running: addRegisteredStatus(running),
+=======
+          setProcessedContests({
+            ended,
+            upcoming: addRegisteredAttribute(upcoming),
+            running: addRegisteredAttribute(running)
+>>>>>>> 29b82ddfb190e262cda4826b72fe3e400707cc56
           });
         } else {
           setProcessedContests({
@@ -69,6 +82,7 @@ const Contests = () => {
     }
   }, [contestData, user?._id]);
 
+  //register User + update Registration State
   const { mutate: registerMutation, isLoading: isRegistering } = useMutation({
     mutationFn: ({ contestId, userId }) => registerUser({ contestId, userId }),
     onSuccess: (data) => {
@@ -76,6 +90,7 @@ const Contests = () => {
         // Update the specific contest's registered status
         setProcessedContests((prev) => ({
           ...prev,
+<<<<<<< HEAD
           upcoming: prev.upcoming.map((c) =>
             c.contestId === data.contestId
               ? {
@@ -94,6 +109,15 @@ const Contests = () => {
                 }
               : c
           ),
+=======
+          upcoming: prev.upcoming.map(c => 
+            c.contestId === data.contestId ? { 
+              ...c, 
+              registered: true,
+              registeredUsers: [...c.registeredUsers, user._id] 
+            } : c
+          )
+>>>>>>> 29b82ddfb190e262cda4826b72fe3e400707cc56
         }));
         toast.success("Registered successfully!");
       }
@@ -112,6 +136,7 @@ const Contests = () => {
   };
 
   const renderContestAction = (contest) => {
+    //for running contest
     if (contest.status === "running") {
       if (!user) {
         return (
