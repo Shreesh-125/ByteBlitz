@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import App from "./App.jsx";
 import { authStore } from "./store/authStore.js";
 
-
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={authStore}>

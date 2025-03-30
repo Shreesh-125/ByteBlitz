@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 import Pagination from "../ui/Pagination";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getAllContestWithPagination, registerUser } from "../servers/getContest.js";
+import {
+  getAllContestWithPagination,
+  registerUser,
+} from "../servers/getContest.js";
 import next_icon from "../assets/next-icon.png";
 import back_icon from "../assets/back-icon.png";
 import Loader from "../ui/Loader.jsx";
@@ -16,8 +19,9 @@ import { addRegisteredAttribute } from "../utils/ContestUtils.js";
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const contestsPerPage = 5;
+
   const user = useSelector((state)=> state.auth.user);
-  
+
   const slider = useRef();
   const [tx, setTx] = useState(0);
 
@@ -31,29 +35,37 @@ const Contests = () => {
   const [processedContests, setProcessedContests] = useState({
     ended: [],
     upcoming: [],
-    running: []
+    running: [],
   });
 
   // Update contests with registration status when user or contestData changes
   useEffect(() => {
     if (contestData) {
       const processContests = () => {
-        const ended = contestData.filter(c => c.status === "ended");
-        const upcoming = contestData.filter(c => c.status === "upcoming");
-        const running = contestData.filter(c => c.status === "running");
+        const ended = contestData.filter((c) => c.status === "ended");
+        const upcoming = contestData.filter((c) => c.status === "upcoming");
+        const running = contestData.filter((c) => c.status === "running");
 
         // Only add registered status if user is logged in
         if (user?._id) {
+
+          const addRegisteredStatus = (contests) =>
+            contests.map((c) => ({
+              ...c,
+              registered: c.registeredUsers?.includes(user._id) || false,
+            }));
+
           setProcessedContests({
             ended,
-            upcoming: addRegisteredAttribute(upcoming),
-            running: addRegisteredAttribute(running)
+            upcoming: addRegisteredStatus(upcoming),
+            running: addRegisteredStatus(running),
+
           });
         } else {
           setProcessedContests({
             ended,
             upcoming,
-            running
+            running,
           });
         }
       };
@@ -68,22 +80,34 @@ const Contests = () => {
     onSuccess: (data) => {
       if (data.status === 200) {
         // Update the specific contest's registered status
-        setProcessedContests(prev => ({
+        setProcessedContests((prev) => ({
           ...prev,
-          upcoming: prev.upcoming.map(c => 
-            c.contestId === data.contestId ? { 
-              ...c, 
-              registered: true,
-              registeredUsers: [...c.registeredUsers, user._id] 
-            } : c
-          )
+          upcoming: prev.upcoming.map((c) =>
+            c.contestId === data.contestId
+              ? {
+                  ...c,
+                  registered: true,
+                  registeredUsers: [...c.registeredUsers, user._id],
+                }
+              : c
+          ),
+          running: prev.running.map((c) =>
+            c.contestId === data.contestId
+              ? {
+                  ...c,
+                  registered: true,
+                  registeredUsers: [...c.registeredUsers, user._id],
+                }
+              : c
+          ),
+
         }));
         toast.success("Registered successfully!");
       }
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || "Registration failed");
-    }
+    },
   });
 
   const handleRegister = (contestId) => {
@@ -99,7 +123,7 @@ const Contests = () => {
     if (contest.status === "running") {
       if (!user) {
         return (
-          <button 
+          <button
             className={styles.enterBtn}
             onClick={() => toast.error("Please login to enter the contest")}
           >
@@ -109,15 +133,18 @@ const Contests = () => {
       }
       if (!contest.registered) {
         return (
-          <button 
+          <button
             className={styles.enterBtn}
-            onClick={() => toast.error("You need to register first to enter this contest")}
+            onClick={() =>
+              toast.error("You need to register first to enter this contest")
+            }
           >
             Enter Contest
           </button>
         );
       }
       return (
+
         <Link 
           to={`/contests/${contest.contestId}/problems`}
           className={styles.enterBtn}
@@ -130,7 +157,7 @@ const Contests = () => {
     // For upcoming contests
     if (!user) {
       return (
-        <button 
+        <button
           className={styles.registerBtn}
           onClick={() => toast.error("Please login to register")}
         >
@@ -140,8 +167,10 @@ const Contests = () => {
     }
 
     return (
-      <button 
-        className={`${styles.registerBtn} ${contest.registered ? styles.registeredBtn : ''}`}
+      <button
+        className={`${styles.registerBtn} ${
+          contest.registered ? styles.registeredBtn : ""
+        }`}
         onClick={() => handleRegister(contest.contestId)}
         disabled={contest.registered || isRegistering}
       >
@@ -162,12 +191,10 @@ const Contests = () => {
   const slideForward = () => {
     if (tx > -50) setTx(tx - 33.33);
   };
-  
+
   const slideBackward = () => {
     if (tx < 0) setTx(tx + 33.33);
   };
-
-  
 
   return (
     <div className={styles.contestsContainer}>
@@ -177,8 +204,8 @@ const Contests = () => {
           <div className={styles.contestsHeading}>Live Contests</div>
           <div className={styles.slider}>
             <ul className={styles.upcomingContests} ref={slider}>
-              {processedContests.running.map(contest => (
-                <ContestCard 
+              {processedContests.running.map((contest) => (
+                <ContestCard
                   key={contest.contestId}
                   contest={contest}
                   renderAction={renderContestAction}
@@ -192,12 +219,22 @@ const Contests = () => {
       {/* Upcoming Contests */}
       <div className={styles.upcomingContestsContainer}>
         <div className={styles.contestsHeading}>Upcoming Contests</div>
-        <img src={next_icon} alt="" className={styles["next-btn"]} onClick={slideForward} />
-        <img src={back_icon} alt="" className={styles["back-btn"]} onClick={slideBackward} />
+        <img
+          src={next_icon}
+          alt=""
+          className={styles["next-btn"]}
+          onClick={slideForward}
+        />
+        <img
+          src={back_icon}
+          alt=""
+          className={styles["back-btn"]}
+          onClick={slideBackward}
+        />
         <div className={styles.slider}>
           <ul className={styles.upcomingContests}>
-            {processedContests.upcoming.map(contest => (
-              <ContestCard 
+            {processedContests.upcoming.map((contest) => (
+              <ContestCard
                 key={contest.contestId}
                 contest={contest}
                 renderAction={renderContestAction}
@@ -214,7 +251,7 @@ const Contests = () => {
           {isLoading ? (
             <Loader />
           ) : paginatedEndedContests.length > 0 ? (
-            paginatedEndedContests.map(contest => (
+            paginatedEndedContests.map((contest) => (
               <PastContestCard key={contest.contestId} contest={contest} />
             ))
           ) : (
