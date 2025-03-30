@@ -103,7 +103,7 @@ export const contestProblemSubmitCode= async(req,res)=>{
   try {
     const { code, languageId } = req.body;
     const { problemid } = req.params;
-
+    
     const userId = req.id;
 
     const user = await User.findById(userId);
@@ -115,7 +115,7 @@ export const contestProblemSubmitCode= async(req,res)=>{
     }
 
     const problem = await Problems.findOne({ problemId: problemid });
-
+    
     if (!problem) {
       return res
         .status(404)
@@ -137,7 +137,9 @@ export const contestProblemSubmitCode= async(req,res)=>{
       hidden:true,
     };
     let isServerError = false;
+    let testcasenumber=0,totaltime=0,totalmemory=0;
     for (const tc of problem.sampleTestCase) {
+      testcasenumber++;
       const formattedInput = JSON.stringify(tc.input).replace(/\\n/g, "\n");
       const formattedOutput = JSON.stringify(tc.output).replace(/\\n/g, "\n");
 
@@ -150,19 +152,21 @@ export const contestProblemSubmitCode= async(req,res)=>{
         memory_limit: memoryLimit,
         number_of_runs: 1,
       };
-
+      
       // Submit code to Judge0
       const response1 = await axios.post(
         "http://localhost:2358/submissions?base64_encoded=false&wait=true",
         submissionData
       );
-
+      
+      
       if (!response1.data || !response1.data.token) {
         return res
           .status(500)
           .json({ message: "Failed to submit code", success: false });
       }
-
+     
+      
       // Wait for Judge0 to complete execution
       await new Promise((resolve) =>
         setTimeout(resolve, (cpuTimeLimit + 1) * 1000)
@@ -170,16 +174,17 @@ export const contestProblemSubmitCode= async(req,res)=>{
 
       // Fetch submission result
       const response2 = await axios.get(
-        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
       );
-
+      totaltime+=Number(response2.data.time);
+      totalmemory+=response2.data.memory
       // If status ID is not 3 (Accepted), return immediately
       if (response2.data.status.id !== 3) {
         if (response2.data.status.id === 13) {
           isServerError = true;
           break;
         }
-
+        
         submission = {
           ...submission,
           status: "Rejected",
@@ -187,13 +192,17 @@ export const contestProblemSubmitCode= async(req,res)=>{
         };
         user.submissions = [...user.submissions, submission];
         await user.save();
-
+        
         return res.status(200).json({
           message: "Submission failed",
           status: response2.data.status,
           stderr: response2.data.stderr,
           compile_output: response2.data.compile_output,
-          submissionId: user.submissions[user.submissions.length - 1]._id
+          submissionId: user.submissions[user.submissions.length - 1]._id,
+          WrongOnTestCase:testcasenumber,
+          time:response2.data.time,
+          memory:response2.data.memory,
+          totalTestCase:problem.sampleTestCase.length
         });
       }
     }
@@ -209,12 +218,16 @@ export const contestProblemSubmitCode= async(req,res)=>{
     await user.save();
     // If all test cases pass
     return res.status(200).json({
-      message: "Accepted",
+      message: "accepted",
       success: true,
-      submissionId: user.submissions[user.submissions.length - 1]._id
+      status:{id:3,description:"accepted"},
+      submissionId: user.submissions[user.submissions.length - 1]._id,
+      totalTestCase:testcasenumber,
+      time:totaltime,
+      memory:totalmemory
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -380,3 +393,47 @@ export const getContestProblemById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const isRegisteredInContest =async(req,res)=>{
+  try {
+    const {contestId,userId}= req.body;
+
+    const contest= await Contests.findOne({contestId});
+
+    if(!contest){
+      return res.status(400).json({
+        message: "Contest Not Found",
+        success: false,
+      });
+    }
+
+    const isregister= contest.registeredUser?.includes(userId) || false;
+    
+    return res.status(200).json({
+      isregister,
+      success:true
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export const getContestStatus =async (req,res)=>{
+  try {
+    const {contestId}= req.params;
+    const contest= await Contests.findOne({contestId});
+
+    if(!contest){
+      return res.status(400).json({
+        message: "Contest Not Found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      status:contest?.status,
+      success:true
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}

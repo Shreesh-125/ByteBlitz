@@ -14,8 +14,7 @@ import { getproblemInfoById } from '../servers/problem';
 
 const Problempage = () => {
   const { problemId } = useParams(); // Get problemId from URL params
-    
-
+  
   // Fetch problem data using React Query
   const { data: problem, isLoading, isError, error } = useQuery({
     queryKey: ['problemid', problemId],
@@ -27,7 +26,7 @@ const Problempage = () => {
   const [language, setLanguage] = useState('cpp');
   const [value, setValue] = useState(codeSnippets['cpp']);
   const [customInput, setCustomInput] = useState('');
-  const [isExecuted, setIsExecuted] = useState(false);
+  const [isExecuted, setIsExecuted] = useState(null);
   const [yourOutput, setYourOutput] = useState('');
   const [isSuccess, setIsSuccess] = useState(true);
   const [theme, setTheme] = useState('vs-dark');

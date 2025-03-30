@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import ProblemNav from '../ui/ProblemNav';
 import ProblemDescription from './ProblemDescription';
@@ -10,11 +10,43 @@ import CodeResults from './CodeResults';
 import ProblemSubmission from './ProblemSubmission';
 import { getProblemInfo } from '../servers/contestProblem';
 import Loader from '../ui/Loader';
+import ContestProblemNav from '../ui/ContestProblemNav';
+import { useSocket } from '../context/SocketContext';
 
 
 const ContestProblemDescriptionPage = () => {
   const { problemId,contestId } = useParams(); // Get problemId from URL params
+   const {socket,setSocket,isrunning}=useSocket();
+    console.log("socket",socket);
+    const navigate = useNavigate();
+
+    if(isrunning==null && socket==null){
+      navigate("../", { replace: true });
+    }
     
+
+    useEffect(() => {
+      if (!socket) return;
+
+      // Handle socket events
+      const handleOutput = (data) => {
+          console.log("Output received:", data);
+      };
+
+      socket.on('see_output', handleOutput);
+      
+      // Join problem-specific room if needed
+      socket.emit('join_problem', { contestId, problemId });
+
+      return () => {
+          socket.off('see_output', handleOutput);
+          // Leave problem room if needed
+          socket.emit('leave_problem', { contestId, problemId });
+      };
+  }, [socket, contestId, problemId]);
+
+    
+  
 
   // Fetch problem data using React Query
   const { data: problem, isLoading, isError, error } = useQuery({
@@ -27,7 +59,7 @@ const ContestProblemDescriptionPage = () => {
   const [language, setLanguage] = useState('cpp');
   const [value, setValue] = useState(codeSnippets['cpp']);
   const [customInput, setCustomInput] = useState('');
-  const [isExecuted, setIsExecuted] = useState(false);
+  const [isExecuted, setIsExecuted] = useState(null);
   const [yourOutput, setYourOutput] = useState('');
   const [isSuccess, setIsSuccess] = useState(true);
   const [theme, setTheme] = useState('vs-dark');
@@ -60,7 +92,7 @@ const ContestProblemDescriptionPage = () => {
   return (
     <div>
       <div className={styles.problemNav}>
-        <ProblemNav
+        <ContestProblemNav
           value={value}
           language={language}
           onSelectLanguage={onSelectLanguage}
@@ -77,7 +109,7 @@ const ContestProblemDescriptionPage = () => {
           yourOutput={yourOutput}
           setYourOutput={setYourOutput}
           setIsSuccess={setIsSuccess}
-          problemId={problemId}
+          submission={submission}
         />
       </div>
       <div className={styles.problemAll}>

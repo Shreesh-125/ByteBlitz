@@ -119,7 +119,7 @@ const Contests = () => {
       }
       return (
         <Link 
-          to={`/contests/${contest.contestId}`}
+          to={`/contests/${contest.contestId}/problems`}
           className={styles.enterBtn}
         >
           Enter Contest

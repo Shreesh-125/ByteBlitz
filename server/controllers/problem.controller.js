@@ -150,7 +150,9 @@ export const submitcode = async (req, res) => {
       hidden: false,
     };
     let isServerError = false;
+    let testcasenumber=0,totaltime=0,totalmemory=0;
     for (const tc of problem.sampleTestCase) {
+      testcasenumber++;
       const formattedInput = JSON.stringify(tc.input).replace(/\\n/g, "\n");
       const formattedOutput = JSON.stringify(tc.output).replace(/\\n/g, "\n");
 
@@ -186,6 +188,9 @@ export const submitcode = async (req, res) => {
         `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
       );
 
+      totaltime+=Number(response2.data.time);
+      totalmemory+=response2.data.memory
+
       // If status ID is not 3 (Accepted), return immediately
       if (response2.data.status.id !== 3) {
         if (response2.data.status.id === 13) {
@@ -207,6 +212,10 @@ export const submitcode = async (req, res) => {
           stderr: response2.data.stderr,
           compile_output: response2.data.compile_output,
           submissionId: user.submissions[user.submissions.length - 1]._id,
+          WrongOnTestCase:testcasenumber,
+          time:response2.data.time,
+          memory:response2.data.memory,
+          totalTestCase:problem.sampleTestCase.length
         });
       }
     }
@@ -224,8 +233,13 @@ export const submitcode = async (req, res) => {
     return res.status(200).json({
       message: "Accepted",
       success: true,
+      status:{id:3,description:"Accepted"},
       submissionId: user.submissions[user.submissions.length - 1]._id,
+      totalTestCase:testcasenumber,
+      time:totaltime,
+      memory:totalmemory
     });
+    
   } catch (error) {
     console.log(error);
     return res.status(500).json({

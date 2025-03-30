@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { submitCode } from "../servers/problem";
 import { useQuery } from "@tanstack/react-query";
+import { getVerdictMessage } from "../utils/ContestUtils";
 
 const languages = Object.entries(LANGUAGE_VERSION);
 
@@ -24,7 +25,8 @@ const ProblemNav = ({
   customInput,
   setYourOutput,
   setIsSuccess,
-  problemId
+  problemId,
+  setSubmission
 }) => {
 
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -36,6 +38,7 @@ const ProblemNav = ({
   });
 
   const handleRunCode = async() => {
+    setIsExecuted(false)
     try {
       const languagecode=languagetoIdMap[language];
     const response= await axios.post(`/api/v1/problem/customTestCase`,{ languagecode, value,customInput })
@@ -59,41 +62,14 @@ const ProblemNav = ({
         .then(({ data }) => {  
           console.log(data);  
           
-          
           if (data &&  data.status) {
             const verdict = data.status.id;
-            
-            switch (verdict) {
-              case 3:
-                setHasSubmitted("accepted");
-                break;
-              case 4:
-                setHasSubmitted("Wrong Answer");
-                break;
-              case 5:
-                setHasSubmitted("Time Limit Exceeded");
-                break;
-              case 6:
-                setHasSubmitted("Compilation Error");
-                break;
-              case 7:
-                setHasSubmitted("Runtime Error");
-                break;
-              case 13:
-                setHasSubmitted("internal server error");
-                break;
-              case 14:
-                setHasSubmitted("Execution Time Limit Exceeded");
-                break;
-              case 15:
-                setHasSubmitted("Memory Limit Exceeded (MLE)");
-                break;
-              default:
-                setHasSubmitted("Runtime Error");
-                break;
-            }
+             const resultMessage = getVerdictMessage(verdict);
+             setSubmission(data);
+             console.log(data);
+             
+              setHasSubmitted(resultMessage);
           } else {
-            
             throw new Error("Unexpected response format");
           }
           

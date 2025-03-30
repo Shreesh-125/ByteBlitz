@@ -46,7 +46,7 @@ export const initializeSocket = (server) => {
         });
         return;
       }
-
+      
       const currTime = new Date();
       const submissionData = {
         code: data.code,
@@ -64,22 +64,27 @@ export const initializeSocket = (server) => {
             },
           }
         );
-
+       
         const verdict = fresponse.data.status.id; // Problem status 3 if accepted
         let leaderboard = await Leaderboard.findOne({
           contestId: data.contestId,
         });
 
+     
         if (!leaderboard) {
           return socket.emit("submission_result", {
             message: "Leaderboard not found!",
           });
         }
-
+        // Ensure leaderboard has an array for accepted/rejected submissions
+        if (!leaderboard.acceptedSubmissions) leaderboard.acceptedSubmissions = [];
+        if (!leaderboard.rejectedSubmissions) leaderboard.rejectedSubmissions = [];
+        
         let userEntry = leaderboard.users.find((user) =>
           user.userId.equals(data.userId)
         );
-
+       
+        
         if (!userEntry) {
           // Add the user if not submitted before
           userEntry = {
@@ -89,10 +94,11 @@ export const initializeSocket = (server) => {
           };
           leaderboard.users.push(userEntry);
         }
-
+       
         let problemEntry = userEntry.problemSolved.find(
-          (problem) => problem.problemId === data.problemId
+          (problem) => problem.problemId === Number(data.problemId)
         );
+        
         if (!problemEntry) {
           problemEntry = {
             problemId: data.problemId,
@@ -101,24 +107,25 @@ export const initializeSocket = (server) => {
           };
           userEntry.problemSolved.push(problemEntry);
         }
-
+       
         const submissionRecord = {
           time: currTime,
           submissionId: fresponse.data.submissionId, // Assuming submissionId is returned
         };
-
+        
         const problemScoreEntry = leaderboard.problemScore.find(
-          (p) => p.problemId === data.problemId
+          (p) => p.problemId === Number(data.problemId)
         );
-
+        
         if (!problemScoreEntry) {
           return socket.emit("submission_result", {
             message: "Problem score not found!",
           });
         }
-
+       
         let problemScore = problemScoreEntry.problemScore;
-
+       
+        
         if (verdict === 3) {
           // Accepted
           problemEntry.accepted.push(submissionRecord);
@@ -133,8 +140,10 @@ export const initializeSocket = (server) => {
           problemEntry.rejected.push(submissionRecord);
           userEntry.score -= 50; // Hardcoded the wrong submission score
         }
-
+       
         await leaderboard.save();
+        
+  
         socket.emit("see_output", fresponse.data);
       } catch (error) {
         console.error("Error submitting code:", error);
@@ -164,7 +173,7 @@ export const initializeSocket = (server) => {
 
         socket.emit("leaderboard_update", leaderboardData);
       } catch (error) {
-        console.error("Error fetching leaderboard:", error);
+        // console.error("Error fetching leaderboard:", error);
         socket.emit("leaderboard_error", {
           message: "Failed to fetch leaderboard",
         });

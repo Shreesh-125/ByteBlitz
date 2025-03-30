@@ -6,6 +6,8 @@ import {
   getContestById,
   getContestProblem,
   getContestProblemById,
+  getContestStatus,
+  isRegisteredInContest,
   registerForContest,
 } from "../controllers/contest.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
@@ -26,7 +28,7 @@ export const contestRoutes = (io) => {
   router.route("/:contestId/problems/:problemId").get( getContestProblemById);
 
   router.route("/:contestId/problems").get(getContestProblem);
-
-
+  router.route("/checkregistered").post(isAuthenticated,isRegisteredInContest)
+  router.route("/getStatus/:contestId").get(isAuthenticated,getContestStatus);
   return router;
 };
