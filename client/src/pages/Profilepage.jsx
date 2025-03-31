@@ -14,13 +14,13 @@ const Profilepage = () => {
     queryFn: () => getProfile(user),
     enabled: !!user,
   });
-  console.log("sujal");
+
   return (
     <div style={{ marginTop: 40 }}>
       {user ? (
         <div className={styles.container}>
-          <Profilepageleftbar className={styles.left} />
-          <Profilepagesidebar className={styles.right} />
+          <Profilepageleftbar userData={userData} className={styles.left} />
+          <Profilepagesidebar userData={userData} className={styles.right} />
         </div>
       ) : (
         <div>login please</div>

@@ -14,13 +14,12 @@ import Loader from "../ui/Loader.jsx";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { ContestCard, PastContestCard } from "../ui/ContestsCard.jsx";
-import { addRegisteredAttribute } from "../utils/ContestUtils.js";
 
 const Contests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const contestsPerPage = 5;
 
-  const user = useSelector((state)=> state.auth.user);
+  const user = useSelector((state) => state.auth.user);
 
   const slider = useRef();
   const [tx, setTx] = useState(0);
@@ -48,7 +47,6 @@ const Contests = () => {
 
         // Only add registered status if user is logged in
         if (user?._id) {
-
           const addRegisteredStatus = (contests) =>
             contests.map((c) => ({
               ...c,
@@ -59,7 +57,6 @@ const Contests = () => {
             ended,
             upcoming: addRegisteredStatus(upcoming),
             running: addRegisteredStatus(running),
-
           });
         } else {
           setProcessedContests({
@@ -100,7 +97,6 @@ const Contests = () => {
                 }
               : c
           ),
-
         }));
         toast.success("Registered successfully!");
       }
@@ -144,8 +140,7 @@ const Contests = () => {
         );
       }
       return (
-
-        <Link 
+        <Link
           to={`/contests/${contest.contestId}/problems`}
           className={styles.enterBtn}
         >
