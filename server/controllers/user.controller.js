@@ -220,18 +220,27 @@ export const getProfileDetails = async (req, res) => {
       });
     }
     const submissions = user.submissions.map((submission) => ({
-      submissionId: submission.submissionId,
-      questionTitle: submission.questionId?.title || "Unknown",
-      status: submission.status,
+      problemId: submission.problemId,
+      rating: submission.rating || 0,
+      status: submission.status || "rejected",
       date: submission.date,
       language: submission.language,
     }));
+    const submissionCalender = user.submissions.reduce((acc, item) => {
+      const date = item.date.split(",")[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
     let modifieduser = {
       username: user.username,
       email: user.email,
       rating: user.rating,
       maxRating: user.maxRating,
+      contests: user.contests,
+      friends: user.friends,
+      friendsOf: user.friendsOf,
       submissions: submissions,
+      submissionCalender,
     };
     return res.status(200).json({
       success: true,
@@ -258,7 +267,7 @@ export const getUserSubmissions = async (req, res) => {
 
     const submissions = user.submissions.map((submission) => ({
       submissionId: submission.submissionId,
-      questionTitle: submission.questionId?.title || "Unknown",
+      questionId: submission.questionId?._id || "Unknown",
       status: submission.status,
       date: submission.date,
       language: submission.language,

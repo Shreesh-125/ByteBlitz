@@ -52,7 +52,7 @@ const Heatmap = ({ startDate, endDate, dataValues }) => {
         <div className={styles.grid}>
           {calendarGrid.map(({ dateString, isInOriginalRange }) => {
             let activityCount = isInOriginalRange
-              ? dataValues.find((item) => item.date === dateString)?.count || 0
+              ? dataValues?.find((item) => item.date === dateString)?.count || 0
               : 0;
             const color =
               new Date(dateString) > new Date()
@@ -69,7 +69,7 @@ const Heatmap = ({ startDate, endDate, dataValues }) => {
                     ? `${activityCount} Problems solved on ${dateString}`
                     : undefined
                 }
-                style={{ backgroundColor: color, transition: 0}}
+                style={{ backgroundColor: color, transition: 0 }}
               />
             );
           })}
