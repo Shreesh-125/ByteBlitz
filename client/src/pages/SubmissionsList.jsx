@@ -2,7 +2,7 @@ import React from "react";
 import styles from "../styles/SubmissionsList.module.css";
 import tickIcon from "../assets/tick.svg";
 import crossIcon from "../assets/cross.svg";
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 
 const dummySubmissions = [
     { id: 1, submissionLink: '/problems', status: "Accepted", time: "0.3s", memory: "400KB", language: "C++", icon: tickIcon },
@@ -15,6 +15,8 @@ const dummySubmissions = [
 ];
 
 const SubmissionList = () => {
+    const { problemId } = useOutletContext();
+    
     return (
         <div className={styles.problemSubmissions}>
             {/* Header */}

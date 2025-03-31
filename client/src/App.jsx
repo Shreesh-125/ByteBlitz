@@ -21,6 +21,8 @@ import { Toaster } from "react-hot-toast";
 import OauthLogin from "./pages/OuthLogin";
 import ContestProblemDescriptionPage from "./pages/ContestProblemDescriptionPage";
 import { SocketProvider } from "./context/SocketContext";
+import ProblemDescription from "./pages/ProblemDescription";
+import SubmissionList from "./pages/SubmissionsList";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -42,6 +44,7 @@ function App() {
           <Route path="/*" element={<Home />} />
           <Route path="/contests/:contestId/problems" element={<Contestproblempage />}>
               <Route path=":problemId" element={<ContestProblemDescriptionPage />} />
+              {/* <Route path=":provlemId/submissions" element={<ProblemAllSubmissionsPage />} /> */}
           </Route>
           {/* <Route
             path="/contests/:contestId/problems/:problemId"
@@ -57,11 +60,14 @@ function App() {
           <Route path="/blogs/:id" element={<Particularblog />} />
           <Route path="/contests" element={<Contests />} />
           <Route path="/problems" element={<Problems />} />
-          <Route path="/problems/:problemId" element={<Problempage />} />
-          <Route
-            path="/problems/20/submissions"
+          <Route path="/problems/:problemId" element={<Problempage />}>
+            <Route index element={<ProblemDescription />} />
+            <Route path="submissions" element={<SubmissionList/>} />
+          </Route> 
+          {/* <Route
+            path="/problems/:problemId/submissions"
             element={<ProblemAllSubmissionsPage />}
-          />
+          /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

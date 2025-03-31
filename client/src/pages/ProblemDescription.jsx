@@ -2,6 +2,7 @@ import React from 'react';
 import Latex from 'react-latex';
 import styles from '../styles/ProblemDescription.module.css';
 import { MdOutlineContentCopy } from 'react-icons/md';
+import { useOutletContext } from 'react-router-dom';
 
 // Function to replace ^ with e
 const formatExponent = (str) => {
@@ -9,8 +10,9 @@ const formatExponent = (str) => {
 };
 
 
-const ProblemDescription = ({ problem }) => {
-  const sampleInput = problem?.sampleTestCase?.input;
+const ProblemDescription = () => {
+  const { problem } = useOutletContext();
+    const sampleInput = problem?.sampleTestCase?.input;
   const sampleOutput = problem?.sampleTestCase?.output;
 
   const handleInputCopy = () => {

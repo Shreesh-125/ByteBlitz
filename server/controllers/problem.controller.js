@@ -148,6 +148,7 @@ export const submitcode = async (req, res) => {
       status: "Pending",
       language: language,
       hidden: false,
+      rating:problem.rating
     };
     let isServerError = false;
     let testcasenumber=0,totaltime=0,totalmemory=0;
@@ -202,6 +203,8 @@ export const submitcode = async (req, res) => {
           ...submission,
           status: "Rejected",
           error: StatusIdMap[response2.data.status.id],
+          time:response2.data.time,
+          memory:response2.data.memory
         };
         user.submissions = [...user.submissions, submission];
         await user.save();
@@ -226,7 +229,7 @@ export const submitcode = async (req, res) => {
         .json({ message: "Failed to submit code", success: false });
     }
 
-    submission = { ...submission, status: "Accepted", error: StatusIdMap[3] };
+    submission = { ...submission, status: "Accepted", error: StatusIdMap[3],time:totaltime,memory:totalmemory };
     user.submissions = [...user.submissions, submission];
     await user.save();
     // If all test cases pass
@@ -325,3 +328,23 @@ export const checkCustomTestCase = async (req,res)=>{
   }
 }
 
+export const getUsrProblemSubmissions= async(req,res)=>{
+  try {
+    const {userid,problemId}=req.params;
+
+    const user=await User.findById(userid);
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        message:"User not found"
+      })
+    }
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+}

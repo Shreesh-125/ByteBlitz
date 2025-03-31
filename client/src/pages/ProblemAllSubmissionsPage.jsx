@@ -7,9 +7,10 @@ import { codeSnippets } from '../utils/languagesConstants';
 import CodeResults from './CodeResults';
 import ProblemSubmission from './ProblemSubmission';
 import SubmissionsList from './SubmissionsList';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 const Problempage = () => {
+    const {problemId}= useParams();
     const [language, setLanguage] = useState('cpp')
     const [value, setValue] = useState(codeSnippets['C++'])
     const [sampleInput, setSampleInput] = useState(`3\n4\n1 2 -1 -2\n2\n-1 -1\n4\n-2 3 0 2`)
@@ -39,30 +40,11 @@ const Problempage = () => {
     }
     return (
         <div>
-            <div className={styles.problemNav}>
-                <ProblemNav 
-                prevLocation={location.pathname}
-                value={value} 
-                language={language} 
-                onSelectLanguage={onSelectLanguage} 
-                setIsExecuted={setIsExecuted} 
-                setTheme={setTheme} 
-                setIsSubmitting={setIsSubmitting} 
-                setHasSubmitted={setHasSubmitted} 
-                setSubmission={setSubmission}
-                isMobile={isMobile}
-                isEditor={isEditor}
-                setIsEditor={setIsEditor}
-                isSubmissionPage={true}
-                />
-            </div>
             <div className={styles.problemAll}>
                 <div className={`${styles.leftSection} ${styles.Scrollbar}`}>
                     <SubmissionsList/>
                 </div>
-                <div className={`${styles.rightSection} ${styles.Scrollbar}`}>
-                    <CodeEditor language={language} value={value} setValue={setValue} theme={theme} />
-                </div>
+               
             </div>
         </div>
     )

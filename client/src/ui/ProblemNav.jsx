@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/ProblemNav.module.css";
 import { LANGUAGE_VERSION, languagetoIdMap } from "../utils/languagesConstants";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import axios from "axios";
 import { submitCode } from "../servers/problem";
@@ -28,6 +28,7 @@ const ProblemNav = ({
   problemId,
   setSubmission
 }) => {
+
 
   const [shouldSubmit, setShouldSubmit] = useState(false);
   

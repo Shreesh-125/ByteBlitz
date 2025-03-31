@@ -145,7 +145,7 @@ const ContestProblemNav = ({
         <Link className={styles.linkStyle} to={`/contests/${contestId}/problems/${problemId}`}>
           <span onClick={handleStatement}>Statement</span>
         </Link>
-        <Link className={styles.linkStyle} to={`/contest/${problemId}/submissions`}>
+        <Link className={styles.linkStyle} to={`/contests/${contestId}/problems${problemId}/submissions`}>
           <span onClick={() => setIsEditor(false)}>Submissions</span>
         </Link>
         {isMobile && isSubmissionPage === false ? (

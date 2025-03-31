@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import ProblemNav from '../ui/ProblemNav';
 import ProblemDescription from './ProblemDescription';
@@ -98,11 +98,10 @@ const Problempage = () => {
               />
             </>
           ) : hasSubmitted === 'no' ? (
-            <ProblemDescription
-              problem={problem}
-              isSubmitting={isSubmitting}
-              hasSubmitted={hasSubmitted}
-            />
+            // <ProblemDescription
+            //   problem={problem}
+            // />
+            <Outlet context={{ problem,problemId }} />
           ) : (
             <ProblemSubmission
               hasSubmitted={hasSubmitted}

@@ -6,6 +6,7 @@ import {
   updateProblem,
   submitcode,
   checkCustomTestCase,
+  getUsrProblemSubmissions,
 } from "../controllers/problem.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 
@@ -20,5 +21,6 @@ router.route("/update/:id").put(isAuthenticated, updateProblem);
 // router.route("/:id/submit").post(submitProblem);
 
 router.route("/:problemid/submitcode").post(isAuthenticated, submitcode);
+router.route("/:problemId/submissions/:userId").get(isAuthenticated,getUsrProblemSubmissions)
 
 export default router;

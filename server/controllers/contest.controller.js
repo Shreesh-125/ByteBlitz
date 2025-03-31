@@ -135,6 +135,7 @@ export const contestProblemSubmitCode= async(req,res)=>{
       status: "Pending",
       language: language,
       hidden:true,
+      rating:problem.rating
     };
     let isServerError = false;
     let testcasenumber=0,totaltime=0,totalmemory=0;
@@ -189,6 +190,8 @@ export const contestProblemSubmitCode= async(req,res)=>{
           ...submission,
           status: "Rejected",
           error: StatusIdMap[response2.data.status.id],
+          time:response2.data.time,
+          memory:response2.data.memory
         };
         user.submissions = [...user.submissions, submission];
         await user.save();
@@ -213,7 +216,7 @@ export const contestProblemSubmitCode= async(req,res)=>{
         .json({ message: "Failed to submit code", success: false });
     }
 
-    submission = { ...submission, status: "Accepted", error: StatusIdMap[3] };
+    submission = { ...submission, status: "Accepted", error: StatusIdMap[3],time:totaltime,memory:totalmemory };
     user.submissions = [...user.submissions, submission];
     await user.save();
     // If all test cases pass
