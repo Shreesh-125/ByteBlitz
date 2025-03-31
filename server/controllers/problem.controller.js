@@ -3,6 +3,7 @@ import axios from "axios";
 import { User } from "../models/user.model.js";
 import { languageMap, StatusIdMap } from "../utils/maps.js";
 import { response } from "express";
+import mongoose from "mongoose";
 
 export const getPaginatedProblems = async (req, res) => {
   try {
@@ -328,23 +329,54 @@ export const checkCustomTestCase = async (req,res)=>{
   }
 }
 
-export const getUsrProblemSubmissions= async(req,res)=>{
+export const getUserProblemSubmissions = async (req, res) => {
   try {
-    const {userid,problemId}=req.params;
-
-    const user=await User.findById(userid);
-    if(!user){
-      return res.status(404).json({
-        success:false,
-        message:"User not found"
-      })
+    const { userId, problemId } = req.params;
+    
+    // Validate input
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID format"
+      });
     }
 
+    // Convert problemId to number if needed (or keep as string if that's your schema)
+    const numericProblemId = Number(problemId);
+    if (isNaN(numericProblemId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Problem ID must be a number"
+      });
+    }
+
+    // Find user and filter submissions
+    const user = await User.findById(userId).select('submissions');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Filter submissions for the specific problem and sort by date (newest first)
+    const problemSubmissions = user.submissions
+      .filter(submission => submission.problemId === numericProblemId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10); // Take only the first 10 submissions
+
+    return res.status(200).json({
+      success: true,
+      submissions: problemSubmissions,
+      count: problemSubmissions.length
+    });
+
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching user submissions:", error);
     return res.status(500).json({
-      message: "Internal Server Error",
       success: false,
+      message: "Internal Server Error",
+      error: error.message
     });
   }
-}
+};

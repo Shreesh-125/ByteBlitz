@@ -68,6 +68,12 @@ const userSchema = new mongoose.Schema({
         enum: ["c++", "java", "python"],
         required: true,
       },
+      time:{
+        type:Number
+      },
+      memory:{
+        type:Number
+      },
       hidden: {
         type: Boolean,
         required: true,

@@ -15,3 +15,8 @@ export const submitCode= async({languageId,value,problemId})=>{
     const response= await axios.post(`/api/v1/problem/${problemId}/submitcode`,{languageId,code:value});
     return response.data;
 }
+
+export const getUserProblemSubmissions = async({problemId,userId})=>{
+    const response = await axios.get(`/api/v1/problem/${problemId}/submissions/${userId}`);
+    return response.data;
+}

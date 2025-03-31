@@ -43,13 +43,13 @@ function App() {
         <Routes>
           <Route path="/*" element={<Home />} />
           <Route path="/contests/:contestId/problems" element={<Contestproblempage />}>
-              <Route path=":problemId" element={<ContestProblemDescriptionPage />} />
+              <Route path=":problemId" element={<ContestProblemDescriptionPage />}>
+                <Route index element={<ProblemDescription />} />
+                <Route path="submissions" element={<SubmissionList/>} />
+              </Route> 
               {/* <Route path=":provlemId/submissions" element={<ProblemAllSubmissionsPage />} /> */}
           </Route>
-          {/* <Route
-            path="/contests/:contestId/problems/:problemId"
-            element={<ContestProblemDescriptionPage />}
-          /> */}
+        
           <Route path="/ranking" element={<Allsubmissionpage />} />
           <Route path="/blogs" element={<Allblogs />} />
           <Route path="/profile" element={<Profilepage />} />
@@ -64,10 +64,6 @@ function App() {
             <Route index element={<ProblemDescription />} />
             <Route path="submissions" element={<SubmissionList/>} />
           </Route> 
-          {/* <Route
-            path="/problems/:problemId/submissions"
-            element={<ProblemAllSubmissionsPage />}
-          /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

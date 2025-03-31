@@ -93,14 +93,20 @@ const ProblemNav = ({
     setShouldSubmit(true); // This will trigger the refetch
   };
 
+  const handleStatement=()=>{
+    setIsEditor(false);
+    setIsExecuted(null);
+    setHasSubmitted('no');
+  }
+
   return (
     <div className={styles.nav}>
       <div className={styles.leftNav}>
         <Link className={styles.linkStyle} to={`/problems/${problemId}`}>
-          <span onClick={() => setIsEditor(false)}>Statement</span>
+          <span onClick={handleStatement}>Statement</span>
         </Link>
         <Link className={styles.linkStyle} to={`/problems/${problemId}/submissions`}>
-          <span onClick={() => setIsEditor(false)}>Submissions</span>
+          <span onClick={handleStatement}>Submissions</span>
         </Link>
         {isMobile && isSubmissionPage === false ? (
           <Link className={styles.linkStyle} to={`/problems/${problemId}`}>
