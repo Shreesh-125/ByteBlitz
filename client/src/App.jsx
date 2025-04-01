@@ -52,15 +52,28 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/*" element={<Home />} />
-              <Route
-                path="/contests/:contestId/problems"
-                element={<Contestproblempage />}
-              >
-                <Route
-                  path=":problemId"
-                  element={<ContestProblemDescriptionPage />}
-                />
+                {/*  Contest Section  */}
+              <Route path="/contests/:contestId" element={<ContestLayout />}>
+                {/* Default redirect to problems */}
+                <Route index element={<Navigate to="problems" replace />} />
+
+                {/* Problems section */}
+                <Route path="problems">
+                  <Route index element={<Contestproblempage />} />
+                  <Route
+                    path=":problemId"
+                    element={<ContestProblemDescriptionPage />}
+                  >
+                    <Route index element={<ProblemDescription />} />
+                    <Route path="submissions" element={<SubmissionList />} />
+                  </Route>
+                </Route>
+
+                {/* Standings section */}
+                <Route path="standings" element={<Conteststandingpage />} />
               </Route>
+
+
               <Route path="/ranking" element={<Allsubmissionpage />} />
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile" element={<Profilepage />} />
@@ -71,11 +84,12 @@ function App() {
               <Route path="/blogs/:id" element={<Particularblog />} />
               <Route path="/contests" element={<Contests />} />
               <Route path="/problems" element={<Problems />} />
-              <Route path="/problems/:problemId" element={<Problempage />} />
-              <Route
-                path="/problems/20/submissions"
-                element={<ProblemAllSubmissionsPage />}
-              />
+
+              <Route path="/problems/:problemId" element={<Problempage />}>
+                <Route index element={<ProblemDescription />} />
+                <Route path="submissions" element={<SubmissionList />} />
+              </Route>
+
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />

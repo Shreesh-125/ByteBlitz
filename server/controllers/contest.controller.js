@@ -18,7 +18,7 @@ export const getAllcontests = async (req, res) => {
       .select("-problems -submissions") // Exclude these fields
       .skip(skip)
       .limit(limit);
-    console.log(contests);
+
     
     const totalContests = await Contests.countDocuments();
     res.json({
