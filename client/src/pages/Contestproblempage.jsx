@@ -17,29 +17,11 @@ const Contestproblempage = () => {
     const user = useSelector((state) => state.auth.user);
     const ContestName = `BB Challenge ${contestId}`;
     const [toendtime, setToendtime] = useState(""); 
-    const { socket, setSocket,setIsrunning,setIsRegister } = useSocket();
+    const {setIsrunning } = useSocket();
 
-    const { data: contestStatus } = useQuery({
-        queryKey: ['contest', contestId],
-        queryFn: () => getContestStatus(contestId),
-        enabled: !!contestId,
-    });
-
-    if (contestStatus?.status === "upcoming") {
-        navigate(-1);
-    }
 
     const [contestRunning, setContestRunning] = useState(false);
 
-    useEffect(() => {
-        if (contestStatus?.status === "running") {
-            setContestRunning(true);
-            setIsrunning(true);   // isrunning of context
-        }
-        else{
-            setIsrunning(false);
-        }
-    }, [contestStatus]);
 
     useEffect(() => {
         if (contestRunning && !user) {
@@ -53,47 +35,7 @@ const Contestproblempage = () => {
         enabled: !!contestId,
     });
 
-    const { data: isregisteredData } = useQuery({
-        queryKey: ['contestregister', { contestId, userId: user?._id }],
-        queryFn: () => checkRegisteredUser({ contestId, userId: user?._id }),
-        enabled: !!contestId && !!user?._id && data?.contestRunning,
-    });
-    useEffect(()=>{
-        setIsRegister(isregisteredData?.isregister);
-    },[isregisteredData])
     
-    
-    
-    
-    
-    useEffect(() => {
-        if (contestRunning && !socket) {
-            const newSocket = io("http://localhost:8000", {
-                transports: ["websocket", "polling"],
-                withCredentials: true,
-                autoConnect: true,
-                reconnection: true,
-                reconnectionAttempts: Infinity,
-                reconnectionDelay: 1000,
-            });
-
-            newSocket.on('connect', () => {
-                console.log('Socket connected');
-                newSocket.emit('join_contest', { contestId });
-            });
-
-            newSocket.on('disconnect', () => {
-                console.log('Socket disconnected');
-            });
-
-            setSocket(newSocket);
-        }
-
-        return () => {
-            // Cleanup will be handled at the app level
-        };
-    }, [contestRunning, contestId, setSocket]);
-
     useEffect(() => {
         if (data?.contestRunning && data?.endTime) {
             const endTimeUTC = new Date(data.endTime).getTime();

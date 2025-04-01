@@ -1,9 +1,10 @@
 import React from "react";
 import styles from "../styles/Problempagenavbar.module.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 const Problempagenavbar = () => {
     const location = useLocation(); // Detects current URL
+    const {contestId}=useParams();
 
     return (
         <div
@@ -12,10 +13,10 @@ const Problempagenavbar = () => {
             <div 
                 className={`${styles.navbar} ${location.pathname === "/standings" ? styles.standings : ""}`}
             >
-                <Link to="/contestproblems">
+                <Link to={`/contests/${contestId}/problems`}>
                     <button className={styles.problembtn}>Problems</button>
                 </Link>
-                <Link to="/standings">
+                <Link to={`/contests/${contestId}/standings`}>
                     <button className={styles.standingbtn}>Standings</button>
                 </Link>
                 <div className={styles.slider}></div>

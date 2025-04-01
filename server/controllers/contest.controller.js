@@ -440,3 +440,37 @@ export const getContestStatus =async (req,res)=>{
     res.status(500).json({ error: error.message });
   }
 }
+
+export const getLeaderBoard = async(req,res)=>{
+  try {
+    const {contestId}=req.params;
+    const leaderboard = await Leaderboard.findOne({ contestId })
+      .populate({
+          path: 'users.userId',
+          select: 'username', // Include any other user fields you need
+          model: 'User'
+      });
+
+    if (!leaderboard) {
+      return res.status(404).json({
+        message:"Leaderboard Not Found",
+        success:false
+      })
+    }
+
+    const leaderboardData = leaderboard.users.map((user) => ({
+      userId: user.userId._id,
+      username: user.userId.username,
+      problemSolved: user.problemSolved,
+      score: user.score,
+    }));
+
+    return res.status(200).json({
+      leaderboardData,
+      NumberOfProblems:leaderboard.problemScore.length,
+      success:true
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}

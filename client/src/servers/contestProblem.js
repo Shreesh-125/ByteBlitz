@@ -24,3 +24,8 @@ export const getContestStatus =async(contestId)=>{
     const response= await axios.get(`/api/v1/contest/getStatus/${contestId}`);
     return response.data;
 }
+
+export const fetchLeaderboard=async(contestId)=>{
+    const response= await axios.get(`/api/v1/contest/${contestId}/leaderboard`);
+    return response.data;
+}

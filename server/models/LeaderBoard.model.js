@@ -31,7 +31,7 @@ const userContestInfoSchema = new mongoose.Schema({
   score: {
     type: Number,
     default: 0,
-  },
+  },  
 });
 
 

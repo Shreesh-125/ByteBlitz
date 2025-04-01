@@ -159,7 +159,13 @@ export const initializeSocket = (server) => {
       }
 
       try {
-        const leaderboard = await Leaderboard.findOne({ contestId });
+        const leaderboard = await Leaderboard.findOne({ contestId })
+        .populate({
+            path: 'users.userId',
+            select: 'username', // Include any other user fields you need
+            model: 'User'
+        });
+
         if (!leaderboard) {
           return socket.emit("leaderboard_error", {
             message: "Leaderboard not found!",
@@ -167,11 +173,13 @@ export const initializeSocket = (server) => {
         }
 
         const leaderboardData = leaderboard.users.map((user) => ({
-          userId: user.userId,
+          userId: user.userId._id,
+          username: user.userId.username,
+          problemSolved: user.problemSolved,
           score: user.score,
         }));
 
-        socket.emit("leaderboard_update", leaderboardData);
+        socket.emit("leaderboard_update", {leaderboardData,NumberOfProblems:leaderboard.problemScore.length});
       } catch (error) {
         // console.error("Error fetching leaderboard:", error);
         socket.emit("leaderboard_error", {

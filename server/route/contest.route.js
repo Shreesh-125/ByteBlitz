@@ -7,6 +7,7 @@ import {
   getContestProblem,
   getContestProblemById,
   getContestStatus,
+  getLeaderBoard,
   isRegisteredInContest,
   registerForContest,
 } from "../controllers/contest.controller.js";
@@ -30,5 +31,6 @@ export const contestRoutes = (io) => {
   router.route("/:contestId/problems").get(getContestProblem);
   router.route("/checkregistered").post(isAuthenticated,isRegisteredInContest)
   router.route("/getStatus/:contestId").get(isAuthenticated,getContestStatus);
+  router.route("/:contestId/leaderboard").get(isAuthenticated,getLeaderBoard);
   return router;
 };

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "../styles/Standings.module.css";
-import ContestStandingsPagination from "../styles/Conteststandingspagination.module.css"; // Pagination Component
 import Conteststandingspagination from "./Conteststandingspagination";
 
 const data = [
@@ -14,7 +13,10 @@ const data = [
     { rank: 8, username: "Shreesh_125_Alt", A: { attempts: 0 }, B: { attempts: 1, time: 200 }, C: { attempts: -2 }, D: { attempts: -4 }, E: { attempts: 0 }, F: { attempts: 2, time: 160 }, total: 385 },
 ];
 
-const Standings = () => {
+const Standings = ({leaderboardData,NumberOfProblems}) => {
+    // console.log(leaderboardData);
+    // console.log(NumberOfProblems);
+    
     const [currentPage, setCurrentPage] = useState(1);
     const problemsPerPage = 15;
     const totalPages = Math.ceil(data.length / problemsPerPage);
@@ -30,6 +32,7 @@ const Standings = () => {
                 <div className={styles["header-row"]}>
                     <p className={styles.rankH}>Rank</p>
                     <p className={styles.usernameH}>Username</p>
+                    
                     <p className={styles["problemX"]}>1</p>
                     <p className={styles["problemX"]}>2</p>
                     <p className={styles["problemX"]}>3</p>
