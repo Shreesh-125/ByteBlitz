@@ -88,6 +88,7 @@ const Contests = () => {
                 }
               : c
           ),
+
           running: prev.running.map((c) =>
             c.contestId === data.contestId
               ? {

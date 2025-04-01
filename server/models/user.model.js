@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
-    unique: true,
+    default: "",
   },
   email: {
     type: String,
@@ -13,13 +12,17 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   submissions: [
     {
       problemId: {
         type: Number,
         required: true,
+      },
+      questionTitle: {
+        type: String,
+        required: true,
+        default: "Problem Title",
       },
       rating: {
         type: Number,
@@ -143,7 +146,6 @@ const userSchema = new mongoose.Schema({
   },
   country: {
     type: String,
-    required: true,
   },
   profilePhoto: {
     type: String,
