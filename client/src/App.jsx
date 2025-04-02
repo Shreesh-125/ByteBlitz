@@ -19,6 +19,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import Friendspage from "./pages/FriendsPage";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -40,7 +41,7 @@ function App() {
           <Route path="/contests/problems" element={<Contestproblempage />} />
           <Route path="/ranking" element={<Allsubmissionpage />} />
           <Route path="/blogs" element={<Allblogs />} />
-          <Route path="/profile" element={<Profilepage />} />
+          <Route path="/profile/:username" element={<Profilepage />} />
           <Route path="/My_Friends" element={<Profilepage />} />
           <Route path="/settings" element={<Profilepage />} />
           <Route path="/standings" element={<Conteststandingpage />} />
@@ -49,6 +50,7 @@ function App() {
           <Route path="/contests" element={<Contests />} />
           <Route path="/problems" element={<Problems />} />
           <Route path="/problems/20" element={<Problempage />} />
+          <Route path="/:/friends" element={<Friendspage />} />
           <Route
             path="/problems/20/submissions"
             element={<ProblemAllSubmissionsPage />}

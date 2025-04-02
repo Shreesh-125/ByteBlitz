@@ -337,7 +337,7 @@ export const getUserContests = async (req, res) => {
   }
 };
 
-export const addfriend = async (req, res) => {
+export const toggleFriend = async (req, res) => {
   try {
     const { userid, friendusername } = req.params;
 
@@ -359,16 +359,21 @@ export const addfriend = async (req, res) => {
       });
     }
 
-    user.friends = [...user.friends, friend._id];
+    if(user.friends.includes(friend._id)){
+      user.friends = user.friends.filter(friendId=> friendId.toString() !== friend._id.toString())
+      friend.friendsOf = friend.friendsOf - 1;
+    } else{
+      user.friends = [...user.friends, friend._id];
+      friend.friendsOf = friend.friendsOf + 1;
+    }
 
-    friend.friendsOf = friend.friendsOf + 1;
 
     await friend.save();
 
     await user.save();
 
     return res.status(200).json({
-      message: "Friend Added Successfully",
+      message: "Friend updated Successfully",
       success: true,
     });
   } catch (error) {

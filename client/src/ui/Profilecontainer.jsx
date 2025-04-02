@@ -58,7 +58,7 @@ const Profilecontainer = () => {
 
                     <p className = {styles.country}>Country: {userinfo.country}</p>
                     <p className = {styles.nfriends}>Friends of: {userinfo.nfriends}</p>
-                    <Link to="/My_Friends" className = {styles.links}>
+                    <Link to="/manu_codeup/friends" className = {styles.links}>
                         <p>My Friends</p>
                     </Link>
                     <Link to="/profile" className = {styles.links}>
