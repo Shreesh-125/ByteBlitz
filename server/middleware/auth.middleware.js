@@ -4,8 +4,9 @@ import jwt from "jsonwebtoken";
 
 const isAuthenticated = async (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];  
-  
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    console.log(token);
+
     if (!token) {
       return res.status(401).json({
         message: "User is not authenticated",
@@ -16,6 +17,7 @@ const isAuthenticated = async (req, res, next) => {
     let decode;
     try {
       decode = jwt.verify(token, process.env.SECRET_KEY);
+      console.log(decode);
     } catch (error) {
       return res.status(401).json({
         message: "Invalid or expired token",
@@ -59,7 +61,6 @@ const isAuthenticated = async (req, res, next) => {
 
     next();
   } catch (error) {
-    
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,

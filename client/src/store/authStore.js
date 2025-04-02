@@ -1,16 +1,16 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
 // Retrieve User & Token from LocalStorage
-const storedToken = localStorage.getItem("token");
-const storedUser = localStorage.getItem("user");
-
+const storedToken = localStorage.getItem("token") || null;
+const storedUser = localStorage.getItem("user") || null;
 // Decode JWT & Check Expiry
 const isTokenValid = (token) => {
   if (!token) return false;
   try {
-    const decoded = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
+    const decoded = JSON.parse(atob(token?.split(".")[1])); // Decode JWT payload
     return decoded.exp * 1000 > Date.now(); // Check if token is expired
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
@@ -44,12 +44,12 @@ const authSlice = createSlice({
 // Export Actions
 export const { loginSuccess, logout } = authSlice.actions;
 
-// Create Store
-export const store = configureStore({
+
+export const authStore = configureStore({
   reducer: {
     auth: authSlice.reducer,
   },
 });
 
 // Custom Hook for Dispatch
-export const useAppDispatch = () => store.dispatch;
+export const useAppDispatch = () => authStore.dispatch;

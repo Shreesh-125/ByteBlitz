@@ -7,9 +7,10 @@ import { useDispatch } from "react-redux";
 import { login } from "../servers/signInAndLogin.js";
 import { useMutation } from "@tanstack/react-query";
 import { loginSuccess } from "../store/authStore.js";
+import GoolgeLogin from "../features/googleLogin/googleLogin.jsx";
 import toast from "react-hot-toast";
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -47,13 +48,6 @@ const Login = ({ setIsAuthenticated }) => {
     setError("");
     mutation.mutate({ username, password, userType });
   };
-
-  const handleGoogleLogin = () => {
-    setIsAuthenticated(true);
-    console.log("Google login successful");
-    navigate(from, { replace: true });
-  };
-
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginFormContainer}>
@@ -82,10 +76,10 @@ const Login = ({ setIsAuthenticated }) => {
             </button>
           </div>
 
-          <button className={styles.googleLoginBtn} onClick={handleGoogleLogin}>
+          <GoolgeLogin className={styles.googleLoginBtn}>
             <img src={googleIcon} alt="Google" />
             <span>Google</span>
-          </button>
+          </GoolgeLogin>
 
           <div className={styles.divider}>
             <hr />

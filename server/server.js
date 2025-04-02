@@ -5,17 +5,14 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoute from "./route/user.route.js";
 import problemRoute from "./route/problem.route.js";
-import { contestRoutes } from "./route/contest.route.js"; // Import contestRoutes
+import { contestRoutes } from "./route/contest.route.js";
 import adminRoute from "./route/admin.route.js";
 import blogRoute from "./route/blog.route.js";
 import oauthRoute from "./route/oauthRoute.js";
 import http from "http";
-import passport from "passport";
 import { initializeSocket } from "./services/socketService.js";
 import { rescheduleAllContests } from "./services/contestScheduler.js";
-import { User } from "./models/user.model.js";
 import session from "express-session";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 dotenv.config({});
 const app = express();
@@ -32,28 +29,6 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      let user = await User.findOne({ googleId: profile.id });
-      if (!user) {
-        return done(null, {
-          googleId: profile.id,
-          email: profile.emails[0].value,
-          name: profile.displayName,
-        });
-      }
-      return done(null, user);
-    }
-  )
-);
 
 // Middleware
 app.use(express.json());

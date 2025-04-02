@@ -1,284 +1,268 @@
-import React, { useEffect, useState } from 'react'
-import styles from '../styles/Contests.module.css'
-import Trophy from '../assets/trophy.png'
-import { CiClock2 } from "react-icons/ci";
-import user from '../assets/user.png'
-import contestImage from '../assets/contestImage.jpg';
-import { Link } from 'react-router-dom';
-import Pagination from '../ui/Pagination'
-import { formatDateTime } from '../utils/DateFormat';
-const data = [
-  {
-    contestId: 5,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 4,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 3,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 2,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 6,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 7,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 8,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 9,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  }, {
-    contestId: 10,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 11,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 12,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 13,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  }, {
-    contestId: 14,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-  {
-    contestId: 15,
-    registeredUsers: [
-      "zaxas",
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "upcoming"
-  },
-  {
-    contestId: 16,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "upcoming"
-  },
-  {
-    contestId: 17,
-    registeredUsers: [
-      "shreesh_125"
-    ],
-    startTime: new Date("2025-01-01T00:00:00Z"),
-    status: "ended"
-  },
-] //data we will fetch from backend contains both upcoming and previous contests
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import styles from "../styles/Contests.module.css";
+import { Link } from "react-router-dom";
+import Pagination from "../ui/Pagination";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getAllContestWithPagination,
+  registerUser,
+} from "../servers/getContest.js";
+import next_icon from "../assets/next-icon.png";
+import back_icon from "../assets/back-icon.png";
+import Loader from "../ui/Loader.jsx";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { ContestCard, PastContestCard } from "../ui/ContestsCard.jsx";
 
 const Contests = () => {
-  const [myContests, setMyContests] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
-  const [contests, setContests] = useState(data); //here contests are all the previous contests
-  const [upcomingContests, setUpcomingContests] = useState([]); //upcoming contests
-  const [pageContests, setPageContests] = useState([])
   const contestsPerPage = 5;
-  const [totalPages, setTotalPages] = useState(Math.ceil(contests.length / contestsPerPage));
 
+  const user = useSelector((state) => state.auth.user);
 
+  const slider = useRef();
+  const [tx, setTx] = useState(0);
+
+  // First fetch all contests without user dependency
+  const { data: contestData, isLoading } = useQuery({
+    queryKey: ["contest"],
+    queryFn: () => getAllContestWithPagination(currentPage, 5),
+  });
+
+  // State for contests with registration status
+  const [processedContests, setProcessedContests] = useState({
+    ended: [],
+    upcoming: [],
+    running: [],
+  });
+
+  // Update contests with registration status when user or contestData changes
   useEffect(() => {
-    setContests(data.filter(contest => contest.status === 'ended'))
-    setUpcomingContests(data.filter(contest => contest.status !== 'ended'))
-  }, [data])
+    if (contestData) {
+      const processContests = () => {
+        const ended = contestData.filter((c) => c.status === "ended");
+        const upcoming = contestData.filter((c) => c.status === "upcoming");
+        const running = contestData.filter((c) => c.status === "running");
 
-  useEffect(() => {
-    setTotalPages(() => {
-      const newTotalPages = Math.ceil(contests.length / contestsPerPage);
+        // Only add registered status if user is logged in
+        if (user?._id) {
+          const addRegisteredStatus = (contests) =>
+            contests.map((c) => ({
+              ...c,
+              registered: c.registeredUsers?.includes(user._id) || false,
+            }));
 
-      if (currentPage > newTotalPages) {
-        setCurrentPage(newTotalPages);
+          setProcessedContests({
+            ended,
+            upcoming: addRegisteredStatus(upcoming),
+            running: addRegisteredStatus(running),
+          });
+        } else {
+          setProcessedContests({
+            ended,
+            upcoming,
+            running,
+          });
+        }
+      };
+
+      processContests();
+    }
+  }, [contestData, user?._id]);
+
+  //register User + update Registration State
+  const { mutate: registerMutation, isLoading: isRegistering } = useMutation({
+    mutationFn: ({ contestId, userId }) => registerUser({ contestId, userId }),
+    onSuccess: (data) => {
+      if (data.status === 200) {
+        // Update the specific contest's registered status
+        setProcessedContests((prev) => ({
+          ...prev,
+          upcoming: prev.upcoming.map((c) =>
+            c.contestId === data.contestId
+              ? {
+                  ...c,
+                  registered: true,
+                  registeredUsers: [...c.registeredUsers, user._id],
+                }
+              : c
+          ),
+
+          running: prev.running.map((c) =>
+            c.contestId === data.contestId
+              ? {
+                  ...c,
+                  registered: true,
+                  registeredUsers: [...c.registeredUsers, user._id],
+                }
+              : c
+          ),
+        }));
+        toast.success("Registered successfully!");
       }
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Registration failed");
+    },
+  });
 
-      return newTotalPages;
-    });
-  }, [contests]); // Runs when `contests` change
+  const handleRegister = (contestId) => {
+    if (!user?._id) {
+      toast.error("Please login to register");
+      return;
+    }
+    registerMutation({ contestId, userId: user._id });
+  };
 
-  useEffect(() => {
-    const indexOfLastContest = currentPage * contestsPerPage;
-    const indexOfFirstContest = indexOfLastContest - contestsPerPage;
-    setPageContests(contests.slice(indexOfFirstContest, indexOfLastContest));
-  }, [currentPage, contests]); // Runs when `currentPage` changes  
+  const renderContestAction = (contest) => {
+    //for running contest
+    if (contest.status === "running") {
+      if (!user) {
+        return (
+          <button
+            className={styles.enterBtn}
+            onClick={() => toast.error("Please login to enter the contest")}
+          >
+            Enter Contest
+          </button>
+        );
+      }
+      if (!contest.registered) {
+        return (
+          <button
+            className={styles.enterBtn}
+            onClick={() =>
+              toast.error("You need to register first to enter this contest")
+            }
+          >
+            Enter Contest
+          </button>
+        );
+      }
+      return (
+        <Link
+          to={`/contests/${contest.contestId}/problems`}
+          className={styles.enterBtn}
+        >
+          Enter Contest
+        </Link>
+      );
+    }
 
+    // For upcoming contests
+    if (!user) {
+      return (
+        <button
+          className={styles.registerBtn}
+          onClick={() => toast.error("Please login to register")}
+        >
+          Register Now
+        </button>
+      );
+    }
+
+    return (
+      <button
+        className={`${styles.registerBtn} ${
+          contest.registered ? styles.registeredBtn : ""
+        }`}
+        onClick={() => handleRegister(contest.contestId)}
+        disabled={contest.registered || isRegistering}
+      >
+        {contest.registered ? "Registered" : "Register Now"}
+        {isRegistering && <span className={styles.loadingSpinner}></span>}
+      </button>
+    );
+  };
+
+  // Pagination for ended contests
+  const paginatedEndedContests = useMemo(() => {
+    const start = (currentPage - 1) * contestsPerPage;
+    const end = start + contestsPerPage;
+    return processedContests.ended.slice(start, end);
+  }, [currentPage, processedContests.ended]);
+
+  // Slider functions
+  const slideForward = () => {
+    if (tx > -50) setTx(tx - 33.33);
+  };
+
+  const slideBackward = () => {
+    if (tx < 0) setTx(tx + 33.33);
+  };
 
   return (
     <div className={styles.contestsContainer}>
-      <div className={styles.upcomingContestsContainer}>
-        <div className={styles.contestsHeading}>
-          Upcoming Contests
+      {/* Running Contests */}
+      {processedContests.running.length > 0 && (
+        <div className={styles.runningContestsContainer}>
+          <div className={styles.contestsHeading}>Live Contests</div>
+          <div className={styles.slider}>
+            <ul className={styles.upcomingContests} ref={slider}>
+              {processedContests.running.map((contest) => (
+                <ContestCard
+                  key={contest.contestId}
+                  contest={contest}
+                  renderAction={renderContestAction}
+                />
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className={styles.upcomingContests}>
-          {
-            upcomingContests.map((upcomingContest, index) => {
-              
-              if (!upcomingContest.startTime) return null; // Prevent errors if startTime is missing
-              
-              const formattedTime = formatDateTime(upcomingContest.startTime);
-              return (
-                <div className={styles.upcomingContest}>
-                  <div>
-                    <img src={contestImage} alt="contest image" className={styles.upcomingContestImage} />
-                  </div>
-                  <div className={styles.upcomingContestInformation}>
-                    <div className={styles.info1}>
-                      <p>BB Challenge #{upcomingContest.contestId}</p>
-                      <p>
-                        <span>
-                          {formattedTime.formattedDate}
-                        </span>
-                        <span>
-                          {formattedTime.formattedTime}
-                        </span>
-                      </p>
-                    </div>
-                    <div className={styles.info2}>
-                      <div className={styles.registeredUsers}>
-                        <p>{upcomingContest.registeredUsers.length}</p>
-                        <img src={user} alt="user image" className={styles.icon} />
-                      </div>
-                      <button className={styles.registerBtn}>
-                        Register Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-            )
-          }
+      )}
+
+      {/* Upcoming Contests */}
+      <div className={styles.upcomingContestsContainer}>
+        <div className={styles.contestsHeading}>Upcoming Contests</div>
+        <img
+          src={next_icon}
+          alt=""
+          className={styles["next-btn"]}
+          onClick={slideForward}
+        />
+        <img
+          src={back_icon}
+          alt=""
+          className={styles["back-btn"]}
+          onClick={slideBackward}
+        />
+        <div className={styles.slider}>
+          <ul className={styles.upcomingContests}>
+            {processedContests.upcoming.map((contest) => (
+              <ContestCard
+                key={contest.contestId}
+                contest={contest}
+                renderAction={renderContestAction}
+              />
+            ))}
+          </ul>
         </div>
       </div>
+
+      {/* Past Contests */}
       <div className={styles.pastContestsContainer}>
         <div className={styles.previousContests}>
-            <span className={styles.contestsHeading}>Previous Contests</span>
-          <div className={styles.contests}>
-            <div className={styles.contestsListHeading}>
-              <span>Contest</span>
-              <span>Name</span>
-              <span>Time</span>
-              <span>Standings</span>
-              <span>Participants</span>
-            </div>
-          </div>
-          {
-            pageContests.length > 0 ?
-              (
-                pageContests.map((contest, index) => {
-                  if (!contest.startTime) return null; // Prevent errors if startTime is missing
-
-                  const formattedTime = formatDateTime(contest.startTime);
-
-                  return (
-                    <div key={contest.contestId || index} className={styles.contestsListItem}>
-                      <img src={contestImage} alt="contest" className={styles.contestImage} />
-
-                      <span className={styles.contestName}>
-                        BB Challenge #{contest.contestId}
-                      </span>
-
-                      <span>
-                        <p>{formattedTime.formattedDate}</p>
-                        <span className={styles.contestTiming}>
-                          {formattedTime.dayName} {formattedTime.formattedTime}
-                        </span>
-                      </span>
-
-                      <Link to={`/contests/${contest.contestId}/standings`} className={styles.LinkStyles}>
-                        <span>Standings</span>
-                      </Link>
-
-                      <span className={styles.registeredUsers}>
-                        <p>{contest.registeredUsers.length}</p>
-                        <img src={user} alt="user image" className={styles.icon} />
-                      </span>
-                    </div>
-                  );
-                })
-              ) :
-              <p>Contests are loading...</p>
-          }
+          <span className={styles.contestsHeading}>Past Contests</span>
+          {isLoading ? (
+            <Loader />
+          ) : paginatedEndedContests.length > 0 ? (
+            paginatedEndedContests.map((contest) => (
+              <PastContestCard key={contest.contestId} contest={contest} />
+            ))
+          ) : (
+            <p>No past contests available</p>
+          )}
         </div>
       </div>
-      <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-    </div>
-  )
-}
 
-export default Contests
+      <Pagination
+        totalPages={Math.ceil(processedContests.ended.length / contestsPerPage)}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
+    </div>
+  );
+};
+
+export default Contests;

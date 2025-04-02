@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteUser,
   findUser,
   getHomepageDetails,
   getProfileDetails,
@@ -10,6 +11,7 @@ import {
   logout,
   signup,
   toggleFriend,
+  updateProfile,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 import {
@@ -34,6 +36,8 @@ router
   .route("/:username/submissions/:submissionId")
   .get(isAuthenticated, getSubmissionDetails);
 router.route("/:username/contests").get(isAuthenticated, getUserContests);
+router.route("/update-profile").post(isAuthenticated, updateProfile);
+router.route("/delete").delete(isAuthenticated, deleteUser);
 
 // ---------------------------------------------Blog---------------------------------------------------------------------------
 router.route("/:username/blog").get(isAuthenticated, getBlogsByUserName);

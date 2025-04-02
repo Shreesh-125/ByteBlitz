@@ -11,7 +11,10 @@ export const signup = async (userData) => {
 // Login API
 export const login = async (userData) => {
   console.log(userData);
-  const response = await axios.post(`${API_URL}/login`, userData);
+  const response = await axios.post(`${API_URL}/login`, userData, {
+    headers: { "Content-Type": "application/json" },
+    withCredentials: true,
+  });
   console.log(response.data);
   return response.data;
 };

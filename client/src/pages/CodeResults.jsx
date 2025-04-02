@@ -1,15 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from '../styles/CodeResults.module.css'
+import SmallLoader from '../ui/smallLoader'
 
 const CodeResults = ({ customInput, setCustomInput, yourOutput, isExecuted, isSuccess }) => {
+  useEffect(()=>{
+  },[isExecuted])
   return (
     <div className={styles.resultsContainer}>
       {
-        isExecuted &&
+        isExecuted !== null &&
         (
+          isExecuted === true ?
+          
           <div className={styles.codeStatus}>
-            <p>Status:</p> Successfully Executed
-          </div> 
+            <p>Status:</p> {isSuccess?"Successfully Executed":"Some error occured"}
+          </div> :
+          <SmallLoader/>
         )
       }
       <div className={styles.customInput}>

@@ -83,16 +83,24 @@ export const login = async (req, res) => {
     });
 
     const userResponse = {
-      userName: user.username,
+      username: user.username,
       email: user.email,
       _id: user._id,
     };
 
-    return res.status(200).cookie("token",token,{maxAge:1*24*60*60*1000,httpsOnly:true,sameSite:'strict'}).json({
-      message:`Welcome back!! `,
-      user:userResponse,
-      success:true
-  })
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome back!! `,
+        user: userResponse,
+        token,
+        success: true,
+      });
   } catch (error) {
     console.error("Error:", error.message);
     return res.status(500).json({
@@ -202,23 +210,38 @@ export const findUser = async (req, res) => {
 export const getProfileDetails = async (req, res) => {
   try {
     const { username } = req.params;
-
+    console.log(username);
+    // console.log(user);
     const user = await User.findOne({ username });
-
     if (!user) {
       return res.status(400).json({
         success: false,
         message: "Username Not Found",
       });
     }
-
+    const submissions = user.submissions.map((submission) => ({
+      problemId: submission.problemId,
+      rating: submission.rating || 0,
+      status: submission.status || "rejected",
+      date: submission.date,
+      language: submission.language,
+    }));
+    const submissionCalender = user.submissions.reduce((acc, item) => {
+      const date = item.date.split(",")[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
     let modifieduser = {
       username: user.username,
       email: user.email,
       rating: user.rating,
       maxRating: user.maxRating,
+      contests: user.contests,
+      friends: user.friends,
+      friendsOf: user.friendsOf,
+      submissions: submissions,
+      submissionCalender,
     };
-
     return res.status(200).json({
       success: true,
       message: "User Details Fetched Successfully",
@@ -230,10 +253,12 @@ export const getProfileDetails = async (req, res) => {
 export const getUserSubmissions = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username }).populate(
-      "submissions.questionId",
-      "title"
-    );
+    let { page = 1, limit = 20 } = req.query; // Default page = 1, limit = 10
+
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(400).json({
@@ -241,19 +266,34 @@ export const getUserSubmissions = async (req, res) => {
         message: "Username Not Found",
       });
     }
+    // Sort submissions by date (most recent first)
+    const sortedSubmissions = user.submissions.sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
 
-    const submissions = user.submissions.map((submission) => ({
-      submissionId: submission.submissionId,
-      questionTitle: submission.questionId?.title || "Unknown",
-      status: submission.status,
-      date: submission.date,
-      language: submission.language,
-    }));
+    const totalSubmissions = sortedSubmissions.length; // Get total count
+    const totalPages = Math.ceil(totalSubmissions / limit);
+    const paginatedSubmissions = sortedSubmissions
+      .slice((page - 1) * limit, page * limit)
+      .map((submission) => ({
+        problemId: submission.problemId || "Unknown",
+        questionTitle: submission.questionTitle || "Unknown",
+        rating: submission.rating || 0,
+        status: submission.status,
+        date: submission.date,
+        language: submission.language,
+      }));
 
     return res.status(200).json({
       success: true,
       message: "User Submissions Fetched Successfully",
-      submissions,
+      submissions: paginatedSubmissions,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalSubmissions,
+        limit,
+      },
     });
   } catch (error) {
     console.error("Error fetching submissions:", error);
@@ -382,5 +422,39 @@ export const toggleFriend = async (req, res) => {
       message: "Internal Server Error",
       success: false,
     });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  const { email, username, country, password } = req.body;
+  try {
+    await User.findOneAndUpdate({ email }, { username, country, password });
+    const user = await User.findOne({ email });
+    const modifieduser = {
+      username: user.username,
+      email: user.email,
+    };
+    console.log(modifieduser);
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_TIMEOUT,
+    });
+    res.status(200).json({
+      message: "Profile updated successfully",
+      success: true,
+      user: modifieduser,
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Profile update failed" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  const { email } = req.query;
+  try {
+    await User.findOneAndDelete({ email });
+    res.status(200).json({ message: "User deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "User deletion failed" });
   }
 };
