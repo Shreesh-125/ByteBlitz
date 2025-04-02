@@ -32,6 +32,7 @@ import ContestLayout from "./pages/ContestLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLogin from "./features/googleLogin/googleLogin.jsx";
 import UpdateProfile from "./features/googleLogin/UpdateProfile.jsx";
+import Admin from "./pages/Admin";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -84,6 +85,7 @@ function App() {
               <Route path="/blogs/:id" element={<Particularblog />} />
               <Route path="/contests" element={<Contests />} />
               <Route path="/problems" element={<Problems />} />
+              <Route path="/admin" element={<Admin />} />
 
               <Route path="/problems/:problemId" element={<Problempage />}>
                 <Route index element={<ProblemDescription />} />
