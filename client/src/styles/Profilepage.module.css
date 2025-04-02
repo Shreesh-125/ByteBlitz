@@ -1,12 +1,13 @@
-
-.container{
-    width: 100%;
+.container {
     display: grid;
-    grid-template-columns: 70fr 30fr;
-    /* flex-wrap: wrap; */
-    /* background-color: yellow; */
-    /* margin: 0px 50px; */
-    padding-left: 70px;
-    padding-right: 70px;
-    gap: 50px
+    grid-template-columns: 2fr 1fr;
+    /* max-width: 1200px; */
+    /* margin: 40px auto;
+    padding: 20px; */
+    /* gap: 20px; */
+    /* justify-content: space-between; */
+    /* background-color: blue; */
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 40px;
 }

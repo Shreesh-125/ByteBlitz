@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  addfriend,
   deleteUser,
   findUser,
   getHomepageDetails,
@@ -11,6 +10,7 @@ import {
   login,
   logout,
   signup,
+  toggleFriend,
   updateProfile,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
@@ -46,6 +46,6 @@ router.route("/createblog").post(isAuthenticated, postBlog);
 // ----------------------------------------------Friend------------------------------------------------------------------------
 router
   .route("/:userid/friended/:friendusername")
-  .get(isAuthenticated, addfriend);
+  .post( toggleFriend);
 
 export default router;

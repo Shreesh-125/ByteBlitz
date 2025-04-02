@@ -23,6 +23,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import Friendspage from "./pages/FriendsPage";
 import OauthLogin from "./pages/OuthLogin";
 import ContestProblemDescriptionPage from "./pages/ContestProblemDescriptionPage";
 import { SocketProvider } from "./context/SocketContext";

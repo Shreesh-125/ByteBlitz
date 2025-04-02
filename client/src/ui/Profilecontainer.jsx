@@ -78,6 +78,26 @@ const Profilecontainer = ({ userData }) => {
         <div>
           <img src={preview} className={styles.profileimage} />
         </div>
+                    <p className = {styles.country}>Country: {userinfo.country}</p>
+                    <p className = {styles.nfriends}>Friends of: {userinfo.nfriends}</p>
+                    <Link to="/manu_codeup/friends" className = {styles.links}>
+                        <p>My Friends</p>
+                    </Link>
+                    <Link to="/profile" className = {styles.links}>
+                        <p>Contests Participated</p>
+                    </Link>
+                    <Link to="/profile" className = {styles.links}>
+                        <p>Your Blogs</p>
+                    </Link>
+                    <Link to="/settings" className = {styles.links}>
+                        <p>Change Settings</p>
+                    </Link>
+                </div>
+            </div>
+            <div className={styles.photodetails}>
+                <div>
+                    <img src={preview} className={styles.profileimage} />
+                </div>
 
         <div>
           <form onSubmit={handleSubmit}>
