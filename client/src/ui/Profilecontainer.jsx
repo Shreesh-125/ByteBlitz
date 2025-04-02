@@ -46,7 +46,7 @@ const Profilecontainer = ({ userData }) => {
     <div className={styles.container}>
       <div className={styles.info}>
         <div className={styles.tag}>
-          <img src={trophy}></img>
+          <img src={trophy} alt="trophy"></img>
           <p>{tag}</p>
           <FaRegHeart color="blue" size={24} />
         </div>
@@ -57,7 +57,6 @@ const Profilecontainer = ({ userData }) => {
               {userinfo.username}
             </span>
           </p>
-
           <p className={styles.country}>Country: {userinfo.country}</p>
           <p className={styles.nfriends}>Friends of: {userinfo.nfriends}</p>
           <Link to="/My_Friends" className={styles.links}>
@@ -76,29 +75,8 @@ const Profilecontainer = ({ userData }) => {
       </div>
       <div className={styles.photodetails}>
         <div>
-          <img src={preview} className={styles.profileimage} />
+          <img src={preview} className={styles.profileimage} alt="profile" />
         </div>
-                    <p className = {styles.country}>Country: {userinfo.country}</p>
-                    <p className = {styles.nfriends}>Friends of: {userinfo.nfriends}</p>
-                    <Link to="/manu_codeup/friends" className = {styles.links}>
-                        <p>My Friends</p>
-                    </Link>
-                    <Link to="/profile" className = {styles.links}>
-                        <p>Contests Participated</p>
-                    </Link>
-                    <Link to="/profile" className = {styles.links}>
-                        <p>Your Blogs</p>
-                    </Link>
-                    <Link to="/settings" className = {styles.links}>
-                        <p>Change Settings</p>
-                    </Link>
-                </div>
-            </div>
-            <div className={styles.photodetails}>
-                <div>
-                    <img src={preview} className={styles.profileimage} />
-                </div>
-
         <div>
           <form onSubmit={handleSubmit}>
             {/* Hidden File Input */}
@@ -116,8 +94,7 @@ const Profilecontainer = ({ userData }) => {
               </label>
 
               <button type="submit" className={styles.uploadphoto}>
-                {" "}
-                Upload Photo{" "}
+                Upload Photo
               </button>
 
               <button
@@ -125,7 +102,6 @@ const Profilecontainer = ({ userData }) => {
                 disabled={!selectedFile}
                 className={styles.removephoto}
               >
-                {" "}
                 Remove Photo
               </button>
             </div>
