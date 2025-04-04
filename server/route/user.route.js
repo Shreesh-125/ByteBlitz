@@ -4,6 +4,7 @@ import {
   findUser,
   getHomepageDetails,
   getProfileDetails,
+  getRankingList,
   getSubmissionDetails,
   getUserContests,
   getUserSubmissions,
@@ -42,7 +43,7 @@ router.route("/delete").delete(isAuthenticated, deleteUser);
 // ---------------------------------------------Blog---------------------------------------------------------------------------
 router.route("/:username/blog").get(isAuthenticated, getBlogsByUserName);
 router.route("/createblog").post(isAuthenticated, postBlog);
-
+router.route("/global/ranking").get(getRankingList)
 // ----------------------------------------------Friend------------------------------------------------------------------------
 router
   .route("/:userid/friended/:friendusername")
