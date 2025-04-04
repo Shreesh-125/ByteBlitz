@@ -458,3 +458,75 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ error: "User deletion failed" });
   }
 };
+
+export const getRankingList = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    // Get total count of users
+    const totalUsers = await User.countDocuments();
+
+    // Get ranked users with pagination
+    const users = await User.aggregate([
+      {
+        $addFields: {
+          contestsCount: { $size: "$contests" } // Calculate contests count
+        }
+      },
+      {
+        $sort: {
+          rating: -1, // Primary sort by rating (descending)
+          contestsCount: 1 // Secondary sort by contests count (ascending)
+        }
+      },
+      {
+        $project: {
+          username: 1,
+          rating: 1,
+          maxRating: 1,
+          contestsCount: 1,
+          profilePhoto: 1,
+          country: 1
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limit
+      }
+    ]);
+
+    // Calculate ranks based on position (1-based index)
+    const rankedUsers = users.map((user, index) => ({
+      ...user,
+      rank: skip + index + 1
+    }));
+
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        users: rankedUsers,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalUsers,
+          usersPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching ranking list:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch ranking list',
+      error: error.message
+    });
+  }
+};

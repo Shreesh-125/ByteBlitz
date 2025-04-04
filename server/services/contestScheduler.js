@@ -24,7 +24,7 @@ const completePostContestProcessing = async (contestId) => {
     const leaderboard = await Leaderboard.findOne({ contestId })
       .populate({
         path: 'users.userId',
-        select: 'rating submissions'
+        select: 'rating maxRating submissions'
       })
       .session(session);
 
@@ -46,6 +46,7 @@ const completePostContestProcessing = async (contestId) => {
     const users = leaderboard.users.map(user => ({
       userId: user.userId._id,
       rating: user.userId.rating || 1000,
+      maxRating: user.userId.maxRating || 1000,
       score: user.score,
       submissions: user.userId.submissions || []
     }));
@@ -57,14 +58,12 @@ const completePostContestProcessing = async (contestId) => {
     // - Rating updates
     // - Submission unhiding
     const userBulkOps = [];
-    const contestHistoryUpdates = [];
 
     newRatings.forEach(({ userId, newRating }) => {
-      // Find all submissions for this contest's problems
-      const userSubmissions = users.find(u => u.userId.equals(userId))?.submissions || [];
-      const contestSubmissions = userSubmissions.filter(sub => 
-        problemIds.includes(sub.problemId)
-      );
+      // Find the user's current maxRating
+      const user = users.find(u => u.userId.equals(userId));
+      const currentMaxRating = user?.maxRating || 1000;
+      const updatedMaxRating = Math.max(currentMaxRating, newRating);
 
       // Prepare rating update
       userBulkOps.push({
@@ -73,12 +72,7 @@ const completePostContestProcessing = async (contestId) => {
           update: {
             $set: { 
               rating: newRating,
-              // Update maxRating if needed
-              $cond: {
-                if: { $gt: [newRating, "$maxRating"] },
-                then: { maxRating: newRating },
-                else: { maxRating: "$maxRating" }
-              }
+              maxRating: updatedMaxRating
             },
             // Unhide all contest submissions
             $set: {
@@ -88,8 +82,8 @@ const completePostContestProcessing = async (contestId) => {
             $push: {
               contests: {
                 contestId: leaderboard._id,
-                rank: users.find(u => u.userId.equals(userId))?.rank || 0,
-                ratingChange: newRating - (users.find(u => u.userId.equals(userId))?.rating || 1000),
+                rank: leaderboard.users.find(u => u.userId.equals(userId))?.rank || 0,
+                ratingChange: newRating - (user?.rating || 1000),
                 newRating
               }
             }
@@ -122,7 +116,6 @@ const completePostContestProcessing = async (contestId) => {
     session.endSession();
   }
 };
-
 // Enhanced rating calculation with tie handling  
 function computeNewRatings(users) {
   const n = users.length;

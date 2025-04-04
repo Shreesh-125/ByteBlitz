@@ -76,7 +76,7 @@ function App() {
               </Route>
 
 
-              <Route path="/ranking" element={<Allsubmissionpage />} />
+              <Route path="/ranking" element={<Ranking />} />
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile" element={<Profilepage />} />
               <Route path="/My_Friends" element={<Friendspage />} />
