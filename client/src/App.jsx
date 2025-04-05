@@ -54,7 +54,6 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/*" element={<Home />} />
-                {/*  Contest Section  */}
               <Route path="/contests/:contestId" element={<ContestLayout />}>
                 {/* Default redirect to problems */}
                 <Route index element={<Navigate to="problems" replace />} />
@@ -75,8 +74,8 @@ function App() {
                 <Route path="standings" element={<Conteststandingpage />} />
               </Route>
 
-
               <Route path="/ranking" element={<Ranking />} />
+
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile" element={<Profilepage />} />
               <Route path="/My_Friends" element={<Friendspage />} />
