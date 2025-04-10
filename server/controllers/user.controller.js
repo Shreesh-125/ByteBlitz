@@ -399,14 +399,15 @@ export const toggleFriend = async (req, res) => {
       });
     }
 
-    if(user.friends.includes(friend._id)){
-      user.friends = user.friends.filter(friendId=> friendId.toString() !== friend._id.toString())
+    if (user.friends.includes(friend._id)) {
+      user.friends = user.friends.filter(
+        (friendId) => friendId.toString() !== friend._id.toString()
+      );
       friend.friendsOf = friend.friendsOf - 1;
-    } else{
+    } else {
       user.friends = [...user.friends, friend._id];
       friend.friendsOf = friend.friendsOf + 1;
     }
-
 
     await friend.save();
 
@@ -472,14 +473,14 @@ export const getRankingList = async (req, res) => {
     const users = await User.aggregate([
       {
         $addFields: {
-          contestsCount: { $size: "$contests" } // Calculate contests count
-        }
+          contestsCount: { $size: "$contests" }, // Calculate contests count
+        },
       },
       {
         $sort: {
           rating: -1, // Primary sort by rating (descending)
-          contestsCount: 1 // Secondary sort by contests count (ascending)
-        }
+          contestsCount: 1, // Secondary sort by contests count (ascending)
+        },
       },
       {
         $project: {
@@ -488,21 +489,21 @@ export const getRankingList = async (req, res) => {
           maxRating: 1,
           contestsCount: 1,
           profilePhoto: 1,
-          country: 1
-        }
+          country: 1,
+        },
       },
       {
-        $skip: skip
+        $skip: skip,
       },
       {
-        $limit: limit
-      }
+        $limit: limit,
+      },
     ]);
 
     // Calculate ranks based on position (1-based index)
     const rankedUsers = users.map((user, index) => ({
       ...user,
-      rank: skip + index + 1
+      rank: skip + index + 1,
     }));
 
     const totalPages = Math.ceil(totalUsers / limit);
@@ -517,18 +518,66 @@ export const getRankingList = async (req, res) => {
           totalUsers,
           usersPerPage: limit,
           hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1
-        }
-      }
+          hasPreviousPage: page > 1,
+        },
+      },
     });
   } catch (error) {
-    console.error('Error fetching ranking list:', error);
+    console.error("Error fetching ranking list:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch ranking list',
-      error: error.message
+      message: "Failed to fetch ranking list",
+      error: error.message,
     });
   }
-
 };
 
+export const getRecentSubmission = async (req, res) => {
+  try {
+    const { username } = req.params;
+    // console.log(username);
+
+    // Validate input
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: "Username is required.",
+      });
+    }
+
+    // Fetch user
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+    // console.log(user.submissions);
+
+    const submissions = user.submissions || [];
+    const sortedSubmissions = submissions
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, 7); // get top 7
+
+    const formatedData = sortedSubmissions.map((subb) => ({
+      title: subb.questionTitle,
+      problemId: subb.problemId,
+      code: subb.code,
+    }));
+
+    console.log(formatedData);
+
+    return res.status(200).json({
+      success: true,
+      message: "Recent submissions retrieved successfully.",
+      submissions: formatedData,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong. Please try again later.",
+    });
+  }
+};

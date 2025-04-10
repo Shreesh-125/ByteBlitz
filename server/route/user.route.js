@@ -5,6 +5,7 @@ import {
   getHomepageDetails,
   getProfileDetails,
   getRankingList,
+  getRecentSubmission,
   getSubmissionDetails,
   getUserContests,
   getUserSubmissions,
@@ -37,6 +38,9 @@ router
   .route("/:username/submissions/:submissionId")
   .get(isAuthenticated, getSubmissionDetails);
 router.route("/:username/contests").get(isAuthenticated, getUserContests);
+router
+  .route("/getrecentsubmission/:username")
+  .get(isAuthenticated, getRecentSubmission);
 router.route("/update-profile").post(isAuthenticated, updateProfile);
 router.route("/delete").delete(isAuthenticated, deleteUser);
 
@@ -46,8 +50,6 @@ router.route("/createblog").post(isAuthenticated, postBlog);
 
 router.route("/global/ranking").get(getRankingList);
 // ----------------------------------------------Friend------------------------------------------------------------------------
-router
-  .route("/:userid/friended/:friendusername")
-  .post( toggleFriend);
+router.route("/:userid/friended/:friendusername").post(toggleFriend);
 
 export default router;
