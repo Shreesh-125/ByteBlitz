@@ -9,10 +9,10 @@ export const getPaginatedProblems = async (req, res) => {
   try {
     let {
       page = "1",
-      limit = "10",
+      limit = "15",
       tags = "",
       minRating = "0",
-      maxRating = "1000",
+      maxRating = "5000",
       sortBy = "rating",
       order = "desc",
     } = req.query;

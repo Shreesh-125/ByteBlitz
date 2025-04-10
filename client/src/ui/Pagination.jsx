@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+
 import styles from "../styles/Pagination.module.css";
 
 const Pagination = ({ totalPages, currentPage, setCurrentPage }) => {
-  console.log(totalPages, currentPage);
   const handlePageChange = (e) => {
     let value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value >= 1 && value <= totalPages) {
