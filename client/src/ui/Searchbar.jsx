@@ -77,6 +77,8 @@ const Searchbar = () => {
     }
   };
 
+  // if (isLoading) return <Loader />;
+
   return (
     <div className={styles.searchBar}>
       <div className={styles.heading}>Filters</div>
