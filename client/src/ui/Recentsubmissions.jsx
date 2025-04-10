@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../styles//Recentsubmissions.module.css";
 import wrong_icon from "../assets/wrong_icon.png";
 import correct_icon from "../assets/correct_icon.png";
+import { Link } from "react-router-dom";
 
 const Recentsubmissions = ({ probleminfo }) => {
   return (
@@ -19,7 +20,11 @@ const Recentsubmissions = ({ probleminfo }) => {
             <ul>
               {probleminfo.map(
                 ({ when, problemId, lang, solutionstatus }, index) => (
-                  <li key={index} className={styles.listitem}>
+                  <Link
+                    to={`/problems/${problemId}/submissions`}
+                    key={index}
+                    className={styles.listitem}
+                  >
                     <div className={styles.datetime}>
                       <p>{when.date}</p>
                       <p>{when.time}</p>
@@ -31,7 +36,7 @@ const Recentsubmissions = ({ probleminfo }) => {
                       className={solutionstatus ? styles.correct : styles.wrong}
                       alt="solution status"
                     />
-                  </li>
+                  </Link>
                 )
               )}
             </ul>

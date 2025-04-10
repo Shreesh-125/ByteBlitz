@@ -10,7 +10,7 @@ const LastUnsolved = () => {
   const token = useSelector((state) => state.auth.token);
 
   const { isLoading, data } = useQuery({
-    queryKey: ["recentSubmission"],
+    queryKey: ["recentSubmission2"],
     queryFn: () => getRecentSub(user, token),
     enabled: !!user,
   });
@@ -30,7 +30,7 @@ const LastUnsolved = () => {
         {data?.map((problem, index) => (
           <div key={index} className={styles.gridRow}>
             <div className={styles.gridRowItem}>{problem.title}</div>
-            <Link to={`/problems/${problem.problemId}`}>
+            <Link to={`/problems/${problem.problemId}/submissions`}>
               <div className={`${styles.gridRowItem} ${styles.gridRowLink}`}>
                 {/* {problem.link} */}
                 click

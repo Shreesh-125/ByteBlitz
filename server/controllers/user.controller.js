@@ -535,9 +535,6 @@ export const getRankingList = async (req, res) => {
 export const getRecentSubmission = async (req, res) => {
   try {
     const { username } = req.params;
-    // console.log(username);
-
-    // Validate input
     if (!username) {
       return res.status(400).json({
         success: false,
@@ -553,7 +550,6 @@ export const getRecentSubmission = async (req, res) => {
         message: "User not found.",
       });
     }
-    // console.log(user.submissions);
 
     const submissions = user.submissions || [];
     const sortedSubmissions = submissions
@@ -565,8 +561,6 @@ export const getRecentSubmission = async (req, res) => {
       problemId: subb.problemId,
       code: subb.code,
     }));
-
-    console.log(formatedData);
 
     return res.status(200).json({
       success: true,
