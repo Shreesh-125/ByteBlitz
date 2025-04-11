@@ -130,31 +130,18 @@ export const logout = async (req, res) => {
 
 export const getHomepageDetails = async (req, res) => {
   try {
-    const userId = req.id;
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(400).json({
-        message: "User not Found",
-        success: false,
-      });
-    }
-
-    let userDetails = {
-      username: user.username,
-      rating: user.rating,
-    };
-
-    const blogs = await Blog.find().sort({ updatedAt: -1 }).limit(6);
+    // Populate the author (user) field to get the username
+    const blogs = await Blog.find()
+      .populate("author", "username") // populate author with only 'username'
+      .sort({ updatedAt: -1 })
+      .limit(6);
 
     const formattedBlogs = blogs.map((blog) => ({
       id: blog._id,
       title: blog.title,
+      author: blog.authorUsername || "default1",
       updatedAt: blog.updatedAt,
-      snippet:
-        blog.content.substring(0, 100) +
-        (blog.content.length > 100 ? "..." : ""), // Limit content to 100 chars
+      snippet: blog.content,
     }));
 
     const topUsers = await User.find({}, "_id username rating")
@@ -164,46 +151,60 @@ export const getHomepageDetails = async (req, res) => {
     return res.status(200).json({
       message: "Data Fetched Successfully",
       success: true,
-      user: userDetails,
       Blogs: formattedBlogs,
-      topUsers: topUsers,
+      topUsers,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching homepage details:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 };
 
 export const findUser = async (req, res) => {
   try {
     const { username } = req.body;
+    console.log(username);
 
-    const user = await User.findOne({ username });
-
-    if (!user) {
+    if (!username) {
       return res.status(400).json({
-        message: "User Not Found",
         success: false,
+        message: "Username is required",
       });
     }
 
-    let userDetails = {
+    // Perform a case-insensitive partial match using regex
+    const users = await User.find({
+      username: { $regex: username, $options: "i" },
+    }).limit(10); // Limit to 10 results for performance
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No users found",
+      });
+    }
+
+    const userDetails = users.map((user) => ({
       username: user.username,
       email: user.email,
       rating: user.rating,
       maxRating: user.maxRating,
-    };
+    }));
 
     return res.status(200).json({
       success: true,
-      message: "user Detailed Fetched Successfully",
-      user: userDetails,
+      message: "Users fetched successfully",
+      users: userDetails,
     });
   } catch (error) {
-    return (
-      res.status(500),
-      json({
-        message: "Internal Server Error",
-        success: false,
-      })
-    );
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -399,14 +400,15 @@ export const toggleFriend = async (req, res) => {
       });
     }
 
-    if(user.friends.includes(friend._id)){
-      user.friends = user.friends.filter(friendId=> friendId.toString() !== friend._id.toString())
+    if (user.friends.includes(friend._id)) {
+      user.friends = user.friends.filter(
+        (friendId) => friendId.toString() !== friend._id.toString()
+      );
       friend.friendsOf = friend.friendsOf - 1;
-    } else{
+    } else {
       user.friends = [...user.friends, friend._id];
       friend.friendsOf = friend.friendsOf + 1;
     }
-
 
     await friend.save();
 
@@ -456,5 +458,121 @@ export const deleteUser = async (req, res) => {
     res.status(200).json({ message: "User deleted" });
   } catch (error) {
     res.status(500).json({ error: "User deletion failed" });
+  }
+};
+
+export const getRankingList = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    // Get total count of users
+    const totalUsers = await User.countDocuments();
+
+    // Get ranked users with pagination
+    const users = await User.aggregate([
+      {
+        $addFields: {
+          contestsCount: { $size: "$contests" }, // Calculate contests count
+        },
+      },
+      {
+        $sort: {
+          rating: -1, // Primary sort by rating (descending)
+          contestsCount: 1, // Secondary sort by contests count (ascending)
+        },
+      },
+      {
+        $project: {
+          username: 1,
+          rating: 1,
+          maxRating: 1,
+          contestsCount: 1,
+          profilePhoto: 1,
+          country: 1,
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    // Calculate ranks based on position (1-based index)
+    const rankedUsers = users.map((user, index) => ({
+      ...user,
+      rank: skip + index + 1,
+    }));
+
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        users: rankedUsers,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalUsers,
+          usersPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching ranking list:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch ranking list",
+      error: error.message,
+    });
+  }
+};
+
+export const getRecentSubmission = async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: "Username is required.",
+      });
+    }
+
+    // Fetch user
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    const submissions = user.submissions || [];
+    const sortedSubmissions = submissions
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, 7); // get top 7
+
+    const formatedData = sortedSubmissions.map((subb) => ({
+      title: subb.questionTitle,
+      problemId: subb.problemId,
+      code: subb.code,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "Recent submissions retrieved successfully.",
+      submissions: formatedData,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong. Please try again later.",
+    });
   }
 };

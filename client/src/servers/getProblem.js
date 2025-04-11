@@ -1,30 +1,31 @@
 import axios from "axios";
 
-const fetchProblems = async ({ queryKey }) => {
+const fetchProblems = async ({
+  page = 1,
+  minRating = 0,
+  maxRating = 5000,
+  tags = "",
+}) => {
   try {
-    const [, minRating = 0, maxRating = 1000, tags = []] = queryKey;
-
     const response = await axios.get("http://localhost:8000/api/v1/problem", {
       params: {
         minRating,
         maxRating,
-        tags: tags.length ? tags.join(",") : undefined,
+        page,
+        tags: tags.length ? tags.join(",") : "",
       },
     });
 
     const { problems } = response.data;
 
-    // Transform fetched data into required format
     const transformedData = problems.map((problem) => ({
-      id: problem.problemId, // Use problemId as id
-      title: problem.questionTitle, // Use questionTitle as title
-      rating: problem.rating, // Use rating as is
-      solvedBy: problem.solvedBy || 0, // Default solvedBy to 0 if missing
-      status: problem.status || "Unattempted", // Default status if missing
+      id: problem.problemId,
+      title: problem.questionTitle,
+      rating: problem.rating,
+      solvedBy: problem.solvedBy || 0,
+      status: problem.status || "Unattempted",
     }));
-
-    console.log("Transformed Problems Data:", transformedData);
-    return transformedData;
+    return { transformedData, totalPages: response.data.totalPages };
   } catch (error) {
     console.error("Error fetching problems:", error);
     throw new Error("Failed to fetch problems. Please try again later.");

@@ -9,6 +9,7 @@ import { contestRoutes } from "./route/contest.route.js";
 import adminRoute from "./route/admin.route.js";
 import blogRoute from "./route/blog.route.js";
 import oauthRoute from "./route/oauthRoute.js";
+import noauth from "./route/noauth.route.js";
 import http from "http";
 import { initializeSocket } from "./services/socketService.js";
 import { rescheduleAllContests } from "./services/contestScheduler.js";
@@ -22,7 +23,6 @@ const server = http.createServer(app);
 const io = initializeSocket(server);
 
 app.use(cookieParser());
-
 const corsOption = {
   origin: "http://localhost:5173",
   credentials: true,
@@ -39,6 +39,7 @@ app.use("/api/v1/problem", problemRoute);
 app.use("/api/v1/contest", contestRoutes(io)); // Pass io to contest routes
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/blog", blogRoute);
+app.use("/api/v1/noauth", noauth);
 
 server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);

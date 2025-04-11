@@ -51,25 +51,58 @@ export const getContestById = async (req, res) => {
 
 export const createContest = async (req, res, io) => {
   try {
-    const { problems, startTime, endTime, status, problemScore } = req.body;
-
+    const { problems: problemIds, startTime, endTime, status, problemScore } = req.body;
+    
     // Validate required fields
-    if (!problems || !startTime || !endTime || !status || !problemScore) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!problemIds || !startTime || !endTime || !status || !problemScore) {
+      return res.status(400).json({ 
+        success: false,
+        message: "All fields are required: problems, startTime, endTime, status, problemScore" 
+      });
     }
 
-    // Create contest with UTC times
+    // Validate problemIds is an array with at least one element
+    if (!Array.isArray(problemIds)) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Problems must be provided as an array of problem IDs" 
+      });
+    }
+
+    // Fetch all problems from database
+    const problems = await Problems.find({ problemId: { $in: problemIds } });
+  
+    // Check if all problems were found
+    if (problems.length !== problemIds.length) {
+      const foundIds = problems.map(p => p.problemId);
+      const missingIds = problemIds.filter(id => !foundIds.includes(id));
+      return res.status(400).json({ 
+        success: false,
+        message: `Invalid problem IDs: ${missingIds.join(', ')}`,
+        missingProblemIds: missingIds // Include the actual missing IDs for frontend if needed
+      });
+    }
+
+    // Rest of your contest creation logic...
     const contest = await Contests.create({
-      problems,
-      startTime: startTime, // Save as UTC
-      endTime: endTime, // Save as UTC
+      problems: problems.map(problem => ({
+        problemId: problem.problemId,
+        problemTitle: problem.questionTitle,
+        solvedBy: 0,
+        attemptedBy: 0
+      })),
+      startTime,
+      endTime,
       status,
       submissions: [],
       registeredUser: []
     });
 
     if (!contest) {
-      return res.status(400).json({ message: "Error creating contest" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Error creating contest" 
+      });
     }
 
     // Convert UTC to IST for leaderboard
@@ -79,7 +112,7 @@ export const createContest = async (req, res, io) => {
     // Create leaderboard with IST time
     const leaderboard = await Leaderboard.create({
       contestId: contest.contestId,
-      contestStartTime: startTimeIST.toISOString(), // Save as IST
+      contestStartTime: startTimeIST.toISOString(), 
       problemScore,
       users: []
     });
@@ -89,7 +122,7 @@ export const createContest = async (req, res, io) => {
     }
 
     // Schedule contest updates (if needed)
-    scheduleContestUpdates(contest, io); // Pass `io` here
+    scheduleContestUpdates(contest, io); 
 
     // Return success response
     res.status(201).json({ contest, leaderboard });

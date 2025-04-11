@@ -17,7 +17,6 @@ const isAuthenticated = async (req, res, next) => {
     let decode;
     try {
       decode = jwt.verify(token, process.env.SECRET_KEY);
-      console.log(decode);
     } catch (error) {
       return res.status(401).json({
         message: "Invalid or expired token",
@@ -27,6 +26,7 @@ const isAuthenticated = async (req, res, next) => {
 
     req.id = decode.userId;
 
+    console.log(decode);
     const urlParts = req.originalUrl.split("/");
     const versionIndex = urlParts.indexOf("v1");
     const role =

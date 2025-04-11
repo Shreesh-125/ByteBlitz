@@ -3,10 +3,11 @@ import styles from "../styles/Announcements.module.css";
 import goldentrophy from "../assets/goldentrophy.png";
 import profile_icon from "../assets/profile_icon.png";
 import { Link } from "react-router-dom";
+import { formatDate } from "../utils/HomePageUtils";
 
 export const BlogData = createContext();
 
-const Announcements = () => {
+const Announcements = ({ data }) => {
   const content = [
     {
       iconpath: goldentrophy,
@@ -62,25 +63,28 @@ const Announcements = () => {
 
   return (
     <div>
-      <BlogData.Provider value={content}>
+      <BlogData.Provider value={data}>
         <ul className={styles.list}>
-          {content.map(({ iconpath, time, title, text, whoposted }, index) => (
+          {data?.map(({ id, updatedAt, title, snippet, author }, index) => (
             <li key={`${title}-${index}`} className={styles.listitem}>
               <div className={styles.icon}>
-                <img src={iconpath} alt="Icon" className={styles.iconimage} />
+                <img
+                  src={profile_icon}
+                  alt="Icon"
+                  className={styles.iconimage}
+                />
               </div>
               <div className={styles.info}>
-                <p className={styles.time}>{time}</p>
+                <p className={styles.time}>{formatDate(updatedAt)}</p>
                 <p className={styles.title}>
                   <strong>
-                    {title}, By {whoposted}
+                    {title}, By {author}
                   </strong>
                 </p>
                 <div className={styles.text}>
                   <p>
-                    {truncateText(text, fixedLength)}
-                    {/* {text.length > fixedLength && <a href={`/blog/${index}`} className={styles.readmore}> Read more</a>} */}
-                    {text.length > fixedLength && (
+                    {truncateText(snippet, fixedLength)}
+                    {snippet.length > fixedLength && (
                       <Link to={`/blogs/${index}`} className={styles.readmore}>
                         Read more
                       </Link>

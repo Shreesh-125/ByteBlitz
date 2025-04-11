@@ -4,6 +4,8 @@ import {
   findUser,
   getHomepageDetails,
   getProfileDetails,
+  getRankingList,
+  getRecentSubmission,
   getSubmissionDetails,
   getUserContests,
   getUserSubmissions,
@@ -26,8 +28,8 @@ const router = express.Router();
 router.route("/login").post(login);
 router.route("/signup").post(signup);
 router.route("/logout").get(logout);
-router.route("/").get(isAuthenticated, getHomepageDetails);
-router.route("/finduser").post(isAuthenticated, findUser);
+router.route("/findusers").post(findUser);
+router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------
 router.route("/:username").get(isAuthenticated, getProfileDetails);
@@ -36,6 +38,9 @@ router
   .route("/:username/submissions/:submissionId")
   .get(isAuthenticated, getSubmissionDetails);
 router.route("/:username/contests").get(isAuthenticated, getUserContests);
+router
+  .route("/getrecentsubmission/:username")
+  .get(isAuthenticated, getRecentSubmission);
 router.route("/update-profile").post(isAuthenticated, updateProfile);
 router.route("/delete").delete(isAuthenticated, deleteUser);
 
@@ -43,9 +48,8 @@ router.route("/delete").delete(isAuthenticated, deleteUser);
 router.route("/:username/blog").get(isAuthenticated, getBlogsByUserName);
 router.route("/createblog").post(isAuthenticated, postBlog);
 
+router.route("/global/ranking").get(getRankingList);
 // ----------------------------------------------Friend------------------------------------------------------------------------
-router
-  .route("/:userid/friended/:friendusername")
-  .post( toggleFriend);
+router.route("/:userid/friended/:friendusername").post(toggleFriend);
 
 export default router;

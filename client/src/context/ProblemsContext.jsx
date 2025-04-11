@@ -8,6 +8,8 @@ export const ProblemsProvider = ({ children }) => {
   const [minRating, setMinRating] = useState("");
   const [maxRating, setMaxRating] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -17,8 +19,12 @@ export const ProblemsProvider = ({ children }) => {
         problems,
         setProblems,
         tags,
+        page,
+        setPage,
         setTags,
         minRating,
+        totalPages,
+        setTotalPages,
         setMinRating,
         maxRating,
         setMaxRating,
