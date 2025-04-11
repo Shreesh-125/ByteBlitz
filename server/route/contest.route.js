@@ -30,7 +30,7 @@ export const contestRoutes = (io) => {
 
   router.route("/:contestId/problems").get(getContestProblem);
   router.route("/checkregistered").post(isAuthenticated,isRegisteredInContest)
-  router.route("/getStatus/:contestId").get(isAuthenticated,getContestStatus);
+  router.route("/getStatus/:contestId").get(getContestStatus);
   router.route("/:contestId/leaderboard").get(isAuthenticated,getLeaderBoard);
   return router;
 };
