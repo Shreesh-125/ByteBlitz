@@ -19,10 +19,12 @@ export const ContestCard = ({ contest, renderAction }) => {
             </p>
           </div>
           <div className={styles.info2}>
+            
             <div className={styles.registeredUsers}>
               <p>{contest.registeredUsers.length}</p>
               <img src={user} alt="user" className={styles.icon} />
             </div>
+            
             {renderAction(contest)}
           </div>
         </div>

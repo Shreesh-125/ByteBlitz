@@ -24,10 +24,13 @@ const Contests = () => {
   const slider = useRef();
   const [tx, setTx] = useState(0);
 
+  const sliderupcoming = useRef();
+  const [txu, setTxu] = useState(0);
+
   // First fetch all contests without user dependency
   const { data: contestData, isLoading } = useQuery({
     queryKey: ["contest"],
-    queryFn: () => getAllContestWithPagination(currentPage, 5),
+    queryFn: () => getAllContestWithPagination(currentPage, 50),
   });
 
   // State for contests with registration status
@@ -183,13 +186,49 @@ const Contests = () => {
     return processedContests.ended.slice(start, end);
   }, [currentPage, processedContests.ended]);
 
-  // Slider functions
-  const slideForward = () => {
-    if (tx > -50) setTx(tx - 33.33);
+    // Slider functions for running contests
+  const len1 = processedContests.running.length;
+  const windows1 = Math.ceil(len1/3);
+  const shift1 = (3/len1)*100;
+
+  const slideForwardRunning = () => {
+    const currentPosition = Math.abs(tx) / shift1;
+    if (currentPosition < windows1 - 1) {
+      const newTx = tx - shift1;
+      setTx(newTx);
+      slider.current.style.transform = `translateX(${newTx}%)`;
+    }
   };
 
-  const slideBackward = () => {
-    if (tx < 0) setTx(tx + 33.33);
+  const slideBackwardRunning = () => {
+    if (tx < 0) {
+      console.log("slide backward runiing");
+      const newTx = tx + shift1;
+      setTx(newTx);
+      slider.current.style.transform = `translateX(${newTx}%)`;
+    }
+  };
+
+  // Slider functions for upcoming contests
+  const len = processedContests.upcoming.length;
+  const windows = Math.ceil(len/3);
+  const shift = (3/len)*100;
+
+  const slideForwardUpcoming = () => {
+    const currentPosition = Math.abs(txu) / shift;
+    if (currentPosition < windows - 1) {
+      const newTxu = txu - shift;
+      setTxu(newTxu);
+      sliderupcoming.current.style.transform = `translateX(${newTxu}%)`;
+    }
+  };
+
+  const slideBackwardUpcoming = () => {
+    if (txu < 0) {
+      const newTxu = txu + shift;
+      setTxu(txu + shift);
+      sliderupcoming.current.style.transform = `translateX(${newTxu}%)`;
+    }
   };
 
   return (
@@ -198,6 +237,19 @@ const Contests = () => {
       {processedContests.running.length > 0 && (
         <div className={styles.runningContestsContainer}>
           <div className={styles.contestsHeading}>Live Contests</div>
+          <img
+            src={next_icon}
+            alt=""
+            className={styles["next-btn"]}
+            onClick={slideForwardRunning}
+          />
+          <img
+            src={back_icon}
+            alt=""
+            className={styles["back-btn"]}
+            onClick={slideBackwardRunning}
+          />
+          
           <div className={styles.slider}>
             <ul className={styles.upcomingContests} ref={slider}>
               {processedContests.running.map((contest) => (
@@ -219,16 +271,16 @@ const Contests = () => {
           src={next_icon}
           alt=""
           className={styles["next-btn"]}
-          onClick={slideForward}
+          onClick={slideForwardUpcoming}
         />
         <img
           src={back_icon}
           alt=""
           className={styles["back-btn"]}
-          onClick={slideBackward}
+          onClick={slideBackwardUpcoming}
         />
-        <div className={styles.slider}>
-          <ul className={styles.upcomingContests}>
+        <div className={styles.sliderupcoming}>
+          <ul className={styles.upcomingContests} ref={sliderupcoming}>
             {processedContests.upcoming.map((contest) => (
               <ContestCard
                 key={contest.contestId}
@@ -244,15 +296,18 @@ const Contests = () => {
       <div className={styles.pastContestsContainer}>
         <div className={styles.previousContests}>
           <span className={styles.contestsHeading}>Past Contests</span>
-          {isLoading ? (
-            <Loader />
-          ) : paginatedEndedContests.length > 0 ? (
-            paginatedEndedContests.map((contest) => (
-              <PastContestCard key={contest.contestId} contest={contest} />
-            ))
-          ) : (
-            <p>No past contests available</p>
-          )}
+          <div className={styles.pastcontest}>
+            {isLoading ? (
+              <Loader />
+            ) : paginatedEndedContests.length > 0 ? (
+              paginatedEndedContests.map((contest) => (
+                <PastContestCard key={contest.contestId} contest={contest} />
+              ))
+            ) : (
+              <p>No past contests available</p>
+            )}
+          </div>
+          
         </div>
       </div>
 

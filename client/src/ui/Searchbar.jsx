@@ -4,7 +4,7 @@ import styles from "../styles/Searchbar.module.css";
 import { FiX } from "react-icons/fi";
 import { ProblemsContext } from "../context/ProblemsContext";
 import fetchProblems from "./../servers/getProblem.js";
-import SmallLoader from "./SmallLoader.jsx";
+import SmallLoader from "./smallLoader.jsx";
 
 const Searchbar = () => {
   const {
@@ -81,6 +81,7 @@ const Searchbar = () => {
 
   return (
     <div className={styles.searchBar}>
+      
       <div className={styles.heading}>Filters</div>
       <div className={styles.filters}>
         <div className={styles.filtersOptions}>
