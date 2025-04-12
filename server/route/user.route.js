@@ -28,7 +28,7 @@ const router = express.Router();
 router.route("/login").post(login);
 router.route("/signup").post(signup);
 router.route("/logout").get(logout);
-router.route("/findusers").post(findUser);
+router.route("/find/findusers").post(findUser);
 router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------

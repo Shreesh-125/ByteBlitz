@@ -4,10 +4,10 @@ import Usersearch from "../ui/Usersearch";
 import Toprankings from "../ui/Toprankings";
 import Upcomingcontest from "../ui/Upcomingcontest";
 
-const Homesidebar = ({ data }) => {
+const Homesidebar = ({ data, timeData }) => {
   return (
     <div className={styles.container}>
-      <Upcomingcontest />
+      <Upcomingcontest timeData={timeData} />
       {<Usersearch />}
       <Toprankings data={data} />
     </div>

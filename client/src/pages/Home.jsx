@@ -10,11 +10,12 @@ const Home = () => {
     queryKey: ["homedata"],
     queryFn: () => getHomeInfo(),
   });
+  console.log(homeData);
   if (isLoading) return <Loader />;
   return (
     <div className={styles.home}>
       {homeData.Blogs && <Announcements data={homeData.Blogs} />}
-      {homeData && <Homesidebar data={homeData.topUsers} />}
+      {homeData && <Homesidebar data={homeData.topUsers} timeData={homeData} />}
     </div>
   );
 };

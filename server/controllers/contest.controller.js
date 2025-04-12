@@ -9,17 +9,17 @@ import { scheduleContestUpdates } from "../services/contestScheduler.js";
 export const getAllcontests = async (req, res) => {
   try {
     let { page, limit } = req.query;
+    console.log(limit);
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     // Fetch contests but exclude 'problems' and 'submissions'
     const contests = await Contests.find()
       .select("-problems -submissions") // Exclude these fields
       .skip(skip)
       .limit(limit);
 
-    
     const totalContests = await Contests.countDocuments();
     res.json({
       page,
@@ -51,78 +51,89 @@ export const getContestById = async (req, res) => {
 
 export const createContest = async (req, res, io) => {
   try {
-    const { problems: problemIds, startTime, endTime, status, problemScore } = req.body;
-    
+    const {
+      problems: problemIds,
+      startTime,
+      endTime,
+      status,
+      problemScore,
+    } = req.body;
+
     // Validate required fields
     if (!problemIds || !startTime || !endTime || !status || !problemScore) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "All fields are required: problems, startTime, endTime, status, problemScore" 
+        message:
+          "All fields are required: problems, startTime, endTime, status, problemScore",
       });
     }
 
     // Validate problemIds is an array with at least one element
     if (!Array.isArray(problemIds)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "Problems must be provided as an array of problem IDs" 
+        message: "Problems must be provided as an array of problem IDs",
       });
     }
 
     // Fetch all problems from database
     const problems = await Problems.find({ problemId: { $in: problemIds } });
-  
+
     // Check if all problems were found
     if (problems.length !== problemIds.length) {
-      const foundIds = problems.map(p => p.problemId);
-      const missingIds = problemIds.filter(id => !foundIds.includes(id));
-      return res.status(400).json({ 
+      const foundIds = problems.map((p) => p.problemId);
+      const missingIds = problemIds.filter((id) => !foundIds.includes(id));
+      return res.status(400).json({
         success: false,
-        message: `Invalid problem IDs: ${missingIds.join(', ')}`,
-        missingProblemIds: missingIds // Include the actual missing IDs for frontend if needed
+        message: `Invalid problem IDs: ${missingIds.join(", ")}`,
+        missingProblemIds: missingIds, // Include the actual missing IDs for frontend if needed
       });
     }
 
     // Rest of your contest creation logic...
     const contest = await Contests.create({
-      problems: problems.map(problem => ({
+      problems: problems.map((problem) => ({
         problemId: problem.problemId,
         problemTitle: problem.questionTitle,
         solvedBy: 0,
-        attemptedBy: 0
+        attemptedBy: 0,
       })),
       startTime,
       endTime,
       status,
       submissions: [],
-      registeredUser: []
+      registeredUser: [],
     });
 
     if (!contest) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "Error creating contest" 
+        message: "Error creating contest",
       });
     }
 
     // Convert UTC to IST for leaderboard
     const startTimeUTC = new Date(startTime); // Parse input UTC time
-    const startTimeIST = new Date(startTimeUTC.getTime() + 5.5 * 60 * 60 * 1000); // Add 5.5 hours for IST
+    const startTimeIST = new Date(
+      startTimeUTC.getTime() + 5.5 * 60 * 60 * 1000
+    ); // Add 5.5 hours for IST
 
     // Create leaderboard with IST time
     const leaderboard = await Leaderboard.create({
       contestId: contest.contestId,
-      contestStartTime: startTimeIST.toISOString(), 
+      contestStartTime: startTimeIST.toISOString(),
       problemScore,
-      users: []
+      users: [],
     });
 
     if (!leaderboard) {
-      return res.status(400).json({ message: "Error while creating leaderboard", success: false });
+      return res
+        .status(400)
+        .json({ message: "Error while creating leaderboard", success: false });
     }
 
     // Schedule contest updates (if needed)
-    scheduleContestUpdates(contest, io); 
+    scheduleContestUpdates(contest, io);
 
     // Return success response
     res.status(201).json({ contest, leaderboard });
@@ -132,11 +143,11 @@ export const createContest = async (req, res, io) => {
   }
 };
 
-export const contestProblemSubmitCode= async(req,res)=>{
+export const contestProblemSubmitCode = async (req, res) => {
   try {
     const { code, languageId } = req.body;
     const { problemid } = req.params;
-    
+
     const userId = req.id;
 
     const user = await User.findById(userId);
@@ -148,7 +159,7 @@ export const contestProblemSubmitCode= async(req,res)=>{
     }
 
     const problem = await Problems.findOne({ problemId: problemid });
-    
+
     if (!problem) {
       return res
         .status(404)
@@ -167,11 +178,13 @@ export const contestProblemSubmitCode= async(req,res)=>{
       code: code,
       status: "Pending",
       language: language,
-      hidden:true,
-      rating:problem.rating
+      hidden: true,
+      rating: problem.rating,
     };
     let isServerError = false;
-    let testcasenumber=0,totaltime=0,totalmemory=0;
+    let testcasenumber = 0,
+      totaltime = 0,
+      totalmemory = 0;
     for (const tc of problem.sampleTestCase) {
       testcasenumber++;
       const formattedInput = JSON.stringify(tc.input).replace(/\\n/g, "\n");
@@ -186,21 +199,19 @@ export const contestProblemSubmitCode= async(req,res)=>{
         memory_limit: memoryLimit,
         number_of_runs: 1,
       };
-      
+
       // Submit code to Judge0
       const response1 = await axios.post(
         "http://localhost:2358/submissions?base64_encoded=false&wait=true",
         submissionData
       );
-      
-      
+
       if (!response1.data || !response1.data.token) {
         return res
           .status(500)
           .json({ message: "Failed to submit code", success: false });
       }
-     
-      
+
       // Wait for Judge0 to complete execution
       await new Promise((resolve) =>
         setTimeout(resolve, (cpuTimeLimit + 1) * 1000)
@@ -210,35 +221,35 @@ export const contestProblemSubmitCode= async(req,res)=>{
       const response2 = await axios.get(
         `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
       );
-      totaltime+=Number(response2.data.time);
-      totalmemory+=response2.data.memory
+      totaltime += Number(response2.data.time);
+      totalmemory += response2.data.memory;
       // If status ID is not 3 (Accepted), return immediately
       if (response2.data.status.id !== 3) {
         if (response2.data.status.id === 13) {
           isServerError = true;
           break;
         }
-        
+
         submission = {
           ...submission,
           status: "Rejected",
           error: StatusIdMap[response2.data.status.id],
-          time:response2.data.time,
-          memory:response2.data.memory
+          time: response2.data.time,
+          memory: response2.data.memory,
         };
         user.submissions = [...user.submissions, submission];
         await user.save();
-        
+
         return res.status(200).json({
           message: "Submission failed",
           status: response2.data.status,
           stderr: response2.data.stderr,
           compile_output: response2.data.compile_output,
           submissionId: user.submissions[user.submissions.length - 1]._id,
-          WrongOnTestCase:testcasenumber,
-          time:response2.data.time,
-          memory:response2.data.memory,
-          totalTestCase:problem.sampleTestCase.length
+          WrongOnTestCase: testcasenumber,
+          time: response2.data.time,
+          memory: response2.data.memory,
+          totalTestCase: problem.sampleTestCase.length,
         });
       }
     }
@@ -249,18 +260,24 @@ export const contestProblemSubmitCode= async(req,res)=>{
         .json({ message: "Failed to submit code", success: false });
     }
 
-    submission = { ...submission, status: "Accepted", error: StatusIdMap[3],time:totaltime,memory:totalmemory };
+    submission = {
+      ...submission,
+      status: "Accepted",
+      error: StatusIdMap[3],
+      time: totaltime,
+      memory: totalmemory,
+    };
     user.submissions = [...user.submissions, submission];
     await user.save();
     // If all test cases pass
     return res.status(200).json({
       message: "accepted",
       success: true,
-      status:{id:3,description:"accepted"},
+      status: { id: 3, description: "accepted" },
       submissionId: user.submissions[user.submissions.length - 1]._id,
-      totalTestCase:testcasenumber,
-      time:totaltime,
-      memory:totalmemory
+      totalTestCase: testcasenumber,
+      time: totaltime,
+      memory: totalmemory,
     });
   } catch (error) {
     // console.log(error);
@@ -269,41 +286,41 @@ export const contestProblemSubmitCode= async(req,res)=>{
       success: false,
     });
   }
-}
+};
 
-export const registerForContest=async(req,res)=>{
+export const registerForContest = async (req, res) => {
   try {
-    const {userId,contestId}=req.params;
-    
-    const user= await User.findById(userId)
+    const { userId, contestId } = req.params;
 
-    if(!user){
+    const user = await User.findById(userId);
+
+    if (!user) {
       return res.status(400).json({
-        message:"User not found",
-        success:false
-      })
+        message: "User not found",
+        success: false,
+      });
     }
 
-    const contest=await Contests.findOne({contestId:contestId});
+    const contest = await Contests.findOne({ contestId: contestId });
 
-    if(!contest){
+    if (!contest) {
       return res.status(400).json({
-        message:"Contest not found",
-        success:false
-      })
+        message: "Contest not found",
+        success: false,
+      });
     }
 
-    if(contest.status=="ended"){
+    if (contest.status == "ended") {
       return res.status(400).json({
-        message:"contest Ending Cannot Register",
-        success:false
-      })
+        message: "contest Ending Cannot Register",
+        success: false,
+      });
     }
-    
+
     if (contest.registeredUser.includes(userId)) {
       return res.status(400).json({
         message: "User already registered",
-        success: false
+        success: false,
       });
     }
 
@@ -311,96 +328,94 @@ export const registerForContest=async(req,res)=>{
     await contest.save();
 
     return res.status(200).json({
-      message:"Registered Successfully",
-      success:true
-    })
-
+      message: "Registered Successfully",
+      success: true,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message:"Internal Server Error",
-      success:false
-    })
+      message: "Internal Server Error",
+      success: false,
+    });
   }
-}
+};
 
 export const getContestProblem = async (req, res) => {
   try {
-      const { contestId } = req.params;
+    const { contestId } = req.params;
 
-      if (!contestId) {
-          return res.status(400).json({
-              message: "Contest ID is required",
-              success: false,
-          });
-      }
+    if (!contestId) {
+      return res.status(400).json({
+        message: "Contest ID is required",
+        success: false,
+      });
+    }
 
-      const contest = await Contests.findOne({ contestId: contestId });
+    const contest = await Contests.findOne({ contestId: contestId });
 
-      if (!contest) {
-          return res.status(200).json({
-              message: "Contest not found",
-              success: false,
-              contestAccessible: false, 
-              isrunning:false,
-          });
-      }
-
-      if (contest.status === 'upcoming') {
-          return res.status(200).json({
-              message: "Contest has not started yet",
-              success: false,
-              contestAccessible: false, 
-              isrunning:false,
-          });
-      }
-
-      if(contest.status ==='running'){
-        return res.status(200).json({
-          message:"Contest is running",
-          success:true,
-          contestAccessible: true, // Additional flag to indicate contest is accessible
-          isrunning:true,
-          problems: contest.problems,
-          endTime:contest.endTime
-        })
-      }
-
+    if (!contest) {
       return res.status(200).json({
-          message: "Problem fetched successfully",
-          success: true,
-          contestAccessible: true, // Additional flag to indicate contest is accessible
-          isrunning:false,
-          problems: contest.problems,
+        message: "Contest not found",
+        success: false,
+        contestAccessible: false,
+        isrunning: false,
       });
+    }
 
-  } catch (error) {
-      return res.status(500).json({
-          message: "Internal Server Error",
-          success: false,
+    if (contest.status === "upcoming") {
+      return res.status(200).json({
+        message: "Contest has not started yet",
+        success: false,
+        contestAccessible: false,
+        isrunning: false,
       });
+    }
+
+    if (contest.status === "running") {
+      return res.status(200).json({
+        message: "Contest is running",
+        success: true,
+        contestAccessible: true, // Additional flag to indicate contest is accessible
+        isrunning: true,
+        problems: contest.problems,
+        endTime: contest.endTime,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Problem fetched successfully",
+      success: true,
+      contestAccessible: true, // Additional flag to indicate contest is accessible
+      isrunning: false,
+      problems: contest.problems,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
 };
 
 export const getContestProblemById = async (req, res) => {
   try {
     const { problemId, contestId } = req.params;
-   
+
     // Find the contest
     const contest = await Contests.findOne({ contestId });
-    
+
     if (!contest) {
       return res.status(400).json({
         message: "Contest Not Found",
         success: false,
       });
     }
-    
+
     // Check if the problemId exists in the contest's problems array
     const problemExists = contest.problems.some(
       (problem) => problem.problemId.toString() === problemId
     );
-    
+
     if (!problemExists) {
       return res.status(404).json({
         message: "Problem not found in contest",
@@ -430,65 +445,64 @@ export const getContestProblemById = async (req, res) => {
   }
 };
 
-export const isRegisteredInContest =async(req,res)=>{
+export const isRegisteredInContest = async (req, res) => {
   try {
-    const {contestId,userId}= req.body;
+    const { contestId, userId } = req.body;
 
-    const contest= await Contests.findOne({contestId});
+    const contest = await Contests.findOne({ contestId });
 
-    if(!contest){
+    if (!contest) {
       return res.status(400).json({
         message: "Contest Not Found",
         success: false,
       });
     }
 
-    const isregister= contest.registeredUser?.includes(userId) || false;
-    
+    const isregister = contest.registeredUser?.includes(userId) || false;
+
     return res.status(200).json({
       isregister,
-      success:true
-    })
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
-export const getContestStatus =async (req,res)=>{
+export const getContestStatus = async (req, res) => {
   try {
-    const {contestId}= req.params;
-    const contest= await Contests.findOne({contestId});
+    const { contestId } = req.params;
+    const contest = await Contests.findOne({ contestId });
 
-    if(!contest){
+    if (!contest) {
       return res.status(400).json({
         message: "Contest Not Found",
         success: false,
       });
     }
     return res.status(200).json({
-      status:contest?.status,
-      success:true
-    })
+      status: contest?.status,
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
-export const getLeaderBoard = async(req,res)=>{
+export const getLeaderBoard = async (req, res) => {
   try {
-    const {contestId}=req.params;
-    const leaderboard = await Leaderboard.findOne({ contestId })
-      .populate({
-          path: 'users.userId',
-          select: 'username', // Include any other user fields you need
-          model: 'User'
-      });
+    const { contestId } = req.params;
+    const leaderboard = await Leaderboard.findOne({ contestId }).populate({
+      path: "users.userId",
+      select: "username", // Include any other user fields you need
+      model: "User",
+    });
 
     if (!leaderboard) {
       return res.status(404).json({
-        message:"Leaderboard Not Found",
-        success:false
-      })
+        message: "Leaderboard Not Found",
+        success: false,
+      });
     }
 
     const leaderboardData = leaderboard.users.map((user) => ({
@@ -500,10 +514,10 @@ export const getLeaderBoard = async(req,res)=>{
 
     return res.status(200).json({
       leaderboardData,
-      NumberOfProblems:leaderboard.problemScore.length,
-      success:true
-    })
+      NumberOfProblems: leaderboard.problemScore.length,
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};

@@ -130,9 +130,31 @@ export const logout = async (req, res) => {
 
 export const getHomepageDetails = async (req, res) => {
   try {
-    // Populate the author (user) field to get the username
+    const today = new Date();
+
+    // Get only upcoming contests where startTime is today or in the future
+    const contests = await Contests.find({
+      status: "upcoming",
+      startTime: { $gte: today },
+    });
+
+    if (!contests.length) {
+      return null; // or handle no upcoming contests
+    }
+
+    let nearest = contests[0];
+    let minDiff = Math.abs(nearest.startTime - today);
+
+    for (let i = 1; i < contests.length; i++) {
+      const diff = Math.abs(contests[i].startTime - today);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = contests[i];
+      }
+    }
+
     const blogs = await Blog.find()
-      .populate("author", "username") // populate author with only 'username'
+      .populate("author", "username")
       .sort({ updatedAt: -1 })
       .limit(6);
 
@@ -152,6 +174,7 @@ export const getHomepageDetails = async (req, res) => {
       message: "Data Fetched Successfully",
       success: true,
       Blogs: formattedBlogs,
+      nearestContest: nearest,
       topUsers,
     });
   } catch (error) {
