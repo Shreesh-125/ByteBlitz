@@ -10,14 +10,15 @@ const fetchUsers = async (search) => {
   const { data } = await axios.post(`/api/v1/user/find/findusers`, {
     username: search,
   });
-  return data.user;
+  
+  return data.users || [];
 };
 const Usersearch = () => {
   const [inputValue, setInputValue] = useState("");
   const debouncedSearch = useDebounce(inputValue, 400);
 
   const { data: suggestions = [], isLoading } = useQuery({
-    queryKey: ["users", debouncedSearch],
+    queryKey: ["users2", debouncedSearch],
     queryFn: () => fetchUsers(debouncedSearch),
     enabled: debouncedSearch.length >= 2,
   });

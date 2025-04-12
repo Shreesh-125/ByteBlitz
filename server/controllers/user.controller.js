@@ -166,8 +166,8 @@ export const getHomepageDetails = async (req, res) => {
 export const findUser = async (req, res) => {
   try {
     const { username } = req.body;
-    console.log(username);
-
+    
+    
     if (!username) {
       return res.status(400).json({
         success: false,
@@ -193,7 +193,7 @@ export const findUser = async (req, res) => {
       rating: user.rating,
       maxRating: user.maxRating,
     }));
-
+    
     return res.status(200).json({
       success: true,
       message: "Users fetched successfully",
