@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import styles from '../styles/Admin.module.css';
 import CreateProblemModal from '../ui/CreateProblemModal';
 import CreateContestModal from '../ui/CreateContestModal';
+import CreateBlogModal from '../ui/CreateBlogModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { postContest, postProblem } from '../servers/adminpage';
+import { postContest, postProblem , postBlog} from '../servers/adminpage';
 import toast from 'react-hot-toast';
 // import CreateProblemModal from './admin/CreateProblemModal';
 // import CreateContestModal from './admin/CreateContestModal';
@@ -11,6 +12,7 @@ import toast from 'react-hot-toast';
 const AdminDashboard = () => {
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showContestModal, setShowContestModal] = useState(false);
+  const [showBlogModal, setShowBlogModal] = useState(false);
   const queryClient = useQueryClient();
 
   const problemMutation = useMutation({
@@ -68,6 +70,20 @@ const AdminDashboard = () => {
     }
   });
 
+    // Add blog mutation
+    const blogMutation = useMutation({
+      mutationFn: postBlog,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['blogs'] });
+        setShowBlogModal(false);
+        toast.success('Blog created successfully!');
+      },
+      onError: (error) => {
+        console.error('Error creating blog:', error);
+        toast.error(error.response?.data?.message || 'Failed to create blog');
+      }
+    });
+
   const handleProblemSubmit = (data) => {
     console.log(data);
     
@@ -103,6 +119,9 @@ const AdminDashboard = () => {
     contestMutation.mutate(formattedData);
   };
 
+  const handleBlogSubmit = (data) => {
+    blogMutation.mutate(data);
+  };
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Admin Dashboard</h1>
@@ -122,6 +141,13 @@ const AdminDashboard = () => {
         >
           {contestMutation.isPending ? 'Creating...' : 'Create Contest'}
         </button>
+        <button 
+          className={styles.button} 
+          onClick={() => setShowBlogModal(true)}
+          disabled={blogMutation.isPending}
+        >
+          {blogMutation.isPending ? 'Creating...' : 'Create Blog'}
+        </button>
       </div>
 
       <CreateProblemModal 
@@ -136,6 +162,14 @@ const AdminDashboard = () => {
         onClose={() => setShowContestModal(false)}
         onSubmit={handleContestSubmit}
         isLoading={contestMutation.isPending}
+      />
+
+      {/* Add Blog Modal */}
+      <CreateBlogModal
+        show={showBlogModal}
+        onClose={() => setShowBlogModal(false)}
+        onSubmit={handleBlogSubmit}
+        isLoading={blogMutation.isPending}
       />
     </div>
   );
