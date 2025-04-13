@@ -4,6 +4,7 @@ import white_arrow from "../assets/white_arrow.png";
 
 const Toprankings = ({ data }) => {
   const topusers = data;
+  console.log(data);
 
   return (
     <div className={styles.container}>

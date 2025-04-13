@@ -26,6 +26,7 @@ const Ranking = () => {
 
   return (
     <div className={styles.container}>
+      
       <div className={styles.pagetitle}>
         <p>Global Rankings</p>
       </div>

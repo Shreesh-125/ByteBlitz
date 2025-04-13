@@ -10,8 +10,9 @@ const fetchUsers = async (search) => {
   const { data } = await axios.post(`/api/v1/user/find/findusers`, {
     username: search,
   });
-  
-  return data.users || [];
+  console.log(data);
+  return data?.users;
+
 };
 const Usersearch = () => {
   const [inputValue, setInputValue] = useState("");
