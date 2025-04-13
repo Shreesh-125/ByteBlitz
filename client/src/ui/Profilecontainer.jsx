@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import defaultprofileimage from "../assets/defaultprofileimage.png";
 import styles from "../styles/Profilecontainer.module.css";
 import trophy from "../assets/trophy.png";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteProfilePhoto, UploadProfilePhoto } from "../servers/profilePage";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const Profilecontainer = ({ userData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState(defaultprofileimage);
+  const [currentPhoto, setCurrentPhoto] = useState(defaultprofileimage);
   const [tag, setTag] = useState("Master");
+  const user = useSelector(state => state.auth.user);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  useEffect(() => {
+    if (userData?.user?.profilePhoto) {
+      setCurrentPhoto(userData.user.profilePhoto);
+    }
+  }, [userData]);
 
   const userinfo = {
     username: userData?.user.username,
@@ -17,29 +30,74 @@ const Profilecontainer = ({ userData }) => {
   };
 
   const handleFileChange = (event) => {
-    let imageFile = event.target.files[0];
+    const imageFile = event.target.files[0];
     if (imageFile) {
       setSelectedFile(imageFile);
+      // Create and set temporary preview URL
+      const previewUrl = URL.createObjectURL(imageFile);
+      setCurrentPhoto(previewUrl);
+      
+      // Clean up the object URL when component unmounts or when new file is selected
+      return () => URL.revokeObjectURL(previewUrl);
+    }
+  };
+
+  const handleUploadPhoto = async (e) => {
+    e.preventDefault();
+    
+    if (!selectedFile) {
+      toast.error("Please select an image first!");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('profilePic', selectedFile);
+      const newPhotoUrl = await UploadProfilePhoto(user?.username, formData);
+      
+      // Update with the permanent URL from server
+      setCurrentPhoto(newPhotoUrl);
+      setSelectedFile(null);
+      toast.success("Profile photo updated successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error(error.message || "Failed to upload photo");
+      // Revert to previous photo if upload fails
+      setCurrentPhoto(userData?.user?.profilePhoto || defaultprofileimage);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!selectedFile) {
-      alert("Please Select Your Image!");
-      return;
-    }
-
-    setPreview(URL.createObjectURL(selectedFile));
-
     const formData = new FormData();
     formData.append("profile", selectedFile);
   };
 
-  const removeButtonHandler = () => {
-    setSelectedFile(null);
-    setPreview(defaultprofileimage);
+  const removeButtonHandler = async (e) => {
+    e.preventDefault();
+    
+    if (currentPhoto === defaultprofileimage) {
+      toast.error("No photo to remove");
+      return;
+    }
+
+    setIsRemoving(true);
+    try {
+      await deleteProfilePhoto(user?.username);
+      // Reset to default image
+      setCurrentPhoto(defaultprofileimage);
+      setSelectedFile(null);
+      toast.success("Profile photo removed successfully!");
+    } catch (error) {
+      console.error("Error deleting photo:", error);
+      toast.error("Failed to remove photo");
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   return (
@@ -75,10 +133,10 @@ const Profilecontainer = ({ userData }) => {
       </div>
       <div className={styles.photodetails}>
         <div>
-          <img src={preview} className={styles.profileimage} alt="profile" />
+          <img src={currentPhoto} className={styles.profileimage} alt="profile" />
         </div>
         <div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleUploadPhoto}>
             {/* Hidden File Input */}
             <input
               type="file"
@@ -93,16 +151,16 @@ const Profilecontainer = ({ userData }) => {
                 Choose Photo
               </label>
 
-              <button type="submit" className={styles.uploadphoto}>
-                Upload Photo
+              <button onClick={handleUploadPhoto} type="submit" className={styles.uploadphoto} disabled={!selectedFile || isUploading}>
+              {isUploading ? 'Uploading...' : 'Upload Photo'}
               </button>
 
               <button
                 onClick={removeButtonHandler}
-                disabled={!selectedFile}
                 className={styles.removephoto}
+                disabled={currentPhoto === defaultprofileimage || isRemoving}
               >
-                Remove Photo
+                {isRemoving ? 'Removing...' : 'Remove Photo'}
               </button>
             </div>
           </form>

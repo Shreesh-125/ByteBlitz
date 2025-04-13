@@ -149,6 +149,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePhoto: {
     type: String,
+    default:""
   },
   blogs: [
     {
