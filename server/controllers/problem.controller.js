@@ -4,6 +4,9 @@ import { User } from "../models/user.model.js";
 import { languageMap, StatusIdMap } from "../utils/maps.js";
 import { response } from "express";
 import mongoose from "mongoose";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const getPaginatedProblems = async (req, res) => {
   try {
@@ -170,7 +173,7 @@ export const submitcode = async (req, res) => {
 
       // Submit code to Judge0
       const response1 = await axios.post(
-        "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+        `${process.env.JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
         submissionData
       );
 
@@ -187,7 +190,7 @@ export const submitcode = async (req, res) => {
 
       // Fetch submission result
       const response2 = await axios.get(
-        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+        `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true&wait=false`
       );
 
       totaltime+=Number(response2.data.time);
@@ -273,10 +276,11 @@ export const checkCustomTestCase = async (req,res)=>{
     };
   
     const response1 = await axios.post(
-      "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+      `${process.env.JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
       submissionData
     );
-
+    console.log(response1.data);
+    
     if (!response1.data || !response1.data.token) {
       return res
         .status(500)
@@ -287,12 +291,13 @@ export const checkCustomTestCase = async (req,res)=>{
     await new Promise((resolve) =>
       setTimeout(resolve, (3) * 1000)
     );
-
+    
     // Fetch submission result
     const response2 = await axios.get(
-      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true&wait=false`
     );
-
+    // console.log(response2.data);
+    
     if(response2.data.status.id==13){
       return res.status(400).json({
         message:"Judge0 Error",
@@ -310,7 +315,7 @@ export const checkCustomTestCase = async (req,res)=>{
     }
     
     const response3 = await axios.get(
-      `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=false&wait=false`
     );
     
     return res.status(200).json({
