@@ -144,7 +144,7 @@ export const getAllBlog = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Fetch blogs with pagination
-    const blogs = await Blog.find().skip(skip).limit(limit);
+    const blogs = await Blog.find().skip(skip).limit(limit).populate('author','username');
 
     // Get total count of blogs for pagination metadata
     const totalBlogs = await Blog.countDocuments();
