@@ -1,6 +1,7 @@
 import express from "express";
 import isAuthenticated from "../middleware/auth.middleware.js";
 import {
+  AdminPostBlog,
   createBlog,
   createProblem,
   login,
@@ -15,6 +16,6 @@ router.route("/logout").get(logout);
 
 router.route("/createproblem").post(createProblem);
 router.route("/createcontest").post(createContest);
-router.route("/createblog").post(isAuthenticated, postBlog);
+router.route("/postblog").post(AdminPostBlog);
 
 export default router;
