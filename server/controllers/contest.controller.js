@@ -291,7 +291,7 @@ export const contestProblemSubmitCode = async (req, res) => {
 export const registerForContest = async (req, res) => {
   try {
     const { userId, contestId } = req.params;
-
+    
     const user = await User.findById(userId);
 
     if (!user) {
@@ -325,6 +325,8 @@ export const registerForContest = async (req, res) => {
     }
 
     contest.registeredUser.push(userId);
+    console.log(contest.registeredUser);
+    
     await contest.save();
 
     return res.status(200).json({

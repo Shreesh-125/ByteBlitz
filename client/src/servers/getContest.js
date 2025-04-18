@@ -6,12 +6,10 @@ export const getAllContestWithPagination = async (page = 1, limit = 10) => {
     const response = await axios.get(
       `/api/v1/contest?page=${page}&limit=${limit}`
     );
-    console.log(response);
-    
     const transformContestData = (data) => {
       return data.contests.map((contest) => ({
         contestId: contest.contestId, // Assuming contestId exists in API response
-        registeredUsers: contest.registeredUser.map((user) => user.username), // Extract usernames if available
+        registeredUsers: contest.registeredUser.map((user) => user), // Extract usernames if available
         startTime: new Date(contest.startTime),
         status: contest.status,
       }));

@@ -25,7 +25,7 @@ export const contestRoutes = (io) => {
 
 
   router.route("/:problemid/submitcode").post(isAuthenticated, contestProblemSubmitCode);
-  router.route("/register/:contestId/:userId").get(isAuthenticated, registerForContest);
+  router.route("/register/:contestId/:userId").get(registerForContest);
   router.route("/:contestId/problems/:problemId").get( getContestProblemById);
 
   router.route("/:contestId/problems").get(getContestProblem);

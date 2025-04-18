@@ -50,12 +50,13 @@ const Contests = () => {
 
         // Only add registered status if user is logged in
         if (user?._id) {
+
           const addRegisteredStatus = (contests) =>
             contests.map((c) => ({
               ...c,
-              registered: c.registeredUsers?.includes(user._id) || false,
+              registered: c?.registeredUsers?.includes(user._id) || false,
             }));
-
+      
           setProcessedContests({
             ended,
             upcoming: addRegisteredStatus(upcoming),
@@ -103,6 +104,9 @@ const Contests = () => {
           ),
         }));
         toast.success("Registered successfully!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000); // 1 second delay to show the toast
       }
     },
     onError: (error) => {
@@ -131,18 +135,18 @@ const Contests = () => {
           </button>
         );
       }
-      if (!contest.registered) {
-        return (
-          <button
-            className={styles.enterBtn}
-            onClick={() =>
-              toast.error("You need to register first to enter this contest")
-            }
-          >
-            Enter Contest
-          </button>
-        );
-      }
+      // if (!contest.registered) {
+      //   return (
+      //     <button
+      //       className={styles.enterBtn}
+      //       onClick={() =>
+      //         toast.error("You need to register first to enter this contest")
+      //       }
+      //     >
+      //       Enter Contest
+      //     </button>
+      //   );
+      // }
       return (
         <Link
           to={`/contests/${contest.contestId}/problems`}

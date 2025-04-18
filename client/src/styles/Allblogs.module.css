@@ -1,8 +1,40 @@
-.container{
-    margin-left: 5%;
-    margin-right: 5%;
+.allBlogsPageContainer {
+    display: flex;
+    width: 90%;
+    margin: 0 auto;
+    justify-content: space-between;
     margin-top: 40px;
+    margin-bottom: 40px;
 }
-.blogitem{
+
+.leftSideContainer {
+    flex-basis: 65%;
+}
+
+.leftSideContainer ul {
+    max-height: 150vh;
+    overflow-x: auto;
+}
+
+.leftSideContainer ul::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.rightSideContainer {
+    flex-basis: 33%;
+}
+
+.blogitem {
     margin-bottom: 20px;
+}
+
+@media (max-width: 1070px) {
+    .rightSideContainer {
+        display: none;
+    }
+
+    .leftSideContainer {
+        flex-basis: 100%;
+    }
 }

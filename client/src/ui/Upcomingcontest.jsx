@@ -20,24 +20,30 @@ const Upcomingcontest = ({ timeData }) => {
 
     return () => clearInterval(interval);
   }, [contestStart]);
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.heading}>Upcoming Contest</div>
-      <div className={styles.aboutContest}>
-        <img src={contestImage} alt="contest" />
-        <div className={styles.contestInformation}>
-          <h2>BB Challenge #{timeData?.nearestContest?.contestId}</h2>
-          {showCountdown ? (
-            <p>{formatCountdown(timeLeft)}</p>
-          ) : (
-            <p>
-              {timeLeft.days} day{timeLeft.days !== 1 ? "s" : ""} to start
-            </p>
-          )}
-          <h3>Register now</h3>
-        </div>
-      </div>
+
+      {
+        timeData ?
+        (<div className={styles.aboutContest}>
+          <img src={contestImage} alt="contest" />
+          <div className={styles.contestInformation}>
+            <h2>BB Challenge #{timeData.nearestContest?.contestId}</h2>
+            {showCountdown ? (
+              <p>{formatCountdown(timeLeft)}</p>
+            ) : (
+              <p>
+                {timeLeft.days} day{timeLeft.days !== 1 ? "s" : ""} to start
+              </p>
+            )}
+            <h3>Register now</h3>
+          </div>
+        </div>) :
+        <div className={styles.aboutContest}>No upcoming contest</div>
+      }
+
     </div>
   );
 };

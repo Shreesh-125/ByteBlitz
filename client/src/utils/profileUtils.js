@@ -21,7 +21,7 @@ export const formattedResult = (apiData) => {
   });
 };
 
-export const formatSubmissions = (submissions) => {
+export const formatSubmissions = (submissions=[]) => {
   return submissions
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 10)
