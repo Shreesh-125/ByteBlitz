@@ -2,11 +2,12 @@ import axios from "axios";
 
 export const getAllContestWithPagination = async (page = 1, limit = 10) => {
   try {
-    console.log(page);
+
     const response = await axios.get(
       `/api/v1/contest?page=${page}&limit=${limit}`
     );
-
+    console.log(response);
+    
     const transformContestData = (data) => {
       return data.contests.map((contest) => ({
         contestId: contest.contestId, // Assuming contestId exists in API response

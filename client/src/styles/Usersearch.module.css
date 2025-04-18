@@ -1,58 +1,63 @@
 .container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top:20px;
-    width: 85%;
-  }
-  
-  .header {
-    background-color: #3E5879;
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    display: flex;
-    /* align-items: center; */
-    border-radius: 10px 10px 0 0;
-  }
-  .headertext{
-    padding-right:10px;
-  }
-  .header img{
-    padding-top:3px;
-    width:25px
-  }
-  .searchContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 18px 30px;
-    border-radius: 0 0 10px 10px;
-    /* background-color: red; */
-  }
-  
-  .inputBox {
-    display: flex;
-    align-items: center;
-    background: #F5EFE7;
-    padding: 8px;
-    border-radius: 6px;
-  }  
-  .searchIcon{
-    width: 25px;
-  }
-  .input{
-    padding: 8px;
-    background-color:#F5EFE7;
-    border-style: none;
-  }
-  .searchBtn{
-    padding:14px 8px;
-    background-color:#3E5879;
-    color: white;
-    border-radius: 8px;
-    border-style: none;
-    font-size: 18px;
-  }
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  width: 85%;
+}
+
+.header {
+  background-color: #3e5879;
+  color: white;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  /* align-items: center; */
+  border-radius: 10px 10px 0 0;
+}
+.headertext {
+  padding-right: 10px;
+}
+.header img {
+  padding-top: 3px;
+  width: 25px;
+}
+.searchContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 18px 30px;
+  border-radius: 0 0 10px 10px;
+  /* background-color: red; */
+}
+
+.inputBox {
+  display: flex;
+  align-items: center;
+  background: #f5efe7;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+}
+input:focus {
+  outline: none;
+  border: none;
+}
+.searchIcon {
+  width: 25px;
+}
+.input {
+  padding: 8px;
+  background-color: #f5efe7;
+  border-style: none;
+}
+.searchBtn {
+  padding: 14px 8px;
+  background-color: #3e5879;
+  color: white;
+  border-radius: 8px;
+  border-style: none;
+  font-size: 18px;
+}

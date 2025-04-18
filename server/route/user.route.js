@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteProfilePic,
   deleteUser,
   findUser,
   getHomepageDetails,
@@ -14,6 +15,7 @@ import {
   signup,
   toggleFriend,
   updateProfile,
+  uploadProfilePic,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middleware/auth.middleware.js";
 import {
@@ -21,6 +23,7 @@ import {
   getBlogsByUserName,
   postBlog,
 } from "../controllers/blog.controller.js";
+import { handleProfilePicUpload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
@@ -28,7 +31,7 @@ const router = express.Router();
 router.route("/login").post(login);
 router.route("/signup").post(signup);
 router.route("/logout").get(logout);
-router.route("/findusers").post(findUser);
+router.route("/find/findusers").post(findUser);
 router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------
@@ -51,5 +54,9 @@ router.route("/createblog").post(isAuthenticated, postBlog);
 router.route("/global/ranking").get(getRankingList);
 // ----------------------------------------------Friend------------------------------------------------------------------------
 router.route("/:userid/friended/:friendusername").post(toggleFriend);
+
+router.post('/upload/profile-pic/:username',handleProfilePicUpload,uploadProfilePic);
+
+router.delete('/delete/profile-pic/:username',deleteProfilePic);
 
 export default router;

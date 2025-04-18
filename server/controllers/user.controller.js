@@ -4,6 +4,8 @@ import { Contests } from "../models/constests.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Blog } from "../models/blog.model.js";
+import S3Service from "../services/s3Service.js";
+import AppError from "../utils/AppError.js";
 
 export const signup = async (req, res) => {
   try {
@@ -130,9 +132,31 @@ export const logout = async (req, res) => {
 
 export const getHomepageDetails = async (req, res) => {
   try {
-    // Populate the author (user) field to get the username
+    const today = new Date();
+
+    // Get only upcoming contests where startTime is today or in the future
+    const contests = await Contests.find({
+      status: "upcoming",
+      startTime: { $gte: today },
+    });
+
+    if (!contests.length) {
+      return null; // or handle no upcoming contests
+    }
+
+    let nearest = contests[0];
+    let minDiff = Math.abs(nearest.startTime - today);
+
+    for (let i = 1; i < contests.length; i++) {
+      const diff = Math.abs(contests[i].startTime - today);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = contests[i];
+      }
+    }
+
     const blogs = await Blog.find()
-      .populate("author", "username") // populate author with only 'username'
+      .populate("author", "username")
       .sort({ updatedAt: -1 })
       .limit(6);
 
@@ -152,6 +176,7 @@ export const getHomepageDetails = async (req, res) => {
       message: "Data Fetched Successfully",
       success: true,
       Blogs: formattedBlogs,
+      nearestContest: nearest,
       topUsers,
     });
   } catch (error) {
@@ -166,8 +191,8 @@ export const getHomepageDetails = async (req, res) => {
 export const findUser = async (req, res) => {
   try {
     const { username } = req.body;
-    console.log(username);
-
+    
+    
     if (!username) {
       return res.status(400).json({
         success: false,
@@ -193,7 +218,7 @@ export const findUser = async (req, res) => {
       rating: user.rating,
       maxRating: user.maxRating,
     }));
-
+    
     return res.status(200).json({
       success: true,
       message: "Users fetched successfully",
@@ -211,9 +236,9 @@ export const findUser = async (req, res) => {
 export const getProfileDetails = async (req, res) => {
   try {
     const { username } = req.params;
-    console.log(username);
-    // console.log(user);
+    
     const user = await User.findOne({ username });
+    
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -242,6 +267,7 @@ export const getProfileDetails = async (req, res) => {
       friendsOf: user.friendsOf,
       submissions: submissions,
       submissionCalender,
+      profilePhoto:user?.profilePhoto
     };
     return res.status(200).json({
       success: true,
@@ -574,5 +600,52 @@ export const getRecentSubmission = async (req, res) => {
       success: false,
       message: "Something went wrong. Please try again later.",
     });
+  }
+};
+
+
+export const uploadProfilePic = async (req, res, next) => {
+  try {
+    if (!req.file) throw new AppError('No file uploaded', 400);
+
+    const user = await User.findOne({username:req.params.username});
+    if (!user) throw new AppError('User not found', 404);
+
+    // Delete old image if exists
+    if (user.profilePhoto) {
+      const oldKey = S3Service.extractKeyFromUrl(user.profilePhoto);
+      await S3Service.deleteFile(oldKey);
+    }
+
+    user.profilePhoto = req.file.location;
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      data: { profilePhoto: user.profilePhoto }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteProfilePic = async (req, res, next) => {
+  try {
+    const user = await User.findOne({username:req.params.username});
+    if (!user) throw new AppError('User not found', 404);
+    if (!user.profilePhoto) throw new AppError('No profile picture exists', 400);
+
+    const key = S3Service.extractKeyFromUrl(user.profilePhoto);
+    await S3Service.deleteFile(key);
+
+    user.profilePhoto = undefined;
+    await user.save();
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    next(err);
   }
 };

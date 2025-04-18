@@ -30,7 +30,7 @@ const Contests = () => {
   // First fetch all contests without user dependency
   const { data: contestData, isLoading } = useQuery({
     queryKey: ["contest"],
-    queryFn: () => getAllContestWithPagination(currentPage, 50),
+    queryFn: () => getAllContestWithPagination(currentPage, 20),
   });
 
   // State for contests with registration status
