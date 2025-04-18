@@ -5,8 +5,10 @@ import styles from "../styles/Profilecontainer.module.css";
 import trophy from "../assets/trophy.png";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { postBlog } from '../servers/adminpage'; //need to replace this function for user to create their blogs
 import { deleteProfilePhoto, UploadProfilePhoto } from "../servers/profilePage";
 import { useSelector } from "react-redux";
+import CreateBlogModal from '../ui/CreateBlogModal';
 import toast from "react-hot-toast";
 
 const Profilecontainer = ({ userData }) => {
@@ -16,12 +18,26 @@ const Profilecontainer = ({ userData }) => {
   const user = useSelector(state => state.auth.user);
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [showBlogModal, setShowBlogModal] = useState(false)
 
   useEffect(() => {
     if (userData?.user?.profilePhoto) {
       setCurrentPhoto(userData.user.profilePhoto);
     }
   }, [userData]);
+
+  const blogMutation = useMutation({
+    mutationFn: postBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] });
+      setShowBlogModal(false);
+      toast.success('Blog created successfully!');
+    },
+    onError: (error) => {
+      console.error('Error creating blog:', error);
+      toast.error(error.response?.data?.message || 'Failed to create blog');
+    }
+  });
 
   const userinfo = {
     username: userData?.user.username,
@@ -36,7 +52,7 @@ const Profilecontainer = ({ userData }) => {
       // Create and set temporary preview URL
       const previewUrl = URL.createObjectURL(imageFile);
       setCurrentPhoto(previewUrl);
-      
+
       // Clean up the object URL when component unmounts or when new file is selected
       return () => URL.revokeObjectURL(previewUrl);
     }
@@ -44,7 +60,7 @@ const Profilecontainer = ({ userData }) => {
 
   const handleUploadPhoto = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedFile) {
       toast.error("Please select an image first!");
       return;
@@ -55,7 +71,7 @@ const Profilecontainer = ({ userData }) => {
       const formData = new FormData();
       formData.append('profilePic', selectedFile);
       const newPhotoUrl = await UploadProfilePhoto(user?.username, formData);
-      
+
       // Update with the permanent URL from server
       setCurrentPhoto(newPhotoUrl);
       setSelectedFile(null);
@@ -79,7 +95,7 @@ const Profilecontainer = ({ userData }) => {
 
   const removeButtonHandler = async (e) => {
     e.preventDefault();
-    
+
     if (currentPhoto === defaultprofileimage) {
       toast.error("No photo to remove");
       return;
@@ -98,6 +114,11 @@ const Profilecontainer = ({ userData }) => {
     } finally {
       setIsRemoving(false);
     }
+  };
+
+  const handleBlogSubmit = (data) => {
+    console.log(data)
+    blogMutation.mutate(data);
   };
 
   return (
@@ -123,10 +144,16 @@ const Profilecontainer = ({ userData }) => {
           <Link to="/profile" className={styles.links}>
             <p>Contests Participated</p>
           </Link>
-          <Link to="/profile" className={styles.links}>
+          <Link to="/myblogs" className={styles.links}>
             <p>Your Blogs</p>
           </Link>
-          <Link to="/settings" className={styles.links}>
+          <div className={styles.links}
+            onClick={() => setShowBlogModal(true)}
+            disabled={blogMutation.isPending}
+          >
+            {blogMutation.isPending ? 'Creating...' : 'Create Blog'}
+          </div>
+          <Link to="/updateProfileInfo" className={styles.links}>
             <p>Change Settings</p>
           </Link>
         </div>
@@ -152,7 +179,7 @@ const Profilecontainer = ({ userData }) => {
               </label>
 
               <button onClick={handleUploadPhoto} type="submit" className={styles.uploadphoto} disabled={!selectedFile || isUploading}>
-              {isUploading ? 'Uploading...' : 'Upload Photo'}
+                {isUploading ? 'Uploading...' : 'Upload Photo'}
               </button>
 
               <button
@@ -166,6 +193,13 @@ const Profilecontainer = ({ userData }) => {
           </form>
         </div>
       </div>
+      {/*Only need to replace the mutationFn for createBlog rest is all good */}
+      <CreateBlogModal
+        show={showBlogModal}
+        onClose={() => setShowBlogModal(false)}
+        onSubmit={handleBlogSubmit}
+        isLoading={blogMutation.isPending}
+      />
     </div>
   );
 };
