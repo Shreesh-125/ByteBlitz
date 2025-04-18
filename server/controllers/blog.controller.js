@@ -29,6 +29,7 @@ export const postBlog = async (req, res) => {
       content,
       tags,
       author: userId, // Assuming the Blog schema has an 'author' field
+      authorUsername:user.username
     });
 
     // Optionally, add the blog to the user's list of blogs
@@ -42,6 +43,7 @@ export const postBlog = async (req, res) => {
         blogId: blog._id,
         title: blog.title,
         author: user.name,
+        authorUsername:user.username,
         createdAt: blog.createdAt,
       },
     });

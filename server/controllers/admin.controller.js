@@ -3,6 +3,7 @@ import { Blog } from "../models/blog.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Problems } from "../models/problems.model.js";
+import { User } from "../models/user.model.js";
 
 export const login = async (req, res) => {
   try {
@@ -117,6 +118,7 @@ export const createBlog = async (req, res) => {
       content: content,
       tags: tags,
       author: adminId, // Assuming the Blog schema has an 'author' field
+      authorUsername:"admin"
     });
 
     // Optionally, add the blog to the admin's list of blogs
