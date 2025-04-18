@@ -9,7 +9,7 @@ import { scheduleContestUpdates } from "../services/contestScheduler.js";
 export const getAllcontests = async (req, res) => {
   try {
     let { page, limit } = req.query;
-    console.log(limit);
+
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
