@@ -140,38 +140,42 @@ export const getHomepageDetails = async (req, res) => {
       startTime: { $gte: today },
     });
 
-    if (!contests.length) {
-      return null; // or handle no upcoming contests
-    }
+    // Handle case where no contests are found
+    let nearest = null;
+    if (contests.length > 0) {
+      nearest = contests[0];
+      let minDiff = Math.abs(contests[0].startTime.getTime() - today.getTime());
 
-    let nearest = contests[0];
-    let minDiff = Math.abs(nearest.startTime - today);
-
-    for (let i = 1; i < contests.length; i++) {
-      const diff = Math.abs(contests[i].startTime - today);
-      if (diff < minDiff) {
-        minDiff = diff;
-        nearest = contests[i];
+      for (let i = 1; i < contests.length; i++) {
+        const diff = Math.abs(contests[i].startTime.getTime() - today.getTime());
+        if (diff < minDiff) {
+          minDiff = diff;
+          nearest = contests[i];
+        }
       }
     }
 
+    // Fetch latest blogs and populate author username
     const blogs = await Blog.find()
       .populate("author", "username")
       .sort({ updatedAt: -1 })
       .limit(6);
 
+    // Format blog data
     const formattedBlogs = blogs.map((blog) => ({
       id: blog._id,
       title: blog.title,
-      author: blog.authorUsername || "default1",
+      author: blog.author?.username || "default1",
       updatedAt: blog.updatedAt,
       snippet: blog.content,
     }));
 
+    // Get top users by rating
     const topUsers = await User.find({}, "_id username rating")
       .sort({ rating: -1 })
       .limit(10);
 
+    // Send success response
     return res.status(200).json({
       message: "Data Fetched Successfully",
       success: true,
@@ -187,6 +191,7 @@ export const getHomepageDetails = async (req, res) => {
     });
   }
 };
+
 
 export const findUser = async (req, res) => {
   try {
