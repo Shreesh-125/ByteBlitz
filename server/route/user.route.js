@@ -48,7 +48,7 @@ router.route("/update-profile").post(isAuthenticated, updateProfile);
 router.route("/delete").delete(isAuthenticated, deleteUser);
 
 // ---------------------------------------------Blog---------------------------------------------------------------------------
-router.route("/:username/blog").get(isAuthenticated, getBlogsByUserName);
+router.route("/:username/blog").get( getBlogsByUserName);
 router.route("/createblog").post(isAuthenticated, postBlog);
 
 router.route("/global/ranking").get(getRankingList);

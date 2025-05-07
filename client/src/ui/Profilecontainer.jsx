@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 const Profilecontainer = ({ userData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [currentPhoto, setCurrentPhoto] = useState(defaultprofileimage);
+  const [currentPhoto, setCurrentPhoto] = useState(null);
   const [tag, setTag] = useState("Master");
   const user = useSelector(state => state.auth.user);
   const [isUploading, setIsUploading] = useState(false);
@@ -160,7 +160,7 @@ const Profilecontainer = ({ userData }) => {
       </div>
       <div className={styles.photodetails}>
         <div>
-          <img src={currentPhoto} className={styles.profileimage} alt="profile" />
+          <img src={currentPhoto || defaultprofileimage} className={styles.profileimage} alt="profile" />
         </div>
         <div>
           <form onSubmit={handleUploadPhoto}>

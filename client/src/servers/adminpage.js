@@ -11,6 +11,6 @@ export const postContest=async (data)=>{
 }
 
 export const postBlog=async (data)=>{
-    const response= await axios.post(`/api/v1/admin/createpost`,data);
+    const response= await axios.post(`/api/v1/admin/postblog`,data);
     return response.data;
 }
