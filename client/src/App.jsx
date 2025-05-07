@@ -79,7 +79,7 @@ function App() {
 
               <Route path="/myblogs" element={<MyBlogs />} />
               <Route path="/blogs" element={<Allblogs />} />
-              <Route path="/profile" element={<Profilepage />} />
+              <Route path="/profile/:username" element={<Profilepage />} />
               <Route path="/My_Friends" element={<Friendspage />} />
               <Route path="/settings" element={<Profilepage />} />
               <Route path="/standings" element={<Conteststandingpage />} />

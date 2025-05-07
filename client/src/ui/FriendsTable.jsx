@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../styles/FriendsTable.module.css';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { Link, useNavigate } from 'react-router-dom';
 
 const friends = [
     {
@@ -25,6 +26,8 @@ const FriendsTable = () => {
         });
     };
 
+    const navigate=useNavigate();
+
     return (
         <div className={styles.friendsTable}>
             <div className={`${styles.friendRow} ${styles.header}`}>
@@ -34,7 +37,7 @@ const FriendsTable = () => {
             </div>
             {friendsList.map(({ profile, rating, isFriend }, index) => (
                 <div key={index} className={styles.friendRow}>
-                    <span>{profile}</span>
+                    <span className={styles.username} onClick={()=>navigate(`/profile/${profile}`)}>{profile}</span>
                     <span className={`${styles.centerGridInfo} ${styles.ratingInfo} `}>{rating}</span>
                     <span
                         className={`${styles.centerGridInfo} ${styles.heartIcon}`}

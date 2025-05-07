@@ -10,6 +10,7 @@ import {
   getSubmissionDetails,
   getUserContests,
   getUserSubmissions,
+  isFriend,
   login,
   logout,
   signup,
@@ -35,7 +36,7 @@ router.route("/find/findusers").post(findUser);
 router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------
-router.route("/:username").get(isAuthenticated, getProfileDetails);
+router.route("/:username").get( getProfileDetails);
 router.route("/:username/submissions").get(isAuthenticated, getUserSubmissions);
 router
   .route("/:username/submissions/:submissionId")
@@ -58,5 +59,7 @@ router.route("/:userid/friended/:friendusername").post(toggleFriend);
 router.post('/upload/profile-pic/:username',handleProfilePicUpload,uploadProfilePic);
 
 router.delete('/delete/profile-pic/:username',deleteProfilePic);
+
+router.route(`/:userid/isFriend/:friendUsername`).get(isFriend);
 
 export default router;

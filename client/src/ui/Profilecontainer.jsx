@@ -4,14 +4,14 @@ import defaultprofileimage from "../assets/defaultprofileimage.png";
 import styles from "../styles/Profilecontainer.module.css";
 import trophy from "../assets/trophy.png";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { postBlog } from '../servers/adminpage'; //need to replace this function for user to create their blogs
-import { deleteProfilePhoto, UploadProfilePhoto } from "../servers/profilePage";
+import { checkfriend, deleteProfilePhoto, togglefriend, UploadProfilePhoto } from "../servers/profilePage";
 import { useSelector } from "react-redux";
 import CreateBlogModal from '../ui/CreateBlogModal';
 import toast from "react-hot-toast";
 
-const Profilecontainer = ({ userData }) => {
+const Profilecontainer = ({ userData ,isUser }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [currentPhoto, setCurrentPhoto] = useState(null);
   const [tag, setTag] = useState("Master");
@@ -45,6 +45,8 @@ const Profilecontainer = ({ userData }) => {
     nfriends: userData?.user.friendsOf,
   };
 
+  
+  
   const handleFileChange = (event) => {
     const imageFile = event.target.files[0];
     if (imageFile) {
@@ -116,6 +118,39 @@ const Profilecontainer = ({ userData }) => {
     }
   };
 
+  const queryClient = useQueryClient();
+
+  const toggleFriendMutation = useMutation({
+    mutationFn: ({ userid, friendUsername }) => 
+      togglefriend(userid, friendUsername),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['userData']);
+      
+    },
+    onError: (error) => {
+      console.error("Error toggling friend:", error);
+      toast.error("Failed to update friend status");
+    }
+  });
+
+  // Check friendship status
+  const { data: friendshipStatus, isLoading: isCheckingFriend } = useQuery({
+    queryKey: ['friendship', user?._id, userData?.user?.username],
+    queryFn: () => checkfriend(user?._id, userData?.user?.username),
+    enabled: !!user?._id && !!userData?.user?.username ,
+    select: (response) => response?.data?.isFriend || false
+  });
+  
+  const handleToggleFriend = () => {
+    
+    if (!user?._id || !userData?.user?.username) return;
+   
+    toggleFriendMutation.mutate({
+      userid: user?._id,
+      friendUsername: userData.user.username
+    });
+  };
+
   const handleBlogSubmit = (data) => {
     console.log(data)
     blogMutation.mutate(data);
@@ -127,7 +162,21 @@ const Profilecontainer = ({ userData }) => {
         <div className={styles.tag}>
           <img src={trophy} alt="trophy"></img>
           <p>{tag}</p>
-          <FaRegHeart color="blue" size={24} />
+          {!isUser && (
+            <button 
+              onClick={handleToggleFriend}
+              disabled={isCheckingFriend || toggleFriendMutation.isPending}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              {isCheckingFriend || toggleFriendMutation.isPending ? (
+                <span>...</span>
+              ) : friendshipStatus ? (
+                <FaHeart color="blue" size={24} />
+              ) : (
+                <FaRegHeart color="blue" size={24} />
+              )}
+            </button>
+          )}
         </div>
         <div className={styles.userdetails}>
           <p className={styles.username}>

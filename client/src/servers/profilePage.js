@@ -24,3 +24,27 @@ export const UploadProfilePhoto = async (username, formData) => {
     throw new Error(error.response?.data?.message || 'Failed to upload profile photo');
   }
 };
+
+export const togglefriend = async (userid,friendUsername)=>{
+  try {
+    const response = await axios.post(`/api/v1/user/${userid}/friended/${friendUsername}`)
+    return response;
+
+  } catch (error) {
+    console.log("Error While toggling Friend");
+    console.log(error);
+    
+  }
+}
+
+export const checkfriend = async (userid,friendUsername)=>{
+  try {
+    return await axios.get(`/api/v1/user/${userid}/isFriend/${friendUsername}`)
+    
+    
+  } catch (error) {
+    console.log("Error While toggling Friend");
+    console.log(error);
+    
+  }
+}

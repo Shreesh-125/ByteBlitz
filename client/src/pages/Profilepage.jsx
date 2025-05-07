@@ -6,17 +6,18 @@ import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "../servers/getProfile";
 import Loader from "../ui/Loader.jsx";
+import { useParams } from "react-router-dom";
 
 const Profilepage = () => {
+  const { username } = useParams();
   const user = useSelector((state) => state.auth.user);
-  const token = useSelector((state) => state.auth.token);
+  
   const { data: userData, isLoading } = useQuery({
-    queryKey: ["userProfile", user?.id],
-    queryFn: () => getProfile(user, token),
-    enabled: !!user,
+    queryKey: ["userProfile", username],
+    queryFn: () => getProfile(username),
+    enabled: !!username,
   });
 
-  console.log("userData", userData);
 
   if (isLoading) return <Loader />;
 
@@ -24,7 +25,7 @@ const Profilepage = () => {
     <div style={{ marginTop: 40 }}>
       {user ? (
         <div className={styles.container}>
-          <Profilepageleftbar userData={userData} className={styles.left} />
+          <Profilepageleftbar isUser={username===user?.username} userData={userData} className={styles.left} />
           <Profilepagesidebar userData={userData} className={styles.right} />
         </div>
       ) : (

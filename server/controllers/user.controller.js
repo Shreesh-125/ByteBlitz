@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { Blog } from "../models/blog.model.js";
 import S3Service from "../services/s3Service.js";
 import AppError from "../utils/AppError.js";
+import mongoose from "mongoose";
 
 export const signup = async (req, res) => {
   try {
@@ -404,6 +405,56 @@ export const getUserContests = async (req, res) => {
   }
 };
 
+export const isFriend = async (req, res) => {
+  try {
+    const { userid, friendUsername } = req.params;
+
+    if (!userid || !friendUsername) {
+      return res.status(400).json({
+        message: "userId and username required",
+        success: false
+      });
+    }
+
+    // Check if userid is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userid)) {
+      return res.status(400).json({
+        message: "Invalid user ID format",
+        success: false
+      });
+    }
+
+    // Find the current user and check if the friend is in their friends array
+    const currentUser = await User.findById(userid);
+    const friendUser = await User.findOne({ username: friendUsername });
+
+    if (!currentUser || !friendUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
+    // Check if friendUser's ID exists in currentUser's friends array
+    const isFriend = currentUser.friends.some(friendId => 
+      friendId.equals(friendUser._id)
+    );
+    
+    return res.status(200).json({
+      success: true,
+      isFriend,
+      message: isFriend ? "Users are friends" : "Users are not friends"
+    });
+
+  } catch (error) {
+    console.error("Error checking friendship:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message
+    });
+  }
+};
 export const toggleFriend = async (req, res) => {
   try {
     const { userid, friendusername } = req.params;
