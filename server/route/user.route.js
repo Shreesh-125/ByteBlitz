@@ -3,6 +3,7 @@ import {
   deleteProfilePic,
   deleteUser,
   findUser,
+  getfriends,
   getHomepageDetails,
   getProfileDetails,
   getRankingList,
@@ -61,5 +62,7 @@ router.post('/upload/profile-pic/:username',handleProfilePicUpload,uploadProfile
 router.delete('/delete/profile-pic/:username',deleteProfilePic);
 
 router.route(`/:userid/isFriend/:friendUsername`).get(isFriend);
+
+router.route(`/getfriends/:username`).get(getfriends);
 
 export default router;

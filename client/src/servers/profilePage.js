@@ -48,3 +48,8 @@ export const checkfriend = async (userid,friendUsername)=>{
     
   }
 }
+
+export const getAllFriends = async (username)=>{
+  const response= await axios.get(`/api/v1/user/getfriends/${username}`);
+  return response.data;
+}

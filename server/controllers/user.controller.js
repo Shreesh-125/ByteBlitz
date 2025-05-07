@@ -455,6 +455,7 @@ export const isFriend = async (req, res) => {
     });
   }
 };
+
 export const toggleFriend = async (req, res) => {
   try {
     const { userid, friendusername } = req.params;
@@ -500,6 +501,50 @@ export const toggleFriend = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
+    });
+  }
+};
+
+export const getfriends = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({
+        message: "Username is required",
+        success: false
+      });
+    }
+
+    // Find the user and populate the friends field with usernames
+    const user = await User.findOne({ username })
+      .populate({
+        path: 'friends',
+        select: 'username' // Only select the username field from friends
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
+    // Extract usernames from the populated friends array
+    const friendsList = user.friends.map(friend => friend.username);
+
+    return res.status(200).json({
+      message: "Friends list retrieved successfully",
+      success: true,
+      data: friendsList
+    });
+
+  } catch (error) {
+    console.error("Error while getting friends:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message
     });
   }
 };

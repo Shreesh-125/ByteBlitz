@@ -77,7 +77,7 @@ function App() {
 
               <Route path="/ranking" element={<Ranking />} />
 
-              <Route path="/myblogs" element={<MyBlogs />} />
+              <Route path="/user/blogs/:username" element={<MyBlogs />} />
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile/:username" element={<Profilepage />} />
               <Route path="/My_Friends" element={<Friendspage />} />

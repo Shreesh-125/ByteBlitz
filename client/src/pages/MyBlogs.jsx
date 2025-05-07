@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import stylesall from "../styles/Allblogs.module.css";
 import Blog from "../ui/Blog";
@@ -14,17 +14,10 @@ const MyBlogs = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
   const user = useSelector((state) => state.auth.user);
-  const [username, setUsername] = useState("");
+  const {username}=useParams();
   const navigate = useNavigate();
 
-  // Redirect to home if not authenticated and set username
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    } else {
-      setUsername(user.username);
-    }
-  }, [user, navigate]);
+
 
   const { data: blogData, isLoading } = useQuery({
     queryKey: ["blogs", username, page],
@@ -39,7 +32,7 @@ const MyBlogs = () => {
   });
 
   if (!user) {
-    return null; // Return null while redirect happens
+    return null; 
   }
 
   return (
