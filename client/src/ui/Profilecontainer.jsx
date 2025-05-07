@@ -197,7 +197,7 @@ const Profilecontainer = ({ userData, isUser }) => {
           ) : (
             ""
           )}
-          <Link to="/profile" className={styles.links}>
+          <Link to={`/user/contests/${user?.username}`} className={styles.links}>
             <p>Contests Participated</p>
           </Link>
           <Link to={`/user/blogs/${userinfo.username}`} className={styles.links}>
