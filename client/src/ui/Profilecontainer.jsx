@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { postBlog } from '../servers/adminpage'; //need to replace this function for user to create their blogs
 import { deleteProfilePhoto, UploadProfilePhoto } from "../servers/profilePage";
 import { useSelector } from "react-redux";
-import CreateBlogModal from '../ui/CreateBlogModal';
+import UserCreateBlogModal from '../ui/UserCreateBlogModal';
 import toast from "react-hot-toast";
 
 const Profilecontainer = ({ userData }) => {
@@ -194,7 +194,7 @@ const Profilecontainer = ({ userData }) => {
         </div>
       </div>
       {/*Only need to replace the mutationFn for createBlog rest is all good */}
-      <CreateBlogModal
+      <UserCreateBlogModal
         show={showBlogModal}
         onClose={() => setShowBlogModal(false)}
         onSubmit={handleBlogSubmit}

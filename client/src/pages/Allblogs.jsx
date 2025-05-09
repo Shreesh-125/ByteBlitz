@@ -5,7 +5,7 @@ import stylesall from "../styles/Allblogs.module.css";
 import Blog from "../ui/Blog";
 import { getHomeInfo } from "../servers/getHomeInfo";
 import { getAllBlogs } from "../servers/getAllBlogs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../ui/Loader";
 import Homesidebar from "./Homesidebar";
 import Pagination from "../ui/Pagination";
@@ -65,7 +65,9 @@ const Allblogs = () => {
     queryKey: ["homedata"],
     queryFn: () => getHomeInfo(),
   });
-
+  useEffect(()=>{
+    console.log(homeData)
+  },[homeData])
   blogData = blogDatas?.blogs;
   return (
     <div className={stylesall.allBlogsPageContainer}>

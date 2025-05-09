@@ -140,20 +140,25 @@ export const getHomepageDetails = async (req, res) => {
       startTime: { $gte: today },
     });
 
-    if (!contests.length) {
-      return null; // or handle no upcoming contests
-    }
-
-    let nearest = contests[0];
-    let minDiff = Math.abs(nearest.startTime - today);
-
-    for (let i = 1; i < contests.length; i++) {
-      const diff = Math.abs(contests[i].startTime - today);
-      if (diff < minDiff) {
-        minDiff = diff;
-        nearest = contests[i];
+    // if (!contests.length) {
+    //   return null; // or handle no upcoming contests
+    // }
+    
+    // this will handle upcoming contests
+    let nearest = null;
+    if(contests.length){
+      nearest=contests[0];
+      let minDiff = Math.abs(nearest.startTime - today);
+  
+      for (let i = 1; i < contests.length; i++) {
+        const diff = Math.abs(contests[i].startTime - today);
+        if (diff < minDiff) {
+          minDiff = diff;
+          nearest = contests[i];
+        }
       }
     }
+    
 
     const blogs = await Blog.find()
       .populate("author", "username")
