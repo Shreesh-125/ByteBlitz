@@ -1,0 +1,143 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    position: relative;
+    margin: 30px;
+    /* padding: 30px; */
+    /* background-color: blue; */
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+  }
+  .modal h2{
+    /* background-color: #3E5879; */
+    color: white;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 15px;
+    margin-bottom: 5px;
+  }
+  .modal h2 p{
+    background-color: #3E5879;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 15px;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  
+  .formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .formGroup input,
+  .formGroup textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    resize: none;
+    font-family: inherit;
+  }
+  
+  .tagInputContainer {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .addTagButton {
+    padding: 8px 12px;
+    background-color: #3E5879;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .tagsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag {
+    background-color: #e0e0e0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .removeTag {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .modalButtons{
+    display: flex;
+    gap: 15px;
+  }
+  
+  .cancelButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #e04a40;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .cancelButton:hover {
+    background-color: #d32f2f;
+  }
+  
+  .submitButton {
+    padding: 0.75rem 1.5rem;
+    background-color: #3E5879;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submitButton:hover {
+    background-color: #314560;
+  }
+  

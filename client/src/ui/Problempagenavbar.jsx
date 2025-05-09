@@ -11,7 +11,7 @@ const Problempagenavbar = () => {
             className={`${location.pathname === "/standings" ? styles.containerwhenstandings : ""}`}
         >
             <div 
-                className={`${styles.navbar} ${location.pathname === "/standings" ? styles.standings : ""}`}
+                className={`${styles.navbar} ${location.pathname.endsWith("/standings") ? styles.standings : ""}`}
             >
                 <Link to={`/contests/${contestId}/problems`}>
                     <button className={styles.problembtn}>Problems</button>

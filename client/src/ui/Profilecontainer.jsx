@@ -13,7 +13,7 @@ import {
   UploadProfilePhoto,
 } from "../servers/profilePage";
 import { useSelector } from "react-redux";
-import CreateBlogModal from "../ui/CreateBlogModal";
+import UserCreateBlogModal from '../ui/UserCreateBlogModal';
 import toast from "react-hot-toast";
 
 const Profilecontainer = ({ userData, isUser }) => {
@@ -268,7 +268,7 @@ const Profilecontainer = ({ userData, isUser }) => {
         </div>
       </div>
       {/*Only need to replace the mutationFn for createBlog rest is all good */}
-      <CreateBlogModal
+      <UserCreateBlogModal
         show={showBlogModal}
         onClose={() => setShowBlogModal(false)}
         onSubmit={handleBlogSubmit}

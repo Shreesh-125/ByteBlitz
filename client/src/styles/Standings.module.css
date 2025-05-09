@@ -24,7 +24,8 @@
     padding-top: 15px;
     padding-bottom: 15px;
     display: grid;
-    grid-template-columns: 2fr 7fr 10% 10% 10% 10% 10% 10% 10%;
+    width: 100%;
+    /* grid-template-columns: 7% 25% repeat(7,10%); */
     background-color: #3E5879;
     color: white;
     font-weight: bold;
@@ -42,13 +43,13 @@
     padding-top: 10px;
     padding-bottom: 10px;
     display: grid;
-    grid-template-columns: 2fr 7fr 10% 10% 10% 10% 10% 10% 10%;
+    /* grid-template-columns: 2fr 7fr 10% 10% 10% 10% 10% 10% 10%; */
     background-color: white;
     border-bottom: 1px solid #ddd;
 }
 .table-row:nth-child(even) {
     display: grid;
-    grid-template-columns: 2fr 7fr 10% 10% 10% 10% 10% 10% 10%;
+    /* grid-template-columns: 2fr 7fr 10% 10% 10% 10% 10% 10% 10%; */
     background-color: #f9f9f9;
 }
 

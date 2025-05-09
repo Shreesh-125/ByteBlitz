@@ -141,20 +141,25 @@ export const getHomepageDetails = async (req, res) => {
       startTime: { $gte: today },
     });
 
-    // Handle case where no contests are found
+ // if (!contests.length) {
+    //   return null; // or handle no upcoming contests
+    // }
+    
+    // this will handle upcoming contests
     let nearest = null;
-    if (contests.length > 0) {
-      nearest = contests[0];
-      let minDiff = Math.abs(contests[0].startTime.getTime() - today.getTime());
-
+    if(contests.length){
+      nearest=contests[0];
+      let minDiff = Math.abs(nearest.startTime - today);
+  
       for (let i = 1; i < contests.length; i++) {
-        const diff = Math.abs(contests[i].startTime.getTime() - today.getTime());
+        const diff = Math.abs(contests[i].startTime - today);
         if (diff < minDiff) {
           minDiff = diff;
           nearest = contests[i];
         }
       }
     }
+    
 
     // Fetch latest blogs and populate author username
     const blogs = await Blog.find()
