@@ -29,8 +29,8 @@ export const contestRoutes = (io) => {
   router.route("/:contestId/problems/:problemId").get( getContestProblemById);
 
   router.route("/:contestId/problems").get(getContestProblem);
-  router.route("/checkregistered").post(isAuthenticated,isRegisteredInContest)
+  router.route("/checkregistered").post(isRegisteredInContest)
   router.route("/getStatus/:contestId").get(getContestStatus);
-  router.route("/:contestId/leaderboard").get(isAuthenticated,getLeaderBoard);
+  router.route("/:contestId/leaderboard").get(getLeaderBoard);
   return router;
 };

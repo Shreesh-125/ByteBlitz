@@ -3,6 +3,7 @@ import {
   deleteProfilePic,
   deleteUser,
   findUser,
+  getfriends,
   getHomepageDetails,
   getProfileDetails,
   getRankingList,
@@ -10,6 +11,7 @@ import {
   getSubmissionDetails,
   getUserContests,
   getUserSubmissions,
+  isFriend,
   login,
   logout,
   signup,
@@ -35,7 +37,7 @@ router.route("/find/findusers").post(findUser);
 router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------
-router.route("/:username").get(isAuthenticated, getProfileDetails);
+router.route("/:username").get( getProfileDetails);
 router.route("/:username/submissions").get(isAuthenticated, getUserSubmissions);
 router
   .route("/:username/submissions/:submissionId")
@@ -48,7 +50,7 @@ router.route("/update-profile").post(isAuthenticated, updateProfile);
 router.route("/delete").delete(isAuthenticated, deleteUser);
 
 // ---------------------------------------------Blog---------------------------------------------------------------------------
-router.route("/:username/blog").get(isAuthenticated, getBlogsByUserName);
+router.route("/:username/blog").get( getBlogsByUserName);
 router.route("/createblog").post(isAuthenticated, postBlog);
 
 router.route("/global/ranking").get(getRankingList);
@@ -58,5 +60,9 @@ router.route("/:userid/friended/:friendusername").post(toggleFriend);
 router.post('/upload/profile-pic/:username',handleProfilePicUpload,uploadProfilePic);
 
 router.delete('/delete/profile-pic/:username',deleteProfilePic);
+
+router.route(`/:userid/isFriend/:friendUsername`).get(isFriend);
+
+router.route(`/getfriends/:username`).get(getfriends);
 
 export default router;

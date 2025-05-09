@@ -83,7 +83,7 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link to="/profile">
+              <Link to={`/profile/${user?.username}`}>
                 <img src={avatar} alt="User Avatar" className={styles.avatar} />
               </Link>
             </>

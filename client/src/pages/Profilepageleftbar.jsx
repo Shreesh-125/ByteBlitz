@@ -5,7 +5,7 @@ import Bargraph from "../ui/bargraph";
 import styles from "../styles/Profilepageleftbar.module.css";
 import { formattedResult } from "../utils/profileUtils";
 
-const Profilepageleftbar = ({ userData }) => {
+const Profilepageleftbar = ({ userData, isUser }) => {
   const submissionCalendarData =
     userData?.user?.submissionCalender &&
     formattedResult(userData?.user?.submissionCalender);
@@ -16,7 +16,7 @@ const Profilepageleftbar = ({ userData }) => {
 
   return (
     <div className={styles.container}>
-      <Profilecontainer userData={userData} />
+      <Profilecontainer isUser={isUser} userData={userData} />
       <Heatmap
         startDate={formatDate(startDate)}
         endDate={formatDate(endDate)}

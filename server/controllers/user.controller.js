@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { Blog } from "../models/blog.model.js";
 import S3Service from "../services/s3Service.js";
 import AppError from "../utils/AppError.js";
+import mongoose from "mongoose";
 
 export const signup = async (req, res) => {
   try {
@@ -140,7 +141,7 @@ export const getHomepageDetails = async (req, res) => {
       startTime: { $gte: today },
     });
 
-    // if (!contests.length) {
+ // if (!contests.length) {
     //   return null; // or handle no upcoming contests
     // }
     
@@ -160,23 +161,27 @@ export const getHomepageDetails = async (req, res) => {
     }
     
 
+    // Fetch latest blogs and populate author username
     const blogs = await Blog.find()
       .populate("author", "username")
       .sort({ updatedAt: -1 })
       .limit(6);
 
+    // Format blog data
     const formattedBlogs = blogs.map((blog) => ({
       id: blog._id,
       title: blog.title,
-      author: blog.authorUsername || "default1",
+      author: blog.author?.username || "default1",
       updatedAt: blog.updatedAt,
       snippet: blog.content,
     }));
 
+    // Get top users by rating
     const topUsers = await User.find({}, "_id username rating")
       .sort({ rating: -1 })
       .limit(10);
 
+    // Send success response
     return res.status(200).json({
       message: "Data Fetched Successfully",
       success: true,
@@ -192,6 +197,7 @@ export const getHomepageDetails = async (req, res) => {
     });
   }
 };
+
 
 export const findUser = async (req, res) => {
   try {
@@ -409,6 +415,57 @@ export const getUserContests = async (req, res) => {
   }
 };
 
+export const isFriend = async (req, res) => {
+  try {
+    const { userid, friendUsername } = req.params;
+
+    if (!userid || !friendUsername) {
+      return res.status(400).json({
+        message: "userId and username required",
+        success: false
+      });
+    }
+
+    // Check if userid is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userid)) {
+      return res.status(400).json({
+        message: "Invalid user ID format",
+        success: false
+      });
+    }
+
+    // Find the current user and check if the friend is in their friends array
+    const currentUser = await User.findById(userid);
+    const friendUser = await User.findOne({ username: friendUsername });
+
+    if (!currentUser || !friendUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
+    // Check if friendUser's ID exists in currentUser's friends array
+    const isFriend = currentUser.friends.some(friendId => 
+      friendId.equals(friendUser._id)
+    );
+    
+    return res.status(200).json({
+      success: true,
+      isFriend,
+      message: isFriend ? "Users are friends" : "Users are not friends"
+    });
+
+  } catch (error) {
+    console.error("Error checking friendship:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message
+    });
+  }
+};
+
 export const toggleFriend = async (req, res) => {
   try {
     const { userid, friendusername } = req.params;
@@ -454,6 +511,50 @@ export const toggleFriend = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
+    });
+  }
+};
+
+export const getfriends = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({
+        message: "Username is required",
+        success: false
+      });
+    }
+
+    // Find the user and populate the friends field with usernames
+    const user = await User.findOne({ username })
+      .populate({
+        path: 'friends',
+        select: 'username' // Only select the username field from friends
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
+    // Extract usernames from the populated friends array
+    const friendsList = user.friends.map(friend => friend.username);
+
+    return res.status(200).json({
+      message: "Friends list retrieved successfully",
+      success: true,
+      data: friendsList
+    });
+
+  } catch (error) {
+    console.error("Error while getting friends:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message
     });
   }
 };

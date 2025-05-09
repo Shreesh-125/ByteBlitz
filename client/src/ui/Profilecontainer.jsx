@@ -4,21 +4,26 @@ import defaultprofileimage from "../assets/defaultprofileimage.png";
 import styles from "../styles/Profilecontainer.module.css";
 import trophy from "../assets/trophy.png";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { postBlog } from '../servers/adminpage'; //need to replace this function for user to create their blogs
-import { deleteProfilePhoto, UploadProfilePhoto } from "../servers/profilePage";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { postBlog } from "../servers/adminpage"; //need to replace this function for user to create their blogs
+import {
+  checkfriend,
+  deleteProfilePhoto,
+  togglefriend,
+  UploadProfilePhoto,
+} from "../servers/profilePage";
 import { useSelector } from "react-redux";
 import UserCreateBlogModal from '../ui/UserCreateBlogModal';
 import toast from "react-hot-toast";
 
-const Profilecontainer = ({ userData }) => {
+const Profilecontainer = ({ userData, isUser }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [currentPhoto, setCurrentPhoto] = useState(defaultprofileimage);
+  const [currentPhoto, setCurrentPhoto] = useState(null);
   const [tag, setTag] = useState("Master");
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
-  const [showBlogModal, setShowBlogModal] = useState(false)
+  const [showBlogModal, setShowBlogModal] = useState(false);
 
   useEffect(() => {
     if (userData?.user?.profilePhoto) {
@@ -29,20 +34,21 @@ const Profilecontainer = ({ userData }) => {
   const blogMutation = useMutation({
     mutationFn: postBlog,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blogs'] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
       setShowBlogModal(false);
-      toast.success('Blog created successfully!');
+      toast.success("Blog created successfully!");
     },
     onError: (error) => {
-      console.error('Error creating blog:', error);
-      toast.error(error.response?.data?.message || 'Failed to create blog');
-    }
+      console.error("Error creating blog:", error);
+      toast.error(error.response?.data?.message || "Failed to create blog");
+    },
   });
 
   const userinfo = {
     username: userData?.user.username,
     country: "India",
     nfriends: userData?.user.friendsOf,
+    maxRating:userData?.user.maxRating
   };
 
   const handleFileChange = (event) => {
@@ -69,7 +75,7 @@ const Profilecontainer = ({ userData }) => {
     setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append('profilePic', selectedFile);
+      formData.append("profilePic", selectedFile);
       const newPhotoUrl = await UploadProfilePhoto(user?.username, formData);
 
       // Update with the permanent URL from server
@@ -116,18 +122,63 @@ const Profilecontainer = ({ userData }) => {
     }
   };
 
-  const handleBlogSubmit = (data) => {
-    console.log(data)
-    blogMutation.mutate(data);
+  const queryClient = useQueryClient();
+
+  const toggleFriendMutation = useMutation({
+    mutationFn: ({ userid, friendUsername }) =>
+      togglefriend(userid, friendUsername),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userData"]);
+    },
+    onError: (error) => {
+      console.error("Error toggling friend:", error);
+      toast.error("Failed to update friend status");
+    },
+  });
+
+  // Check friendship status
+  const { data: friendshipStatus, isLoading: isCheckingFriend } = useQuery({
+    queryKey: ["friendship", user?._id, userData?.user?.username],
+    queryFn: () => checkfriend(user?._id, userData?.user?.username),
+    enabled: !!user?._id && !!userData?.user?.username,
+    select: (response) => response?.data?.isFriend || false,
+  });
+
+  const handleToggleFriend = () => {
+    if (!user?._id || !userData?.user?.username) return;
+
+    toggleFriendMutation.mutate({
+      userid: user?._id,
+      friendUsername: userData.user.username,
+    });
   };
 
+  const handleBlogSubmit = (data) => {
+    console.log(data);
+    blogMutation.mutate(data);
+  };
+  
   return (
     <div className={styles.container}>
       <div className={styles.info}>
         <div className={styles.tag}>
           <img src={trophy} alt="trophy"></img>
           <p>{tag}</p>
-          <FaRegHeart color="blue" size={24} />
+          {!isUser && (
+            <button
+              onClick={handleToggleFriend}
+              disabled={isCheckingFriend || toggleFriendMutation.isPending}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              {isCheckingFriend || toggleFriendMutation.isPending ? (
+                <span>...</span>
+              ) : friendshipStatus ? (
+                <FaHeart color="blue" size={24} />
+              ) : (
+                <FaRegHeart color="blue" size={24} />
+              )}
+            </button>
+          )}
         </div>
         <div className={styles.userdetails}>
           <p className={styles.username}>
@@ -136,31 +187,49 @@ const Profilecontainer = ({ userData }) => {
               {userinfo.username}
             </span>
           </p>
+          {/* <p className={styles.country}>Max Rating: {userinfo?.maxRating}</p> */}
           <p className={styles.country}>Country: {userinfo.country}</p>
           <p className={styles.nfriends}>Friends of: {userinfo.nfriends}</p>
-          <Link to="/My_Friends" className={styles.links}>
-            <p>My Friends</p>
-          </Link>
-          <Link to="/profile" className={styles.links}>
+          {isUser ? (
+            <Link to="/My_Friends" className={styles.links}>
+              <p>My Friends</p>
+            </Link>
+          ) : (
+            ""
+          )}
+          <Link to={`/user/contests/${user?.username}`} className={styles.links}>
             <p>Contests Participated</p>
           </Link>
-          <Link to="/myblogs" className={styles.links}>
-            <p>Your Blogs</p>
+          <Link to={`/user/blogs/${userinfo.username}`} className={styles.links}>
+            <p>{isUser ? "Your" : ""} Blogs</p>
           </Link>
-          <div className={styles.links}
-            onClick={() => setShowBlogModal(true)}
-            disabled={blogMutation.isPending}
-          >
-            {blogMutation.isPending ? 'Creating...' : 'Create Blog'}
-          </div>
-          <Link to="/updateProfileInfo" className={styles.links}>
-            <p>Change Settings</p>
-          </Link>
+          {isUser ? (
+            <div
+              className={styles.links}
+              onClick={() => setShowBlogModal(true)}
+              disabled={blogMutation.isPending}
+            >
+              {blogMutation.isPending ? "Creating..." : "Create Blog"}
+            </div>
+          ) : (
+            ""
+          )}
+          {isUser ? (
+            <Link to="/updateProfileInfo" className={styles.links}>
+              <p>Change Settings</p>
+            </Link>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <div className={styles.photodetails}>
         <div>
-          <img src={currentPhoto} className={styles.profileimage} alt="profile" />
+          <img
+            src={currentPhoto || defaultprofileimage}
+            className={styles.profileimage}
+            alt="profile"
+          />
         </div>
         <div>
           <form onSubmit={handleUploadPhoto}>
@@ -178,8 +247,13 @@ const Profilecontainer = ({ userData }) => {
                 Choose Photo
               </label>
 
-              <button onClick={handleUploadPhoto} type="submit" className={styles.uploadphoto} disabled={!selectedFile || isUploading}>
-                {isUploading ? 'Uploading...' : 'Upload Photo'}
+              <button
+                onClick={handleUploadPhoto}
+                type="submit"
+                className={styles.uploadphoto}
+                disabled={!selectedFile || isUploading}
+              >
+                {isUploading ? "Uploading..." : "Upload Photo"}
               </button>
 
               <button
@@ -187,7 +261,7 @@ const Profilecontainer = ({ userData }) => {
                 className={styles.removephoto}
                 disabled={currentPhoto === defaultprofileimage || isRemoving}
               >
-                {isRemoving ? 'Removing...' : 'Remove Photo'}
+                {isRemoving ? "Removing..." : "Remove Photo"}
               </button>
             </div>
           </form>

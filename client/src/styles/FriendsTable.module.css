@@ -27,7 +27,14 @@
     background-color: #324F7F;
     font-weight: bold;
 }
+.username {
+    transition: text-decoration 0.2s ease;
+}
 
+.username:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
 .centerGridInfo {
     display: flex;
     justify-content: center;
