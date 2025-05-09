@@ -23,7 +23,6 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
-import Friendspage from "./pages/FriendsPage";
 import OauthLogin from "./pages/OuthLogin";
 import ContestProblemDescriptionPage from "./pages/ContestProblemDescriptionPage";
 import { SocketProvider } from "./context/SocketContext";
@@ -35,6 +34,9 @@ import GoogleLogin from "./features/googleLogin/googleLogin.jsx";
 import UpdateProfile from "./features/googleLogin/UpdateProfile.jsx";
 import Admin from "./pages/Admin";
 import MyBlogs from "./pages/MyBlogs.jsx";
+import ProfileLayout from "./pages/ProfileLayout.jsx";
+import ContestsTable from "./ui/ContestsTable.jsx";
+import FriendsTable from "./ui/FriendsTable.jsx";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -80,7 +82,10 @@ function App() {
               <Route path="/user/blogs/:username" element={<MyBlogs />} />
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile/:username" element={<Profilepage />} />
-              <Route path="/My_Friends" element={<Friendspage />} />
+              <Route path='/' element={<ProfileLayout/>}>
+                <Route path="My_Friends" element={<FriendsTable />} />
+                <Route path="mycontests" element={<ContestsTable />} />
+              </Route>
               <Route path="/settings" element={<Profilepage />} />
               <Route path="/standings" element={<Conteststandingpage />} />
               <Route path="/contestproblems" element={<Contestproblempage />} />
