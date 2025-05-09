@@ -141,16 +141,16 @@ export const getHomepageDetails = async (req, res) => {
       startTime: { $gte: today },
     });
 
- // if (!contests.length) {
+    // if (!contests.length) {
     //   return null; // or handle no upcoming contests
     // }
-    
+
     // this will handle upcoming contests
     let nearest = null;
-    if(contests.length){
-      nearest=contests[0];
+    if (contests.length) {
+      nearest = contests[0];
       let minDiff = Math.abs(nearest.startTime - today);
-  
+
       for (let i = 1; i < contests.length; i++) {
         const diff = Math.abs(contests[i].startTime - today);
         if (diff < minDiff) {
@@ -159,7 +159,7 @@ export const getHomepageDetails = async (req, res) => {
         }
       }
     }
-    
+
 
     // Fetch latest blogs and populate author username
     const blogs = await Blog.find()
@@ -202,8 +202,8 @@ export const getHomepageDetails = async (req, res) => {
 export const findUser = async (req, res) => {
   try {
     const { username } = req.body;
-    
-    
+
+
     if (!username) {
       return res.status(400).json({
         success: false,
@@ -229,7 +229,7 @@ export const findUser = async (req, res) => {
       rating: user.rating,
       maxRating: user.maxRating,
     }));
-    
+
     return res.status(200).json({
       success: true,
       message: "Users fetched successfully",
@@ -247,9 +247,9 @@ export const findUser = async (req, res) => {
 export const getProfileDetails = async (req, res) => {
   try {
     const { username } = req.params;
-    
+
     const user = await User.findOne({ username });
-    
+
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -278,14 +278,14 @@ export const getProfileDetails = async (req, res) => {
       friendsOf: user.friendsOf,
       submissions: submissions,
       submissionCalender,
-      profilePhoto:user?.profilePhoto
+      profilePhoto: user?.profilePhoto
     };
     return res.status(200).json({
       success: true,
       message: "User Details Fetched Successfully",
       user: modifieduser,
     });
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const getUserSubmissions = async (req, res) => {
@@ -446,10 +446,10 @@ export const isFriend = async (req, res) => {
     }
 
     // Check if friendUser's ID exists in currentUser's friends array
-    const isFriend = currentUser.friends.some(friendId => 
+    const isFriend = currentUser.friends.some(friendId =>
       friendId.equals(friendUser._id)
     );
-    
+
     return res.status(200).json({
       success: true,
       isFriend,
@@ -714,7 +714,7 @@ export const uploadProfilePic = async (req, res, next) => {
   try {
     if (!req.file) throw new AppError('No file uploaded', 400);
 
-    const user = await User.findOne({username:req.params.username});
+    const user = await User.findOne({ username: req.params.username });
     if (!user) throw new AppError('User not found', 404);
 
     // Delete old image if exists
@@ -737,7 +737,7 @@ export const uploadProfilePic = async (req, res, next) => {
 
 export const deleteProfilePic = async (req, res, next) => {
   try {
-    const user = await User.findOne({username:req.params.username});
+    const user = await User.findOne({ username: req.params.username });
     if (!user) throw new AppError('User not found', 404);
     if (!user.profilePhoto) throw new AppError('No profile picture exists', 400);
 

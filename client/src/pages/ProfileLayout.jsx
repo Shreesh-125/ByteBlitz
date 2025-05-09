@@ -1,14 +1,15 @@
 import React from 'react';
-import Profilecontainer from '../ui/Profilecontainer';
 import Profilepagesidebar from './Profilepagesidebar';
 import styles from '../styles/Friendspage.module.css'
-import FriendsTable from '../ui/FriendsTable';
-const Friendspage = () => {
+import { Outlet } from 'react-router-dom';
+
+const ProfileLayout = () => {
     return (
         <div style={{ marginTop: 40 }}>
             <div className={styles.container}
             >
-                <FriendsTable />
+                {/* <FriendsTable /> */}
+                <Outlet/>
                 <div className={styles.right}>
                     <Profilepagesidebar/>
                 </div>
@@ -17,4 +18,4 @@ const Friendspage = () => {
     );
 };
 
-export default Friendspage;
+export default ProfileLayout;
