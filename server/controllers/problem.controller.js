@@ -238,12 +238,12 @@ export const submitcode = async (req, res) => {
     await user.save();
     // If all test cases pass
     return res.status(200).json({
-      message: "Accepted",
+      message: "accepted",
       success: true,
       status:{id:3,description:"Accepted"},
       submissionId: user.submissions[user.submissions.length - 1]._id,
       totalTestCase:testcasenumber,
-      time:totaltime,
+      time: parseFloat(totaltime.toFixed(2)),
       memory:totalmemory
     });
     

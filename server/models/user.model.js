@@ -110,8 +110,7 @@ const userSchema = new mongoose.Schema({
   contests: [
     {
       contestId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "contests",
+        type: Number
       },
       rank: {
         type: Number,

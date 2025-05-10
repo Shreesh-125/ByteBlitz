@@ -33,7 +33,7 @@ const SubmissionList = () => {
       const transformedSubmissions = submissionsData.submissions.map((sub) => ({
         id: sub._id,
         status: sub.status,
-        time: sub.time ? `${sub.time}s` : "N/A",
+        time: sub.time ? `${parseFloat((sub.time).toFixed(2))}s` : "N/A",
         memory: sub.memory ? `${sub.memory }KB` : "N/A",
         language: sub.language,
         code: sub.code,

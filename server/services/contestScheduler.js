@@ -20,7 +20,7 @@ const completePostContestProcessing = async (contestId) => {
   session.startTransaction();
 
   try {
-    // 1. Get the leaderboard with all necessary data in one query
+    // 1. Get the leaderboard with all necessary data
     const leaderboard = await Leaderboard.findOne({ contestId })
       .populate({
         path: 'users.userId',
@@ -32,59 +32,59 @@ const completePostContestProcessing = async (contestId) => {
       throw new Error('Contest not found');
     }
 
-    // Extract all problem IDs from the leaderboard
+    // Extract problem IDs
     const problemIds = leaderboard.problemScore.map(prob => prob.problemId);
     
-    // 2. Update all problems to unhidden in bulk
+    // 2. Unhide problems
     await Problems.updateMany(
       { problemId: { $in: problemIds } },
       { $set: { hidden: false } },
       { session }
     );
 
-    // Prepare data for rating updates and submission unhiding
+    // Prepare user data with defaults
     const users = leaderboard.users.map(user => ({
       userId: user.userId._id,
-      rating: user.userId.rating || 1000,
-      maxRating: user.userId.maxRating || 1000,
+      rating: Number(user.userId.rating) || 1000,
+      maxRating: Number(user.userId.maxRating) || 1000,
       score: user.score,
-      submissions: user.userId.submissions || []
+      submissions: user.userId.submissions || [],
+      rank: user.rank
     }));
 
-    // 3. Calculate new ratings
+    // 3. Calculate new ratings with validation
     const newRatings = computeNewRatings(users);
+    
+    // Validate ratings before proceeding
+    newRatings.forEach(rating => {
+      if (isNaN(rating.newRating)) {
+        throw new Error(`Invalid rating calculated for user ${rating.userId}`);
+      }
+    });
 
-    // Prepare bulk operations for:
-    // - Rating updates
-    // - Submission unhiding
+    // Prepare bulk operations
     const userBulkOps = [];
 
     newRatings.forEach(({ userId, newRating }) => {
-      // Find the user's current maxRating
       const user = users.find(u => u.userId.equals(userId));
-      const currentMaxRating = user?.maxRating || 1000;
-      const updatedMaxRating = Math.max(currentMaxRating, newRating);
+      const ratingChange = newRating - (user?.rating || 1000);
+      const updatedMaxRating = Math.max(user?.maxRating || 1000, newRating);
 
-      // Prepare rating update
       userBulkOps.push({
         updateOne: {
           filter: { _id: userId },
           update: {
             $set: { 
               rating: newRating,
-              maxRating: updatedMaxRating
-            },
-            // Unhide all contest submissions
-            $set: {
+              maxRating: updatedMaxRating,
               "submissions.$[elem].hidden": false
             },
-            // Add contest history
             $push: {
               contests: {
-                contestId: leaderboard._id,
-                rank: leaderboard.users.find(u => u.userId.equals(userId))?.rank || 0,
-                ratingChange: newRating - (user?.rating || 1000),
-                newRating
+                contestId: contestId,
+                rank: user?.rank || 0,
+                ratingChange: ratingChange,
+                newRating: newRating
               }
             }
           },
@@ -95,8 +95,9 @@ const completePostContestProcessing = async (contestId) => {
       });
     });
 
-    // 4. Execute all user updates in a single bulk operation
-    await User.bulkWrite(userBulkOps, { session });
+    // 4. Execute updates
+    const bulkWriteResult = await User.bulkWrite(userBulkOps, { session });
+    console.log(`Updated ${bulkWriteResult.modifiedCount} users`);
 
     // 5. Mark leaderboard as processed
     await Leaderboard.updateOne(
@@ -106,18 +107,27 @@ const completePostContestProcessing = async (contestId) => {
     );
 
     await session.commitTransaction();
-    console.log(`Post-contest processing completed for contest ${contestId}`);
-    return { success: true };
+    console.log(`Successfully processed contest ${contestId}`);
+    return { 
+      success: true,
+      usersUpdated: bulkWriteResult.modifiedCount
+    };
   } catch (error) {
     await session.abortTransaction();
-    console.error('Error in post-contest processing:', error);
+    console.error('Post-contest processing failed:', {
+      contestId,
+      error: error.message,
+      stack: error.stack
+    });
     throw error;
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 };
 // Enhanced rating calculation with tie handling  
 function computeNewRatings(users) {
+  if (!users.length) return [];
+
   const n = users.length;
   let newRatings = [];
 
@@ -143,7 +153,15 @@ function computeNewRatings(users) {
   });
 
   // Calculate new ratings with tie consideration
-  users.forEach(({ userId, rating: R_A, rank: rank_A }) => {
+  users.forEach((user) => {
+    const { userId, rating: R_A = 0, rank: rank_A } = user;
+    
+    // Skip users with no rating (0 or undefined)
+    if (!R_A) {
+      newRatings.push({ userId, newRating: 0, ratingChange: 0 });
+      return;
+    }
+
     const group = rankGroups[rank_A];
     const groupSize = group.length;
     const groupStartIndex = rank_A - 1;
@@ -151,36 +169,57 @@ function computeNewRatings(users) {
 
     // Calculate average position for tied users
     const averageRank = (groupStartIndex + groupEndIndex) / 2 + 1;
-    const S_A = (n - averageRank) / (n - 1);
+    const S_A = (n - averageRank) / Math.max(1, n - 1);
 
-    let baseK = R_A >= 1000 ? 400 : 200;
-
-    // Compute expected score against all other users
-    let E_A = users.reduce((sum, { rating: R_B }) => {
-      return sum + 1 / (1 + Math.pow(10, (R_B - R_A) / 400));
-    }, 0) / n;
-
-    // Calculate initial rating change
-    let ratingChange = baseK * (S_A - E_A);
-
-    // Adjust K factor based on performance
-    let K = ratingChange > 0 ? baseK * 1.5 : baseK / 1.5;
-    ratingChange = K * (S_A - E_A);
-
-    // Protection for beginners (rating < 1000)
-    if (R_A < 1000 && ratingChange < 0) {
-      ratingChange = 0; // Or reduced penalty: ratingChange = ratingChange / 2;
+    // Dynamic K-factor based on rating
+    let baseK;
+    if (R_A < 1000) {
+      baseK = 600; // Higher K-factor for beginners to boost them faster
+    } else if (R_A < 2000) {
+      baseK = 400; // Standard K-factor for intermediate
+    } else {
+      baseK = 200; // Lower K-factor for experts
     }
 
-    // Cap extreme rating changes
-    ratingChange = Math.max(-400, Math.min(400, ratingChange));
+    // Compute expected score against all other users
+    let E_A = users.reduce((sum, { rating: R_B = 0 }) => {
+      // Only consider users with actual ratings
+      return R_B ? sum + 1 / (1 + Math.pow(10, (R_B - R_A) / 400)) : sum;
+    }, 0) / n;
 
+    // Calculate rating change with positive bias for beginners
+    let ratingChange = baseK * (S_A - E_A);
+    
+    // Special handling for beginners (<1000 rating)
+    if (R_A < 1000) {
+      // Ensure minimum positive change for beginners
+      const minGain = 10; // Minimum positive change
+      ratingChange = Math.max(ratingChange, minGain);
+      
+      // Cap maximum loss for beginners
+      const maxLoss = -20; // Maximum negative change
+      ratingChange = Math.max(ratingChange, maxLoss);
+    } else {
+      // Standard rating change limits for others
+      ratingChange = Math.max(-100, Math.min(100, ratingChange));
+    }
+
+    // Calculate new rating
     let newRating = Math.round(R_A + ratingChange);
     
-    // Ensure minimum rating
+    // Ensure minimum rating of 100
     newRating = Math.max(100, newRating);
 
-    newRatings.push({ userId, newRating });
+    // For beginners, ensure they don't drop below their starting point
+    if (R_A < 1000) {
+      newRating = Math.max(newRating, R_A);
+    }
+
+    newRatings.push({ 
+      userId, 
+      newRating,
+      ratingChange: Number(ratingChange.toFixed(1))
+    });
   });
 
   return newRatings;

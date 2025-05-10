@@ -111,7 +111,7 @@ export const createContest = async (req, res, io) => {
         message: "Error creating contest",
       });
     }
-
+    
     // Convert UTC to IST for leaderboard
     const startTimeUTC = new Date(startTime); // Parse input UTC time
     const startTimeIST = new Date(
@@ -131,7 +131,8 @@ export const createContest = async (req, res, io) => {
         .status(400)
         .json({ message: "Error while creating leaderboard", success: false });
     }
-
+    
+    
     // Schedule contest updates (if needed)
     scheduleContestUpdates(contest, io);
 
@@ -199,7 +200,8 @@ export const contestProblemSubmitCode = async (req, res) => {
         memory_limit: memoryLimit,
         number_of_runs: 1,
       };
-
+     
+      
       // Submit code to Judge0
       const response1 = await axios.post(
         "http://localhost:2358/submissions?base64_encoded=false&wait=true",

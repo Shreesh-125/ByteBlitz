@@ -4,8 +4,7 @@ import { Loader2 } from 'lucide-react'
 import tickIcon from '../assets/tick.svg'
 import crossIcon from '../assets/cross.svg'
 
-const ProblemSubmission = ({ hasSubmitted,submission }) => {
- 
+const ProblemSubmission = ({ hasSubmitted, submission }) => {
   const statusMessages = {
     "pending": "Checking solution against test cases...",
     "accepted": "Accepted: Your solution is correct.",
@@ -17,10 +16,17 @@ const ProblemSubmission = ({ hasSubmitted,submission }) => {
     "Execution Time Limit Exceeded": "Execution Time Limit Exceeded: Your solution took too long to run.",
     "Memory Limit Exceeded (MLE)": "Memory Limit Exceeded: Your solution used too much memory."
   };
+
+  // Helper function to safely format time
+  const formatTime = (time) => {
+    if (typeof time !== 'number') return "N/A";
+    return parseFloat(time.toFixed(2)) + " s";
+  };
+
   return (
     <div className={styles.problemSubmission}>
       <div className={styles.problemStatus}>
-      <p>{statusMessages[hasSubmitted] || "Runtime Error: An unexpected error occurred."}</p>
+        <p>{statusMessages[hasSubmitted] || "Runtime Error: An unexpected error occurred."}</p>
         {
           hasSubmitted === "pending" ?
             <Loader2 className={styles.spinner} size={20} color="blue" /> :
@@ -36,15 +42,18 @@ const ProblemSubmission = ({ hasSubmitted,submission }) => {
               <>
                 <div className={styles.infoItem}>
                   <p>Time</p>
-                  <p>{submission.time? submission.time:"N/A"} s</p>
+                  <p>{formatTime(submission?.time)}</p>
                 </div>
                 <div className={styles.infoItem}>
                   <p>Memory</p>
-                  <p>{submission.memory? submission.memory:"N/A"} KB</p>
+                  <p>{submission?.memory ? submission.memory + " KB" : "N/A"}</p>
                 </div>
                 <div className={styles.infoItem}>
                   <p>TestCases</p>
-                  <p>{submission?.message==="accepted"? submission?.totalTestCase: submission.WrongOnTestCase}/{submission?.totalTestCase}</p>
+                  <p>{submission?.message === "accepted" ? 
+                      submission?.totalTestCase : 
+                      submission?.WrongOnTestCase || "N/A"}/{submission?.totalTestCase || "N/A"}
+                  </p>
                 </div>
               </>
             )

@@ -110,7 +110,7 @@ const Contestproblempage = () => {
                                 </div>
                             </div>
     
-                            {data?.contestRunning && (
+                            {contestRunning && (
                                 <div className={styles.timer}>
                                     <p className={styles.timertext}>Contest will end in</p>
                                     {toendtime ? (

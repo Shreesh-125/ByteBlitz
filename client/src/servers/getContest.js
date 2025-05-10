@@ -28,3 +28,9 @@ export const registerUser= async({contestId,userId})=>{
   const response=await axios.get(`/api/v1/contest/register/${contestId}/${userId}`);
   return response;
 }
+
+
+export const getUserContests= async (username)=>{
+  const response = await axios.get(`/api/v1/user/${username}/contests`);
+  return response.data.contests;
+}

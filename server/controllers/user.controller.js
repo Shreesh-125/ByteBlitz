@@ -382,10 +382,7 @@ export const getSubmissionDetails = async (req, res) => {
 export const getUserContests = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username }).populate(
-      "contests.contestId",
-      "name"
-    );
+    const user = await User.findOne({ username })
 
     if (!user) {
       return res.status(400).json({
@@ -395,7 +392,7 @@ export const getUserContests = async (req, res) => {
     }
 
     const contests = user.contests.map((contest) => ({
-      contestName: contest.contestId?.name || "Unknown",
+      contestId:contest.contestId,
       rank: contest.rank,
       ratingChange: contest.ratingChange,
       newRating: contest.newRating,

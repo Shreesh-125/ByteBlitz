@@ -191,13 +191,13 @@ const Profilecontainer = ({ userData, isUser }) => {
           <p className={styles.country}>Country: {userinfo.country}</p>
           <p className={styles.nfriends}>Friends of: {userinfo.nfriends}</p>
           {isUser ? (
-            <Link to="/My_Friends" className={styles.links}>
+            <Link to="/profile/friends" className={styles.links}>
               <p>My Friends</p>
             </Link>
           ) : (
             ""
           )}
-          <Link to={`/mycontests`} className={styles.links}>
+          <Link to={`/profile/contests`} className={styles.links}>
             <p>Contests Participated</p>
           </Link>
           <Link to={`/user/blogs/${userinfo.username}`} className={styles.links}>
@@ -267,7 +267,7 @@ const Profilecontainer = ({ userData, isUser }) => {
           </form>
         </div>
       </div>
-      {/*Only need to replace the mutationFn for createBlog rest is all good */}
+      
       <UserCreateBlogModal
         show={showBlogModal}
         onClose={() => setShowBlogModal(false)}
@@ -278,3 +278,4 @@ const Profilecontainer = ({ userData, isUser }) => {
   );
 };
 export default Profilecontainer;
+//profilecontainer.jsx

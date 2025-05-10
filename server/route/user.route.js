@@ -42,7 +42,7 @@ router.route("/:username/submissions").get(isAuthenticated, getUserSubmissions);
 router
   .route("/:username/submissions/:submissionId")
   .get(isAuthenticated, getSubmissionDetails);
-router.route("/:username/contests").get(isAuthenticated, getUserContests);
+router.route("/:username/contests").get(getUserContests);
 router
   .route("/getrecentsubmission/:username")
   .get(isAuthenticated, getRecentSubmission);

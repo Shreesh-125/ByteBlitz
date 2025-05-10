@@ -82,10 +82,6 @@ function App() {
               <Route path="/user/blogs/:username" element={<MyBlogs />} />
               <Route path="/blogs" element={<Allblogs />} />
               <Route path="/profile/:username" element={<Profilepage />} />
-              <Route path='/' element={<ProfileLayout/>}>
-                <Route path="My_Friends" element={<FriendsTable />} />
-                <Route path="mycontests" element={<ContestsTable />} />
-              </Route>
               <Route path="/settings" element={<Profilepage />} />
               <Route path="/standings" element={<Conteststandingpage />} />
               <Route path="/contestproblems" element={<Contestproblempage />} />
@@ -99,6 +95,10 @@ function App() {
                 <Route path="submissions" element={<SubmissionList />} />
               </Route>
 
+              <Route path='/profile/' element={<ProfileLayout/>}>
+                <Route path="friends" element={<FriendsTable />} />
+                <Route path="contests" element={<ContestsTable />} />
+              </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
