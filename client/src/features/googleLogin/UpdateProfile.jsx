@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { updateProfile, deleteUser } from "../../servers/oauthApi";
 import { loginSuccess } from "../../store/authStore";
 import Loader from "../../ui/Loader";
+import styles from "./UpdateProfile.module.css"
 
 const UpdateProfile = () => {
   const [username, setUsername] = useState("");
@@ -51,13 +52,14 @@ const UpdateProfile = () => {
     return <Loader />;
   }
   return (
-    <div className="update-profile-container">
+    <div className={styles.updateprofilecontainer}>
       <h2>Complete Your Profile</h2>
       {mutation.isError && (
         <p className="error">Failed to update profile. Please try again.</p>
       )}
       <form onSubmit={handleUpdate}>
         <input
+          className={styles.username}
           type="text"
           placeholder="Username"
           value={username}
@@ -65,6 +67,7 @@ const UpdateProfile = () => {
           required
         />
         <input
+          className={styles.country}
           type="text"
           placeholder="Country"
           value={country}
@@ -72,6 +75,7 @@ const UpdateProfile = () => {
           required
         />
         <input
+          className={styles.password}
           type="password"
           placeholder="Password"
           value={password}
