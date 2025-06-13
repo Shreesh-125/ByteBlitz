@@ -21,6 +21,6 @@ router.route("/update/:id").put(isAuthenticated, updateProblem);
 // router.route("/:id/submit").post(submitProblem);
 
 router.route("/:problemid/submitcode").post(isAuthenticated, submitcode);
-router.route("/:problemId/submissions/:userId").get(isAuthenticated,getUserProblemSubmissions)
+router.route("/:problemId/submissions/:userId").get(getUserProblemSubmissions)
 
 export default router;

@@ -120,7 +120,8 @@ export const submitcode = async (req, res) => {
   try {
     const { code, languageId } = req.body;
     const { problemid } = req.params;
-
+ 
+    
     const userId = req.id;
 
     const user = await User.findById(userId);
@@ -145,6 +146,8 @@ export const submitcode = async (req, res) => {
       parseInt(problem.memoryLimit.replace("MB", ""), 10) * 1000;
 
     const language = languageMap[languageId];
+
+
 
     let submission = {
       problemId: problemid,
@@ -173,7 +176,7 @@ export const submitcode = async (req, res) => {
 
       // Submit code to Judge0
       const response1 = await axios.post(
-        `${process.env.JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
+        `${process.env.JUDGE0_URL}/submissions?base64_encoded=false`,
         submissionData
       );
 
@@ -182,7 +185,7 @@ export const submitcode = async (req, res) => {
           .status(500)
           .json({ message: "Failed to submit code", success: false });
       }
-
+      
       // Wait for Judge0 to complete execution
       await new Promise((resolve) =>
         setTimeout(resolve, (cpuTimeLimit + 1) * 1000)
@@ -190,12 +193,12 @@ export const submitcode = async (req, res) => {
 
       // Fetch submission result
       const response2 = await axios.get(
-        `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+        `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true`
       );
 
       totaltime+=Number(response2.data.time);
       totalmemory+=response2.data.memory
-
+      
       // If status ID is not 3 (Accepted), return immediately
       if (response2.data.status.id !== 3) {
         if (response2.data.status.id === 13) {
@@ -212,7 +215,7 @@ export const submitcode = async (req, res) => {
         };
         user.submissions = [...user.submissions, submission];
         await user.save();
-
+        
         return res.status(200).json({
           message: "Submission failed",
           status: response2.data.status,
@@ -276,7 +279,7 @@ export const checkCustomTestCase = async (req,res)=>{
     };
   
     const response1 = await axios.post(
-      `${process.env.JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
+      `${process.env.JUDGE0_URL}/submissions?base64_encoded=false`,
       submissionData
     );
     console.log(response1.data);
@@ -294,7 +297,7 @@ export const checkCustomTestCase = async (req,res)=>{
     
     // Fetch submission result
     const response2 = await axios.get(
-      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true`
     );
     // console.log(response2.data);
     
@@ -315,7 +318,7 @@ export const checkCustomTestCase = async (req,res)=>{
     }
     
     const response3 = await axios.get(
-      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=false&wait=false`
+      `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=false`
     );
     
     return res.status(200).json({

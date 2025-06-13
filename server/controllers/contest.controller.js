@@ -204,7 +204,7 @@ export const contestProblemSubmitCode = async (req, res) => {
       
       // Submit code to Judge0
       const response1 = await axios.post(
-        "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+        "http://localhost:2358/submissions?base64_encoded=false",
         submissionData
       );
 
@@ -221,7 +221,7 @@ export const contestProblemSubmitCode = async (req, res) => {
 
       // Fetch submission result
       const response2 = await axios.get(
-        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true&wait=false`
+        `http://localhost:2358/submissions/${response1.data.token}?base64_encoded=true`
       );
       totaltime += Number(response2.data.time);
       totalmemory += response2.data.memory;

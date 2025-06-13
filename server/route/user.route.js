@@ -38,10 +38,10 @@ router.route("/").get(getHomepageDetails);
 
 // --------------------------------------------Profile----------------------------------------------------------------------------
 router.route("/:username").get( getProfileDetails);
-router.route("/:username/submissions").get(isAuthenticated, getUserSubmissions);
+router.route("/:username/submissions").get( getUserSubmissions);
 router
   .route("/:username/submissions/:submissionId")
-  .get(isAuthenticated, getSubmissionDetails);
+  .get( getSubmissionDetails);
 router.route("/:username/contests").get(getUserContests);
 router
   .route("/getrecentsubmission/:username")
