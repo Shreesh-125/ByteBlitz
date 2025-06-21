@@ -61,3 +61,10 @@ export const getUserBlogs = async (username,page=1,limit=10)  => {
     return null; // Return null in case of an error
   }
 };
+
+export const postBlog=async (data)=>{
+    const response= await axios.post(`/api/v1/blog/postblog`,data);
+    console.log(data);
+    
+    return response.data;
+}

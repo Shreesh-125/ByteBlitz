@@ -5,7 +5,7 @@ import styles from "../styles/Profilecontainer.module.css";
 import trophy from "../assets/trophy.png";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { postBlog } from "../servers/adminpage"; //need to replace this function for user to create their blogs
+import { postBlog } from "../servers/getAllBlogs"; 
 import {
   checkfriend,
   deleteProfilePhoto,

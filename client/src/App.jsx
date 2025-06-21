@@ -37,6 +37,7 @@ import MyBlogs from "./pages/MyBlogs.jsx";
 import ProfileLayout from "./pages/ProfileLayout.jsx";
 import ContestsTable from "./ui/ContestsTable.jsx";
 import FriendsTable from "./ui/FriendsTable.jsx";
+import ProfilePageWithoutLogin from "./pages/ProfilePageWithoutLogin.jsx";
 
 // Create a QueryClient with global staleTime
 const queryClient = new QueryClient({
@@ -103,6 +104,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/updateProfileInfo" element={<UpdateProfile />} />
+              <Route path="/profile/NotLoggedIn" element={<ProfilePageWithoutLogin />} />
 
               <Route path="/oauth/login" element={<GoogleLogin />} />
             </Routes>

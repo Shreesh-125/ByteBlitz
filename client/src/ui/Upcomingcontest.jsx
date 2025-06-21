@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Upcomingcontest.module.css";
-import contestImage from "../assets/contest.png";
+// import contestImage from "../assets/contest.png";
+import upcomingContestImage from "../assets/upcomingContestImage.png";
 
 const Upcomingcontest = ({ timeData }) => {
   const contestStart = new Date(timeData?.nearestContest?.startTime); // Replace with your actual contest date
@@ -28,7 +29,7 @@ const Upcomingcontest = ({ timeData }) => {
       {
         timeData ?
         (<div className={styles.aboutContest}>
-          <img src={contestImage} alt="contest" />
+          <img src={upcomingContestImage} alt="contest" />
           <div className={styles.contestInformation}>
             <h2>BB Challenge #{timeData.nearestContest?.contestId}</h2>
             {showCountdown ? (

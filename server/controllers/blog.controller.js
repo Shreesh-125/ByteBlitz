@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js";
 export const postBlog = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
-
+    
     // Validate required fields
     if (!title || !content) {
       return res.status(400).json({
@@ -12,10 +12,12 @@ export const postBlog = async (req, res) => {
         success: false,
       });
     }
-
+    
+    
     const userId = req.id; // Assuming req.id contains the authenticated user's ID
     const user = await User.findById(userId);
-
+    // console.log(user);
+    
     if (!user) {
       return res.status(404).json({
         message: "User not found",

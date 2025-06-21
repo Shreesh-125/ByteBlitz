@@ -7,7 +7,6 @@ import {
   logout,
 } from "../controllers/admin.controller.js";
 import { createContest } from "../controllers/contest.controller.js";
-import { postBlog } from "../controllers/blog.controller.js";
 const router = express.Router();
 
 router.route("/login").post(login);
