@@ -162,7 +162,7 @@ export const initializeSocket = (server) => {
         const leaderboard = await Leaderboard.findOne({ contestId })
         .populate({
             path: 'users.userId',
-            select: 'username', // Include any other user fields you need
+            select: 'username', 
             model: 'User'
         });
 

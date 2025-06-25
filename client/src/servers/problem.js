@@ -12,6 +12,7 @@ export const getproblemInfoById= async(problemId)=>{
 }
 
 export const submitCode= async({languageId,value,problemId})=>{
+    console.log("hisdi")
     const response= await axios.post(`/api/v1/problem/${problemId}/submitcode`,{languageId,code:value});
     return response.data;
 }

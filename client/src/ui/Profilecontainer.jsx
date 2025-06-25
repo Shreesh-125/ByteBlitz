@@ -214,13 +214,7 @@ const Profilecontainer = ({ userData, isUser }) => {
           ) : (
             ""
           )}
-          {isUser ? (
-            <Link to="/updateProfileInfo" className={styles.links}>
-              <p>Change Settings</p>
-            </Link>
-          ) : (
-            ""
-          )}
+        
         </div>
       </div>
       <div className={styles.photodetails}>

@@ -146,9 +146,6 @@ export const submitcode = async (req, res) => {
       parseInt(problem.memoryLimit.replace("MB", ""), 10) * 1000;
 
     const language = languageMap[languageId];
-
-
-
     let submission = {
       problemId: problemid,
       code: code,

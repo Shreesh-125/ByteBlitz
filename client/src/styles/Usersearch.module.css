@@ -61,3 +61,50 @@ input:focus {
   border-style: none;
   font-size: 18px;
 }
+
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: blue;
+}
+
+.suggestionsList {
+  list-style: none;
+  padding: 0;
+  margin: 10px 30px 20px 30px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.suggestionItem {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
+}
+
+.suggestionItem:hover {
+  background-color: #f0f6ff;
+}
+
+.link {
+  display: block;
+  color: #333;
+  font-weight: 500;
+}
+
+.link:hover {
+  color: #1a73e8;
+  text-decoration: none;
+}

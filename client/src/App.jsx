@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -59,10 +59,9 @@ function App() {
             <Routes>
               <Route path="/*" element={<Home />} />
               <Route path="/contests/:contestId" element={<ContestLayout />}>
-                {/* Default redirect to problems */}
+                
                 <Route index element={<Navigate to="problems" replace />} />
 
-                {/* Problems section */}
                 <Route path="problems">
                   <Route index element={<Contestproblempage />} />
                   <Route

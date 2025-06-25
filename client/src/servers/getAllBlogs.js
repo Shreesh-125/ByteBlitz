@@ -6,7 +6,7 @@ const transformBlogs = (blogs) => {
     time: formatTime(blog.createdAt),
     title: blog.title,
     text: blog.content,
-    whoposted: blog.author?.username || 'authorName',
+    whoposted: blog.authorUsername|| 'authorName',
   }));
 };
 
@@ -33,12 +33,11 @@ export const getAllBlogs = async (page = 1, limit = 10) => {
       blogs,
       totalPages: response.data.totalPages
     }
-    // console.log('obj',obj)
-    // console.log(data);
+
     return data;
   } catch (error) {
     console.error("Error fetching blogs:", error);
-    return null; // Return null in case of an error
+    return null; 
   }
 };
 

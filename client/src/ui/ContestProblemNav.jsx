@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/ProblemNav.module.css";
 import { LANGUAGE_VERSION, languagetoIdMap } from "../utils/languagesConstants";
 import { Link, useParams } from "react-router-dom";
-
 import axios from "axios";
-
 import { useSocket } from "../context/SocketContext";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
@@ -50,6 +48,7 @@ const ContestProblemNav = ({
 
   // code submission
   const handleSubmitCode = () => {
+    console.log("chutiya")
     if(isrunning && !isRegister){
       toast.error("You are not Registered,Cannot submit Code");
       return;
@@ -67,6 +66,7 @@ const ContestProblemNav = ({
         userId: user._id,
         contestId: contestId,
       };
+
   
       socket.emit("submit_code", data);
       console.log("Code submitted");
@@ -89,11 +89,11 @@ const ContestProblemNav = ({
     } else {
       // Use the refetch function that was defined at the top level
      
-
+      console.log("love")
       refetch().then(({ data }) => {
         console.log("Submission response:", data);
         setSubmission(data);
-  
+        
         if (data?.status) {
           const verdict = data.status.id;
           const resultMessage = getVerdictMessage(verdict);

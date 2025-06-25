@@ -23,10 +23,11 @@ const Allblogs = () => {
     queryKey: ["homedata"],
     queryFn: () => getHomeInfo(),
   });
-  useEffect(()=>{
-    console.log(homeData)
-  },[homeData])
+    // useEffect(()=>{
+    //   console.log(homeData)
+    // },[homeData])
   blogData = blogDatas?.blogs;
+  console.log(blogData)
   return (
     <div className={stylesall.allBlogsPageContainer}>
       {

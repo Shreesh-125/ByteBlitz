@@ -33,7 +33,7 @@ const ContestProblemDescriptionPage = () => {
 
     socket.on("see_output", handleOutput);
 
-    // Join problem-specific room if needed
+    // Join problem-specific room if needed 
     socket.emit("join_problem", { contestId, problemId });
 
     return () => {

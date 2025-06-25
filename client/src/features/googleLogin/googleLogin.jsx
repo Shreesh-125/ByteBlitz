@@ -18,12 +18,10 @@ const GoogleLogin = ({ children }) => {
         const result = await googleAuth(authResult.code);
         const user = result.data.user;
         const token = result.data.token;
-        if (!result.data.isexit) {
-          navigate("/updateProfileInfo", { state: { email: user.email } });
-        } else {
+       
           dispatch(loginSuccess({ user, token }));
           navigate("/home");
-        }
+        
       } else {
         throw new Error(authResult);
       }

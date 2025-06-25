@@ -22,7 +22,7 @@ const Profilepageleftbar = ({ userData, isUser }) => {
         endDate={formatDate(endDate)}
         dataValues={submissionCalendarData}
       />
-      <Bargraph />
+      {/* <Bargraph /> */}
     </div>
   );
 };

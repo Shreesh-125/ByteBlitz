@@ -8,6 +8,7 @@ const api = axios.create({
 export const googleAuth = (code) => api.get(`/google?code=${code}`);
 
 export const updateProfile = async (userData) => {
+  console.log(userData)
   return await axios.post("/api/v1/user/update-profile", userData);
 };
 

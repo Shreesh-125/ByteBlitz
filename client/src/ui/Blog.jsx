@@ -5,6 +5,7 @@ import upvote_icon from "../assets/upvote_icon.png";
 import { useState } from "react";
 
 function Blog({ blog, index }) {
+  // console.log(blog)
   const [votecount, setVotecount] = useState(0);
   return (
     <div>
@@ -21,21 +22,7 @@ function Blog({ blog, index }) {
         <div className={styles.blogtext}>
           <p>{blog.text}</p>
         </div>
-        <div className={styles.votes}>
-          <button
-            onClick={() => setVotecount(votecount + 1)}
-            className={styles.downvotebtn}
-          >
-            <img className={styles.upvote} src={upvote_icon} />
-          </button>
-          <p>{votecount}</p>
-          <button
-            onClick={() => setVotecount(votecount - 1)}
-            className={styles.downvotebtn}
-          >
-            <img className={styles.downvote} src={downvote_icon} />
-          </button>
-        </div>
+        
       </li>
     </div>
   );

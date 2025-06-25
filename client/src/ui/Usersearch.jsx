@@ -5,6 +5,7 @@ import { useDebounce } from "../hooks/useDebounce"; // debounce hook
 import styles from "../styles/Usersearch.module.css";
 import white_arrow from "../assets/white_arrow.png";
 import search_icon from "../assets/search_icon.png";
+import { Link } from "react-router-dom";
 
 const fetchUsers = async (search) => {
   const { data } = await axios.post(`/api/v1/user/find/findusers`, {
@@ -55,15 +56,17 @@ const Usersearch = () => {
       </div>
 
       {isLoading && <p className={styles.loadingText}>Loading...</p>}
-      {!isLoading && suggestions.length > 0 && (
-        <ul className={styles.suggestionsList}>
-          {suggestions.map((user) => (
-            <li key={user.username} className={styles.suggestionItem}>
-              {user.username}
-            </li>
-          ))}
-        </ul>
-      )}
+     {!isLoading && suggestions.length > 0 && (
+  <ul className={styles.suggestionsList}>
+    {suggestions.map((user) => (
+      <li key={user.username} className={styles.suggestionItem}>
+        <Link to={`/profile/${user.username}`} className={styles.link}>
+          {user.username}
+        </Link>
+      </li>
+    ))}
+  </ul>
+)}
 
       {!isLoading &&
         debouncedSearch.length >= 2 &&
