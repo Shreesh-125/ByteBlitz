@@ -1,6 +1,6 @@
 const OauthLogin = () => {
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8000/api/v1/oauth/auth/google";
+    window.location.href = "https://byteblitz-backend.onrender.com/api/v1/oauth/auth/google";
   };
 
   return (

@@ -8,10 +8,10 @@ import search_icon from "../assets/search_icon.png";
 import { Link } from "react-router-dom";
 
 const fetchUsers = async (search) => {
-  const { data } = await axios.post(`/api/v1/user/find/findusers`, {
+  const { data } = await axios.post(`https://byteblitz-backend.onrender.com/api/v1/user/find/findusers`, {
     username: search,
   });
-  console.log(data);
+  // console.log(data);
   return data?.users;
 
 };

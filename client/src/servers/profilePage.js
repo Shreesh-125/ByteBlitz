@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const deleteProfilePhoto= async(username)=>{
-    const response=await axios.delete(`/api/v1/user/delete/profile-pic/${username}`);
+    const response=await axios.delete(`https://byteblitz-backend.onrender.com/api/v1/user/delete/profile-pic/${username}`);
     return response;
 }
 
@@ -9,7 +9,7 @@ export const deleteProfilePhoto= async(username)=>{
 export const UploadProfilePhoto = async (username, formData) => {
   try {
     const response = await axios.post(
-        `/api/v1/user/upload/profile-pic/${username}`,
+        `https://byteblitz-backend.onrender.com/api/v1/user/upload/profile-pic/${username}`,
         formData,
         {
           headers: {
@@ -27,7 +27,7 @@ export const UploadProfilePhoto = async (username, formData) => {
 
 export const togglefriend = async (userid,friendUsername)=>{
   try {
-    const response = await axios.post(`/api/v1/user/${userid}/friended/${friendUsername}`)
+    const response = await axios.post(`https://byteblitz-backend.onrender.com/api/v1/user/${userid}/friended/${friendUsername}`)
     return response;
 
   } catch (error) {
@@ -39,7 +39,7 @@ export const togglefriend = async (userid,friendUsername)=>{
 
 export const checkfriend = async (userid,friendUsername)=>{
   try {
-    return await axios.get(`/api/v1/user/${userid}/isFriend/${friendUsername}`)
+    return await axios.get(`https://byteblitz-backend.onrender.com/api/v1/user/${userid}/isFriend/${friendUsername}`)
     
     
   } catch (error) {
@@ -50,6 +50,6 @@ export const checkfriend = async (userid,friendUsername)=>{
 }
 
 export const getAllFriends = async (username)=>{
-  const response= await axios.get(`/api/v1/user/getfriends/${username}`);
+  const response= await axios.get(`https://byteblitz-backend.onrender.com/api/v1/user/getfriends/${username}`);
   return response.data;
 }

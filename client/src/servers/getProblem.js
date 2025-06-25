@@ -7,7 +7,7 @@ const fetchProblems = async ({
   tags = "",
 }) => {
   try {
-    const response = await axios.get("http://localhost:8000/api/v1/problem", {
+    const response = await axios.get("https://byteblitz-backend.onrender.com/api/v1/problem", {
       params: {
         minRating,
         maxRating,

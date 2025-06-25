@@ -1,26 +1,26 @@
 import axios from "axios";
 
 export const getContestProblem = async (contestId) => {
-  const response = await axios.get(`/api/v1/contest/${contestId}/problems`);
+  const response = await axios.get(`https://byteblitz-backend.onrender.com/api/v1/contest/${contestId}/problems`);
   return response.data;
 };
 
 export const getProblemInfo = async ({ problemId, contestId }) => {
   const response = await axios.get(
-    `/api/v1/contest/${contestId}/problems/${problemId}`
+    `https://byteblitz-backend.onrender.com/api/v1/contest/${contestId}/problems/${problemId}`
   );
   return response.data;
 };
 
 export const submitContestProblem = async (submissionData) => {
   const response = await axios.post(
-    `/api/v1/contest/${submissionData.problemId}/submitcode`
+    `https://byteblitz-backend.onrender.com/api/v1/contest/${submissionData.problemId}/submitcode`
   );
   return response.data;
 };
 
 export const checkRegisteredUser = async ({ contestId, userId }) => {
-  const response = await axios.post(`/api/v1/contest/checkregistered`, {
+  const response = await axios.post(`https://byteblitz-backend.onrender.com/api/v1/contest/checkregistered`, {
     contestId,
     userId,
   });
@@ -28,11 +28,11 @@ export const checkRegisteredUser = async ({ contestId, userId }) => {
 };
 
 export const getContestStatus = async (contestId) => {
-  const response = await axios.get(`/api/v1/contest/getStatus/${contestId}`);
+  const response = await axios.get(`https://byteblitz-backend.onrender.com/api/v1/contest/getStatus/${contestId}`);
   return response.data;
 };
 
 export const fetchLeaderboard = async (contestId) => {
-  const response = await axios.get(`/api/v1/contest/${contestId}/leaderboard`);
+  const response = await axios.get(`https://byteblitz-backend.onrender.com/api/v1/contest/${contestId}/leaderboard`);
   return response.data;
 };

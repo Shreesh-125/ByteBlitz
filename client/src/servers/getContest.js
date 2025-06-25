@@ -4,7 +4,7 @@ export const getAllContestWithPagination = async (page = 1, limit = 10) => {
   try {
 
     const response = await axios.get(
-      `/api/v1/contest?page=${page}&limit=${limit}`
+      `https://byteblitz-backend.onrender.com/api/v1/contest?page=${page}&limit=${limit}`
     );
     const transformContestData = (data) => {
       return data.contests.map((contest) => ({
@@ -25,12 +25,12 @@ export const getAllContestWithPagination = async (page = 1, limit = 10) => {
 };
 
 export const registerUser= async({contestId,userId})=>{
-  const response=await axios.get(`/api/v1/contest/register/${contestId}/${userId}`);
+  const response=await axios.get(`https://byteblitz-backend.onrender.com/api/v1/contest/register/${contestId}/${userId}`);
   return response;
 }
 
 
 export const getUserContests= async (username)=>{
-  const response = await axios.get(`/api/v1/user/${username}/contests`);
+  const response = await axios.get(`https://byteblitz-backend.onrender.com/api/v1/user/${username}/contests`);
   return response.data.contests;
 }

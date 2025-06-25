@@ -34,7 +34,7 @@ const ContestLayout = () => {
             setIsrunning(true);
             
             if (!socket) {
-                const newSocket = io("http://localhost:8000", {
+                const newSocket = io("https://byteblitz-backend.onrender.com", {
                     transports: ["websocket", "polling"],
                     withCredentials: true,
                     autoConnect: true,
