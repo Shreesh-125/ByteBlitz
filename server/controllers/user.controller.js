@@ -97,7 +97,9 @@ export const login = async (req, res) => {
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "strict",
+        secure: process.env.NODE_ENV === 'production', // true in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
       })
       .json({
         message: `Welcome back!! `,

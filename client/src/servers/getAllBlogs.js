@@ -61,9 +61,20 @@ export const getUserBlogs = async (username,page=1,limit=10)  => {
   }
 };
 
-export const postBlog=async (data)=>{
-    const response= await axios.post(`https://byteblitz-backend.onrender.com/api/v1/blog/postblog`,data);
-    console.log(data);
-    
-    return response.data;
-}
+export const postBlog = async (data) => {
+  // Get token from localStorage or wherever you store it
+  const token = localStorage.getItem('token'); // or however you store it
+  
+  const response = await axios.post(
+    `https://byteblitz-backend.onrender.com/api/v1/blog/postblog`,
+    data,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    }
+  );
+  return response.data;
+};
