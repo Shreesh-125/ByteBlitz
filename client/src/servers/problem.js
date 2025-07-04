@@ -12,7 +12,14 @@ export const getproblemInfoById= async(problemId)=>{
 }
 
 export const submitCode= async({languageId,value,problemId})=>{
-    const response= await axios.post(`https://byteblitz-backend.onrender.com/api/v1/problem/${problemId}/submitcode`,{languageId,code:value},{withCredentials:true});
+    const token = localStorage.getItem('token');
+    const response= await axios.post(`https://byteblitz-backend.onrender.com/api/v1/problem/${problemId}/submitcode`,{languageId,code:value}, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    });
     return response.data;
 }
 
