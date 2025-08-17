@@ -24,7 +24,7 @@ const io = initializeSocket(server);
 
 app.use(cookieParser());
 const corsOption = {
-  origin: "http://localhost:5173",
+  origin: "https://byte-blitz-three.vercel.app",
   credentials: true,
 };
 app.use(cors(corsOption));
@@ -46,3 +46,4 @@ server.listen(PORT, async () => {
   await connectDB();
   rescheduleAllContests(io); // Reschedule contests on server start
 });
+
