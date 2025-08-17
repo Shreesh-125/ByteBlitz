@@ -25,7 +25,7 @@ const formatTime = (dateString) => {
 export const getAllBlogs = async (page = 1, limit = 10) => {
   try {
     const response = await axios.get(
-      `https://byteblitz-backend.onrender.com/api/v1/blog?page=${page}&limit=${limit}`
+      `${import.meta.env.VITE_BACKEND_URI}/api/v1/blog?page=${page}&limit=${limit}`
     );
     console.log(response.data)
     const blogs = transformBlogs(response.data?.blogs);
@@ -44,7 +44,7 @@ export const getAllBlogs = async (page = 1, limit = 10) => {
 export const getUserBlogs = async (username,page=1,limit=10)  => {
   try {
     const response = await axios.get(
-      `https://byteblitz-backend.onrender.com/api/v1/user/${username}/blog?page=${page}&limit=${limit}`
+      `${import.meta.env.VITE_BACKEND_URI}/api/v1/user/${username}/blog?page=${page}&limit=${limit}`
     );
     console.log(response.data)
     const blogs = transformBlogs(response.data?.blogs);
@@ -66,7 +66,7 @@ export const postBlog = async (data) => {
   const token = localStorage.getItem('token'); // or however you store it
   
   const response = await axios.post(
-    `https://byteblitz-backend.onrender.com/api/v1/blog/postblog`,
+    `${import.meta.env.VITE_BACKEND_URI}/api/v1/blog/postblog`,
     data,
     {
       headers: {

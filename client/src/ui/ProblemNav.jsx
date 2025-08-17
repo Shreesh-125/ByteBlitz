@@ -42,7 +42,15 @@ const ProblemNav = ({
     setIsExecuted(false)
     try {
       const languagecode=languagetoIdMap[language];
-    const response= await axios.post(`/api/v1/problem/customTestCase`,{ languagecode, value,customInput })
+       const token = localStorage.getItem('token'); 
+
+    const response= await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/v1/problem/customTestCase`,{ languagecode, value,customInput }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    })
     
       setYourOutput(response.data.response.output);
       setIsSuccess(!response.data.response.isError)

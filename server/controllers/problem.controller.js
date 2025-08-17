@@ -118,10 +118,11 @@ export const updateProblem = async (req, res) => {
 
 export const submitcode = async (req, res) => {
   try {
+    
     const { code, languageId } = req.body;
     const { problemid } = req.params;
- 
     
+   
     const userId = req.id;
 
     const user = await User.findById(userId);
@@ -170,7 +171,7 @@ export const submitcode = async (req, res) => {
         memory_limit: memoryLimit,
         number_of_runs: 1,
       };
-
+     
       // Submit code to Judge0
       const response1 = await axios.post(
         `${process.env.JUDGE0_URL}/submissions?base64_encoded=false`,
@@ -185,14 +186,15 @@ export const submitcode = async (req, res) => {
       
       // Wait for Judge0 to complete execution
       await new Promise((resolve) =>
-        setTimeout(resolve, (cpuTimeLimit + 1) * 1000)
+        setTimeout(resolve, (cpuTimeLimit + 3) * 1000)
       );
 
       // Fetch submission result
       const response2 = await axios.get(
         `${process.env.JUDGE0_URL}/submissions/${response1.data.token}?base64_encoded=true`
       );
-
+      console.log(response2);
+      
       totaltime+=Number(response2.data.time);
       totalmemory+=response2.data.memory
       
@@ -258,6 +260,7 @@ export const submitcode = async (req, res) => {
 
 export const checkCustomTestCase = async (req,res)=>{
   try {
+  
     const { languagecode, value,customInput } = req.body;
    
     if(!languagecode || !value ){
@@ -274,7 +277,7 @@ export const checkCustomTestCase = async (req,res)=>{
       cpu_time_limit: 2,
       number_of_runs: 1,
     };
-  
+    
     const response1 = await axios.post(
       `${process.env.JUDGE0_URL}/submissions?base64_encoded=false`,
       submissionData
@@ -289,7 +292,7 @@ export const checkCustomTestCase = async (req,res)=>{
 
     // Wait for Judge0 to complete execution
     await new Promise((resolve) =>
-      setTimeout(resolve, (3) * 1000)
+      setTimeout(resolve, (5) * 1000)
     );
     
     // Fetch submission result

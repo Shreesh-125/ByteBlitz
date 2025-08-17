@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://byteblitz-backend.onrender.com/api/v1/user";
+const API_URL = `${import.meta.env.VITE_BACKEND_URI}/api/v1/user`;
 
 // Signup API
 export const signup = async (userData) => {
@@ -11,7 +11,7 @@ export const signup = async (userData) => {
 // Login API
 export const login = async (userData) => {
   console.log(userData);
-  const response = await axios.post(`${API_URL}/login`, userData, {
+  const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/v1/user/login`, userData, {
     headers: { "Content-Type": "application/json" },
     withCredentials: true,
   });

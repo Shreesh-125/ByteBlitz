@@ -24,7 +24,7 @@ const io = initializeSocket(server);
 
 app.use(cookieParser());
 const corsOption = {
-  origin: "https://byte-blitz-three.vercel.app",
+  origin: ["https://byte-blitz-three.vercel.app","http://localhost:5173"],
   credentials: true,
 };
 app.use(cors(corsOption));

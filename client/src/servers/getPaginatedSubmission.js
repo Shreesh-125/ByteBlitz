@@ -7,7 +7,7 @@ export const getPaginatedSubmission = async (
   token
 ) => {
   try {
-    const url = `https://byteblitz-backend.onrender.com/api/v1/user/${username}/submissions?page=${page}&limit=${limit}`;
+    const url = `${import.meta.env.VITE_BACKEND_URI}/api/v1/user/${username}/submissions?page=${page}&limit=${limit}`;
     console.log("Fetching:", url);
 
     const response = await axios.get(url, {
