@@ -1,7 +1,6 @@
 import React from "react";
 import Profilecontainer from "../ui/Profilecontainer";
 import Heatmap from "../ui/Heatmap";
-import Bargraph from "../ui/bargraph";
 import styles from "../styles/Profilepageleftbar.module.css";
 import { formattedResult } from "../utils/profileUtils";
 
@@ -22,7 +21,6 @@ const Profilepageleftbar = ({ userData, isUser }) => {
         endDate={formatDate(endDate)}
         dataValues={submissionCalendarData}
       />
-      {/* <Bargraph /> */}
     </div>
   );
 };
